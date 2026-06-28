@@ -7,21 +7,21 @@ import styles from "./sign-up.module.css";
 
 const ROLE_OPTIONS = [
   {
-    href: "/sign-up/Brand",
-    label: "Brand",
+    href: "/sign-up/brand",
+    label: "brand",
     description: "Manage your brand's presence and engage with the community",
     icon: Building2,
   },
   {
-    href: "/sign-up/Designer",
+    href: "/sign-up/designer",
     label: "Designer",
     description: "Create and manage your design projects",
     icon: Building2,
   },
   {
-    href: "/sign-up/",
-    label: "Transport Volunteer",
-    description: "Help transport rescue animals to their new homes",
+    href: "/sign-up/member",
+    label: "Other",
+    description: "Look at and purchase all the cool new stuff",
     icon: Truck,
   },
 ];
