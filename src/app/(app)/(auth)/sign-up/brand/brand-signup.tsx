@@ -32,6 +32,7 @@ export default function BrandSignUpPage() {
   const [showConfirm, setShowConfirm] = useState(false);
   const [selectedLogoName, setSelectedLogoName] = useState("");
   const isSubmittingRef = useRef(false);
+  const devSignupBypass = process.env.NEXT_PUBLIC_DEV_SIGNUP_BYPASS === "true";
 
   const {
     register,
@@ -71,6 +72,58 @@ export default function BrandSignUpPage() {
     setLoading(true);
 
     try {
+      const brandStyle = data.style === "other" ? data.customStyle?.trim() || "Other" : data.style;
+      const contactInfo = {
+        first_name: data.firstName,
+        last_name: data.lastName,
+        phone: data.phone,
+        email: data.email,
+        location: data.location,
+        website: data.website,
+        company_name: data.companyName,
+      };
+
+      if (devSignupBypass) {
+        const response = await fetch("/api/brand-signup", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            mode: "dev",
+            email: data.email,
+            password: data.password,
+            userMetadata: {
+              role: "Brand",
+              first_name: data.firstName,
+              last_name: data.lastName,
+              phone: data.phone,
+            },
+            brandData: {
+              about: data.description,
+              company_name: data.companyName,
+              first_name: data.firstName,
+              last_name: data.lastName,
+              logo: data.logo?.name ?? null,
+              style: brandStyle,
+              website: data.website,
+              contact_info: contactInfo,
+            },
+          }),
+        });
+
+        const result = await response.json().catch(() => ({}));
+
+        if (!response.ok) {
+          setError(result.error || "We could not create your brand account. Please try again.");
+          setLoading(false);
+          return;
+        }
+
+        router.push("/sign-up-success");
+        return;
+      }
+
       const supabase = createClient();
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: data.email,
@@ -96,52 +149,40 @@ export default function BrandSignUpPage() {
         return;
       }
 
-      let userId = authData.user?.id;
+      const userId = authData.user?.id;
 
-      if (!authData.session) {
-        const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
-          email: data.email,
-          password: data.password,
-        });
-
-        if (signInError) {
-          setError("Your account was created, but we could not sign you in automatically. Please confirm your email or try again.");
-          setLoading(false);
-          return;
-        }
-
-        userId = signInData.user?.id ?? userId;
+      if (!userId) {
+        setError("Your account was not created correctly. Please try again.");
+        setLoading(false);
+        return;
       }
 
-      const brandStyle = data.style === "other" ? data.customStyle?.trim() || "Other" : data.style;
-      const contactInfo = {
-        first_name: data.firstName,
-        last_name: data.lastName,
-        phone: data.phone,
-        email: data.email,
-        location: data.location,
-        website: data.website,
-        company_name: data.companyName,
-      };
+      const response = await fetch("/api/brand-signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId,
+          brandData: {
+            about: data.description,
+            company_name: data.companyName,
+            first_name: data.firstName,
+            last_name: data.lastName,
+            logo: data.logo?.name ?? null,
+            style: brandStyle,
+            website: data.website,
+            contact_info: contactInfo,
+          },
+        }),
+      });
 
-      if (userId) {
-        const { error: brandError } = await supabase.from("brands").insert({
-          about: data.description,
-          company_name: data.companyName,
-          first_name: data.firstName,
-          last_name: data.lastName,
-          logo: data.logo?.name ?? null,
-          style: brandStyle,
-          website: data.website,
-          account_id: userId,
-          contact_info: JSON.stringify(contactInfo),
-        });
+      const result = await response.json().catch(() => ({}));
 
-        if (brandError) {
-          setError(brandError.message);
-          setLoading(false);
-          return;
-        }
+      if (!response.ok) {
+        setError(result.error || "We could not save your brand profile. Please try again.");
+        setLoading(false);
+        return;
       }
 
       router.push("/sign-up-success");
