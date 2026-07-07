@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
@@ -31,6 +31,7 @@ export default function BrandSignUpPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [selectedLogoName, setSelectedLogoName] = useState("");
+  const isSubmittingRef = useRef(false);
 
   const {
     register,
@@ -63,6 +64,9 @@ export default function BrandSignUpPage() {
   const allPasswordReqsMet = Object.values(passwordChecks).every(Boolean);
 
   const onSubmit = async (data: BrandFormData) => {
+    if (isSubmittingRef.current) return;
+
+    isSubmittingRef.current = true;
     setError("");
     setLoading(true);
 
@@ -83,9 +87,30 @@ export default function BrandSignUpPage() {
       });
 
       if (authError) {
-        setError(authError.message);
+        if (authError.message.toLowerCase().includes("rate limit")) {
+          setError("Too many signup attempts were sent recently. Please wait a few minutes and try again.");
+        } else {
+          setError(authError.message);
+        }
         setLoading(false);
         return;
+      }
+
+      let userId = authData.user?.id;
+
+      if (!authData.session) {
+        const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+          email: data.email,
+          password: data.password,
+        });
+
+        if (signInError) {
+          setError("Your account was created, but we could not sign you in automatically. Please confirm your email or try again.");
+          setLoading(false);
+          return;
+        }
+
+        userId = signInData.user?.id ?? userId;
       }
 
       const brandStyle = data.style === "other" ? data.customStyle?.trim() || "Other" : data.style;
@@ -99,7 +124,7 @@ export default function BrandSignUpPage() {
         company_name: data.companyName,
       };
 
-      if (authData.user) {
+      if (userId) {
         const { error: brandError } = await supabase.from("brands").insert({
           about: data.description,
           company_name: data.companyName,
@@ -108,7 +133,7 @@ export default function BrandSignUpPage() {
           logo: data.logo?.name ?? null,
           style: brandStyle,
           website: data.website,
-          account_id: authData.user.id,
+          account_id: userId,
           contact_info: JSON.stringify(contactInfo),
         });
 
@@ -123,6 +148,7 @@ export default function BrandSignUpPage() {
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong while creating your account.");
     } finally {
+      isSubmittingRef.current = false;
       setLoading(false);
     }
   };
