@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useForm } from "react-hook-form";
-import styles from "../sign-up.module.css";
+import styles from "./brand-signup.module.css";
 
 interface BrandFormData {
   firstName: string;
@@ -66,58 +66,65 @@ export default function BrandSignUpPage() {
     setError("");
     setLoading(true);
 
-    const supabase = createClient();
-    const { data: authData, error: authError } = await supabase.auth.signUp({
-      email: data.email,
-      password: data.password,
-      options: {
-        data: {
-          role: "Brand",
-          first_name: data.firstName,
-          last_name: data.lastName,
-          phone: data.phone,
-        },
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
-      },
-    });
-
-    if (authError) {
-      setError(authError.message);
-      setLoading(false);
-      return;
-    }
-
-    if (authData.session && authData.user) {
-      const { data: Brand } = await supabase
-        .from("Brands")
-        .insert({
-          contact_info: {
+    try {
+      const supabase = createClient();
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: data.email,
+        password: data.password,
+        options: {
+          data: {
+            role: "Brand",
             first_name: data.firstName,
             last_name: data.lastName,
             phone: data.phone,
-            email: data.email,
-            company_name: data.companyName,
-            logo_name: data.logo?.name ?? null,
-            style: data.style === "other" ? data.customStyle?.trim() || "Other" : data.style,
-            description: data.description,
-            location: data.location,
-            website: data.website,
           },
-        })
-        .select("Brand_uuid")
-        .single();
-
-      await supabase.from("accounts").insert({
-        account_id: authData.user.id,
-        account_type: "Brand",
-        Brand_id: Brand?.Brand_uuid ?? null,
+          emailRedirectTo: `${window.location.origin}/sign-up-success`,
+        },
       });
 
-      router.push("/dashboard/Brand");
-      return;
-    }
+      if (authError) {
+        setError(authError.message);
+        setLoading(false);
+        return;
+      }
 
-    router.push("/sign-up-success");
+      const brandStyle = data.style === "other" ? data.customStyle?.trim() || "Other" : data.style;
+      const contactInfo = {
+        first_name: data.firstName,
+        last_name: data.lastName,
+        phone: data.phone,
+        email: data.email,
+        location: data.location,
+        website: data.website,
+        company_name: data.companyName,
+      };
+
+      if (authData.user) {
+        const { error: brandError } = await supabase.from("brands").insert({
+          about: data.description,
+          company_name: data.companyName,
+          first_name: data.firstName,
+          last_name: data.lastName,
+          logo: data.logo?.name ?? null,
+          style: brandStyle,
+          website: data.website,
+          account_id: authData.user.id,
+          contact_info: JSON.stringify(contactInfo),
+        });
+
+        if (brandError) {
+          setError(brandError.message);
+          setLoading(false);
+          return;
+        }
+      }
+
+      router.push("/sign-up-success");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong while creating your account.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -256,12 +263,20 @@ export default function BrandSignUpPage() {
 
           <div className={styles.inputGroup}>
             <input
-              type="url"
+              type="text"
               id="website"
               placeholder=" "
-              {...register("website")}
+              {...register("website", {
+                validate: (value) =>
+                  !value ||
+                  /^(https?:\/\/)?(www\.)?[a-z0-9.-]+\.[a-z]{2,}(\/[^\s]*)?$/i.test(value) ||
+                  "Please enter a valid website URL",
+              })}
             />
             <label htmlFor="website">Website (optional)</label>
+            {errors.website && (
+              <span className={styles.fieldError}>{errors.website.message}</span>
+            )}
           </div>
         </div>
 
@@ -277,10 +292,14 @@ export default function BrandSignUpPage() {
 
         <div className={styles.inputGroup}>
           <input
-            type="email"
+            type="text"
             id="email"
             placeholder=" "
-            {...register("email", { required: "Email is required" })}
+            {...register("email", {
+              required: "Email is required",
+              validate: (value) =>
+                /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) || "Please enter a valid email address",
+            })}
           />
           <label htmlFor="email">Email</label>
           {errors.email && (

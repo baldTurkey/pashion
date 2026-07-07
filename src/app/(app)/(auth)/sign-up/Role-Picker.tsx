@@ -8,7 +8,7 @@ import styles from "./sign-up.module.css";
 const ROLE_OPTIONS = [
   {
     href: "/sign-up/brand",
-    label: "brand",
+    label: "Brand",
     description: "Manage your brand's presence and engage with the community",
     icon: Building2,
   },
@@ -20,7 +20,7 @@ const ROLE_OPTIONS = [
   },
   {
     href: "/sign-up/member",
-    label: "Other",
+    label: "Member",
     description: "Look at and purchase all the cool new stuff",
     icon: Truck,
   },
