@@ -127,9 +127,25 @@
   }
 }
 
+/* ── Labels (static, above the field — not floating) ── */
+/* A floating label needs a distinct "has a value" rule per field type
+   (input/select/textarea/file all detect that differently, if at all),
+   which is exactly what caused labels to sit stuck on top of select/file
+   values with no way to ever move. A plain static label above each field
+   sidesteps that whole class of bug. */
+.inputGroup label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--emerald);
+  letter-spacing: 0.2px;
+}
+
 /* ── Inputs ─────────────────────────────────── */
 .inputGroup input,
-.inputGroup select {
+.inputGroup select,
+.inputGroup textarea {
   width: 100%;
   box-sizing: border-box;
   appearance: none;
@@ -137,7 +153,7 @@
   border: 2px solid #e5e7eb;
   color: var(--text);
   border-radius: 12px;
-  padding: 16px 16px 8px 16px;
+  padding: 12px 16px;
   font-size: 16px;
   font-weight: 500;
   line-height: 1.5;
@@ -146,48 +162,50 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
+.inputGroup textarea {
+  resize: vertical;
+}
+
 .inputGroup input:focus,
-.inputGroup select:focus {
+.inputGroup select:focus,
+.inputGroup textarea:focus {
   outline: none;
   border-color: var(--emerald);
   box-shadow: 0 0 0 3px rgba(169, 100, 122, 0.1);
   background: #fff;
 }
 
-/* ── Floating labels ────────────────────────── */
-.inputGroup label {
-  position: absolute;
-  left: 16px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #6b7280;
-  font-size: 16px;
-  font-weight: 500;
-  background: transparent;
-  padding: 0 4px;
-  pointer-events: none;
-  transition: all 0.2s ease;
-  z-index: 1;
+.inputGroup input::placeholder,
+.inputGroup textarea::placeholder {
+  color: #9ca3af;
 }
 
-.inputGroup input::placeholder {
-  color: transparent;
-  transition: color 0.25s ease;
-}
-
-.inputGroup input:focus::placeholder {
-  color: rgba(0, 0, 0, 0.1);
-}
-
-.inputGroup input:focus ~ label,
-.inputGroup input:not(:placeholder-shown) ~ label {
-  top: 0;
-  transform: translateY(-50%);
-  font-size: 12px;
-  color: var(--emerald);
-  background: rgba(245, 241, 232, 0.95);
+/* ── Logo file field (previously unstyled — same label bug affected it) ── */
+.fileLabel {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
   font-weight: 600;
-  padding: 0 6px;
+  color: var(--emerald);
+}
+
+.fileInput {
+  width: 100%;
+  box-sizing: border-box;
+  background: rgba(255, 255, 255, 0.95);
+  border: 2px dashed #d1d5db;
+  color: var(--text);
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.helperText {
+  display: block;
+  margin-top: 6px;
+  font-size: 12px;
+  color: #6b7280;
 }
 
 /* ── Validation error ───────────────────────── */

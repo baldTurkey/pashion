@@ -83,8 +83,19 @@
   isolation: isolate;
 }
 
+
+.inputGroup label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--emerald);
+  letter-spacing: 0.2px;
+}
+
 .inputGroup input,
-.inputGroup select {
+.inputGroup select,
+.inputGroup textarea {
   width: 100%;
   box-sizing: border-box;
   appearance: none;
@@ -92,7 +103,7 @@
   border: 2px solid #e5e7eb;
   color: var(--text);
   border-radius: 12px;
-  padding: 16px 16px 8px 16px;
+  padding: 12px 16px;
   font-size: 16px;
   font-weight: 500;
   line-height: 1.5;
@@ -110,87 +121,12 @@
   background-color: #ffffffb3;
 }
 
-.inputGroup input:focus,
-.inputGroup select:focus {
-  outline: none;
-  border-color: var(--emerald);
-  box-shadow: 0 0 0 3px rgba(169, 100, 122, 0.1);
-  background: #fff;
-}
-
-.inputGroup select:focus {
-  background-color: #fff;
-}
-
-.inputGroup label {
-  position: absolute;
-  left: 16px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #6b7280;
-  font-size: 16px;
-  font-weight: 500;
-  background: transparent;
-  padding: 0 4px;
-  pointer-events: none;
-  transition: all 0.2s ease;
-  z-index: 1;
-}
-
-/* Hide placeholder by default, show on focus (prevents overlap with label) */
-.inputGroup input::placeholder {
-  color: transparent;
-  transition: color 0.2s ease;
-}
-
-.inputGroup input:focus::placeholder {
-  color: #9ca3af;
-}
-
-.inputGroup input:focus ~ label,
-.inputGroup input:not(:placeholder-shown) ~ label {
-  top: 0;
-  transform: translateY(-50%);
-  font-size: 12px;
-  color: var(--emerald);
-  background: rgba(245, 241, 232, 0.95);
-  font-weight: 600;
-  padding: 0 4px;
-}
-
-/* Selects always show option text, so always float the label up */
-.inputGroup select ~ label {
-  top: 0;
-  transform: translateY(-50%);
-  font-size: 12px;
-  background: rgba(245, 241, 232, 0.95);
-  font-weight: 600;
-  padding: 0 4px;
-  color: var(--emerald);
-}
-
-.inputGroup select:focus ~ label,
-.inputGroup select[data-has-value="true"] ~ label {
-  color: var(--emerald);
-}
-
 .inputGroup textarea {
-  width: 100%;
-  box-sizing: border-box;
-  background: rgba(255, 255, 255, 0.95);
-  border: 2px solid #e5e7eb;
-  color: var(--text);
-  border-radius: 12px;
-  padding: 16px 16px 8px 16px;
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 1.5;
-  transition: all 0.2s ease;
-  font-family: inherit;
   resize: vertical;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
+.inputGroup input:focus,
+.inputGroup select:focus,
 .inputGroup textarea:focus {
   outline: none;
   border-color: var(--emerald);
@@ -198,20 +134,9 @@
   background: #fff;
 }
 
-.inputGroup textarea ~ label {
-  top: 18px;
-  transform: none;
-}
-
-.inputGroup textarea:focus ~ label,
-.inputGroup textarea:not(:placeholder-shown) ~ label {
-  top: 0;
-  transform: translateY(-50%);
-  font-size: 12px;
-  color: var(--emerald);
-  background: rgba(245, 241, 232, 0.95);
-  font-weight: 600;
-  padding: 0 4px;
+.inputGroup input::placeholder,
+.inputGroup textarea::placeholder {
+  color: #9ca3af;
 }
 
 .fieldError {
@@ -222,7 +147,8 @@
 }
 
 .fileLabel {
-  font-size: 12px;
+  display: block;
+  font-size: 13px;
   font-weight: 600;
   color: var(--emerald);
   margin-bottom: 6px;

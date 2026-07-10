@@ -129,7 +129,10 @@ export default function BrandSignUpPage() {
           return;
         }
 
-        router.push("/sign-up-success");
+        // Dev bypass creates the account fully confirmed already (no email
+        // step), so there's no reason to show the "check your email" page —
+        // go straight to the dashboard.
+        router.push("/dashboard/brand");
         return;
       }
 
@@ -144,7 +147,10 @@ export default function BrandSignUpPage() {
             last_name: data.lastName,
             phone: data.phone,
           },
-          emailRedirectTo: `${window.location.origin}/sign-up-success`,
+          // Supabase's own server verifies the email link first, then
+          // redirects here with a `code` param — /auth/callback exchanges
+          // that for a real session before sending the browser onward.
+          emailRedirectTo: `${window.location.origin}/auth/callback?next=/dashboard/brand`,
         },
       });
 
