@@ -1,0 +1,307 @@
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:wght@500&family=Inter:wght@400;500;600&display=swap");
+
+.mpform-root {
+  --paper: #F7F5F0;
+  --card: #FFFFFF;
+  --ink: #22201C;
+  --ink-soft: #6B6860;
+  --denim: #33455C;
+  --denim-dark: #22303F;
+  --denim-soft: #E7ECF1;
+  --thread: #B6AE9E;
+  --danger: #A1382E;
+  --font-display: "Fraunces", "Georgia", serif;
+  --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  max-width: 640px;
+  margin: 0 auto;
+  background: var(--paper);
+  padding: 36px 20px 60px;
+  font-family: var(--font-body);
+}
+
+.mpform-header {
+  margin-bottom: 28px;
+}
+
+.mpform-title {
+  font-family: var(--font-display);
+  font-size: 34px;
+  font-weight: 500;
+  color: var(--ink);
+  margin: 14px 0 6px;
+}
+
+.mpform-subtitle {
+  font-size: 14px;
+  color: var(--ink-soft);
+  margin: 0;
+  line-height: 1.6;
+}
+
+.mpform-section {
+  background: var(--card);
+  border-radius: 10px;
+  border: 1px solid rgba(182, 174, 158, 0.2);
+  padding: 22px 24px;
+  margin-bottom: 20px;
+}
+
+.mpform-field-label {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.mpform-field-number {
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: var(--thread);
+  letter-spacing: 0.08em;
+}
+
+.mpform-field-label label {
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.mpform-required {
+  color: var(--denim);
+  margin-left: 4px;
+}
+
+.mpform-input,
+.mpform-select,
+.mpform-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--ink);
+  background: var(--card);
+  border: 1px solid rgba(182, 174, 158, 0.33);
+  border-radius: 6px;
+  padding: 11px 13px;
+  outline: none;
+}
+
+.mpform-select {
+  cursor: pointer;
+}
+
+.mpform-textarea {
+  resize: vertical;
+}
+
+.mpform-textarea.tall {
+  min-height: 100px;
+}
+
+.mpform-textarea.short {
+  min-height: 90px;
+}
+
+.mpform-spacer {
+  height: 20px;
+}
+
+.mpform-price-wrap {
+  position: relative;
+}
+
+.mpform-price-sign {
+  position: absolute;
+  left: 13px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--ink-soft);
+  font-size: 15px;
+}
+
+.mpform-price-input {
+  padding-left: 24px;
+}
+
+.mpform-error {
+  color: var(--danger);
+  font-size: 12.5px;
+  margin-top: 6px;
+  font-family: var(--font-body);
+}
+
+.mpform-helper {
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  margin: -2px 0 14px;
+}
+
+.mpform-dropzone {
+  border: 1.5px dashed var(--thread);
+  border-radius: 8px;
+  padding: 26px 16px;
+  text-align: center;
+  cursor: pointer;
+  background: transparent;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.mpform-dropzone.active {
+  border-color: var(--denim);
+  background: var(--denim-soft);
+}
+
+.mpform-dropzone.full {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.mpform-dropzone-title {
+  font-size: 13.5px;
+  color: var(--ink);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.mpform-dropzone-sub {
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+
+.mpform-hidden-input {
+  display: none;
+}
+
+.mpform-thumb-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.mpform-thumb {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid rgba(182, 174, 158, 0.33);
+}
+
+.mpform-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.mpform-thumb-remove {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(34, 32, 28, 0.75);
+  color: #fff;
+  font-size: 12px;
+  line-height: 20px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.mpform-thumb-cover {
+  position: absolute;
+  bottom: 4px;
+  left: 4px;
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--denim);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.mpform-size-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.mpform-size-chip {
+  padding: 7px 14px;
+  border-radius: 6px;
+  font-size: 13.5px;
+  font-family: var(--font-body);
+  cursor: pointer;
+  border: 1px solid rgba(182, 174, 158, 0.4);
+  background: var(--card);
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.mpform-size-chip.selected {
+  border-color: var(--denim);
+  background: var(--denim);
+  color: #fff;
+  font-weight: 600;
+}
+
+.mpform-guide-upload {
+  border: 1px dashed var(--thread);
+  border-radius: 6px;
+  padding: 14px 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.mpform-guide-name {
+  font-size: 13.5px;
+  color: var(--ink);
+}
+
+.mpform-guide-action {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--denim);
+  white-space: nowrap;
+}
+
+.mpform-guide-preview {
+  margin-top: 10px;
+  max-height: 140px;
+  border-radius: 6px;
+  border: 1px solid rgba(182, 174, 158, 0.33);
+}
+
+.mpform-submit {
+  width: 100%;
+  padding: 14px 20px;
+  border-radius: 6px;
+  border: none;
+  background: var(--denim-dark);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: var(--font-body);
+  cursor: pointer;
+  letter-spacing: 0.02em;
+}
+
+.mpform-success {
+  margin-top: 16px;
+  padding: 12px 16px;
+  border-radius: 6px;
+  background: var(--denim-soft);
+  color: var(--denim-dark);
+  font-size: 13.5px;
+  font-weight: 600;
+}
