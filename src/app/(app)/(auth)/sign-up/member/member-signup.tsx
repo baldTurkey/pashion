@@ -90,7 +90,7 @@ export default function CustomerSignUpPage() {
           return;
         }
 
-        router.push("/sign-up-success");
+        router.push("/");
         return;
       }
 
@@ -105,7 +105,7 @@ export default function CustomerSignUpPage() {
             last_name: data.lastName,
             phone: data.phone,
           },
-          emailRedirectTo: `${window.location.origin}/sign-up-success`,
+          emailRedirectTo: `${window.location.origin}/`,
         },
       });
 
@@ -148,7 +148,7 @@ export default function CustomerSignUpPage() {
         return;
       }
 
-      router.push("/sign-up-success");
+      router.push("/");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong while creating your account.");
     } finally {

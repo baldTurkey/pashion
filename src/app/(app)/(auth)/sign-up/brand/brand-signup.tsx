@@ -120,7 +120,7 @@ export default function BrandSignUpPage() {
           return;
         }
 
-        router.push("/sign-up-success");
+        router.push("/brand/dashboard");
         return;
       }
 
@@ -135,7 +135,7 @@ export default function BrandSignUpPage() {
             last_name: data.lastName,
             phone: data.phone,
           },
-          emailRedirectTo: `${window.location.origin}/sign-up-success`,
+          emailRedirectTo: `${window.location.origin}/brand/dashboard`,
         },
       });
 
@@ -185,7 +185,7 @@ export default function BrandSignUpPage() {
         return;
       }
 
-      router.push("/sign-up-success");
+      router.push("/brand/dashboard");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong while creating your account.");
     } finally {

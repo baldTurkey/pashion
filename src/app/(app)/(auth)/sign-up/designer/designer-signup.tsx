@@ -110,7 +110,7 @@ export default function DesignerSignUpPage() {
           return;
         }
 
-        router.push("/sign-up-success");
+        router.push("/designer/dashboard");
         return;
       }
 
@@ -125,7 +125,7 @@ export default function DesignerSignUpPage() {
             last_name: data.lastName,
             phone: data.phone,
           },
-          emailRedirectTo: `${window.location.origin}/sign-up-success`,
+          emailRedirectTo: `${window.location.origin}/designer/dashboard`,
         },
       });
 
@@ -173,7 +173,7 @@ export default function DesignerSignUpPage() {
         return;
       }
 
-      router.push("/sign-up-success");
+      router.push("/designer/dashboard");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong while creating your account.");
     } finally {
