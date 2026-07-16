@@ -294,6 +294,11 @@
   font-family: var(--font-body);
   cursor: pointer;
   letter-spacing: 0.02em;
+  transition: background-color 0.2s ease;
+}
+
+.mpform-submit:hover {
+  background-color: #3c73b7;
 }
 
 .mpform-success {

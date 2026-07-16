@@ -1,5 +1,8 @@
+"use client";
+
 import React, { useState, useRef } from "react";
 import "./mpform.css";
+import {supabaseBrowser} from "./lib/supabase/client.ts";
 
 const MIN_IMAGES = 1;
 const MAX_IMAGES = 8;
@@ -32,6 +35,22 @@ function ErrorText({ children }) {
   return <div className="mpform-error">{children}</div>;
 }
 
+async function uploadFile(file, folder) {
+  const ext = file.name.split(".").pop();
+  const path = `${folder}/${Date.now()}-${Math.random()
+    .toString(36)
+    .slice(2)}.${ext}`;
+ 
+  const { error: uploadError } = await supabaseBrowser.storage
+    .from("listing-photos")
+    .upload(path, file);
+ 
+  if (uploadError) throw uploadError;
+ 
+  const { data } = supabaseBrowser.storage.from("listing-photos").getPublicUrl(path);
+  return data.publicUrl;
+}
+
 export default function marketplaceform() {
   const [images, setImages] = useState([]);
   const [itemName, setItemName] = useState("");
@@ -46,6 +65,9 @@ export default function marketplaceform() {
   const [errors, setErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [dragActive, setDragActive] = useState(false);
+
+  const [saving, setSaving] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
 
   const fileInputRef = useRef(null);
   const guideInputRef = useRef(null);
@@ -95,18 +117,58 @@ export default function marketplaceform() {
       e.price = "Enter a valid price.";
     if (!description.trim()) e.description = "Add a description.";
     if (!size && !customSize.trim()) e.size = "Choose or enter a size.";
+    if (!sizeGuide) e.sizeGuide = "Upload a size guide.";
     if (!style && !customStyle.trim()) e.style = "Choose or enter a style.";
     if (!careInfo.trim()) e.careInfo = "Add care and info details.";
     setErrors(e);
     return Object.keys(e).length === 0;
   };
 
-  const handleSubmit = (ev) => {
+  const handleSubmit = async (ev) => {
     ev.preventDefault();
-    if (validate()) {
-      setSubmitted(true);
-    } else {
+    setSubmitError(null);
+
+    if (!validate()) {
       setSubmitted(false);
+      return;
+    }
+
+  setSaving(true);
+  try {
+    const photoUrls = await Promise.all(
+    images.map((img) => uploadFile(img.file, "photos"))
+    );
+
+    let sizeGuideUrl = null;
+      if (sizeGuide?.file) {
+        sizeGuideUrl = await uploadFile(sizeGuide.file, "size-guides");
+      }
+ 
+      const { error: insertError } = await supabaseBrowser.from("mpformlistings").insert([
+        {
+          item_name: itemName.trim(),
+          price: Number(price),
+          description: description.trim(),
+          size: size || customSize.trim(),
+          style: style === "Other" ? customStyle.trim() : style,
+          care_info: careInfo.trim(),
+          photo_urls: photoUrls,
+          size_guide_url: sizeGuideUrl,
+        },
+      ]);
+ 
+      if (insertError) throw insertError;
+
+      setSubmitted(true);
+      } catch (err) {
+      console.error("Failed to publish listing:", err?.message, err?.details, err?.hint, err?.code);
+      setSubmitError(
+        "Uh oh.. Something went wrong while publishing. Please try again."
+      );
+      setSubmitted(false);
+    
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -120,7 +182,7 @@ export default function marketplaceform() {
       </div>
 
       <form onSubmit={handleSubmit}>
-        {/* Photos */}
+        {/* pictures */}
         <div className="mpform-section">
           <FieldLabel number="01" required>
             Photos of the item
@@ -184,7 +246,6 @@ export default function marketplaceform() {
           {errors.images && <ErrorText>{errors.images}</ErrorText>}
         </div>
 
-        {/* Item name + price */}
         <div className="mpform-section">
           <FieldLabel number="02" required>
             Item name
@@ -218,7 +279,6 @@ export default function marketplaceform() {
           {errors.price && <ErrorText>{errors.price}</ErrorText>}
         </div>
 
-        {/* Description */}
         <div className="mpform-section">
           <FieldLabel number="04" required>
             Description
@@ -232,7 +292,6 @@ export default function marketplaceform() {
           {errors.description && <ErrorText>{errors.description}</ErrorText>}
         </div>
 
-        {/* Size + size guide */}
         <div className="mpform-section">
           <FieldLabel number="05" required>
             Size
@@ -265,7 +324,7 @@ export default function marketplaceform() {
 
           <div className="mpform-spacer" />
 
-          <FieldLabel number="06">Size guide (optional)</FieldLabel>
+          <FieldLabel number="06">Size guide</FieldLabel>
           <div
             onClick={() => guideInputRef.current?.click()}
             className="mpform-guide-upload"
@@ -291,9 +350,9 @@ export default function marketplaceform() {
               className="mpform-guide-preview"
             />
           )}
+          {errors.sizeGuide && <ErrorText>{errors.sizeGuide}</ErrorText>}
         </div>
 
-        {/* Style */}
         <div className="mpform-section">
           <FieldLabel number="07" required>
             Style
@@ -325,7 +384,6 @@ export default function marketplaceform() {
           {errors.style && <ErrorText>{errors.style}</ErrorText>}
         </div>
 
-        {/* Care and info */}
         <div className="mpform-section">
           <FieldLabel number="08" required>
             Care and info
@@ -350,5 +408,5 @@ export default function marketplaceform() {
         )}
       </form>
     </div>
-  );
+  ); 
 }

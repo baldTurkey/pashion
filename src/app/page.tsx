@@ -1,5 +1,6 @@
 import React from 'react';
 import { createSupabaseServer } from '@/lib/supabase/server';
+import Mpform from '@/mpform';
 
 export default async function Home() {
   
@@ -25,6 +26,8 @@ export default async function Home() {
           )}
         </div>
       </div>
+
+      <Mpform />
     </main>
   );
 }
