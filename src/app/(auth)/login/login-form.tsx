@@ -11,6 +11,7 @@ import styles from "../sign-up/brand/brand-signup.module.css";
 interface LoginFormData {
   email: string;
   password: string;
+  rememberMe: boolean;
 }
 
 // Matches the `role` value each signup form stores in auth user_metadata
@@ -110,12 +111,19 @@ export default function LoginPage() {
           {errors.password && <span className={styles.fieldError}>{errors.password.message}</span>}
         </div>
 
+        <div className="flex items-center justify-between text-sm">
+          <label className="flex items-center gap-2 text-brand-ink/70">
+            <input type="checkbox" {...register("rememberMe")} className="h-4 w-4 rounded border-gray-300" />
+            Remember me
+          </label>
+          <Link href="/forgot-password" className="font-medium text-brand-accent hover:underline">
+            Forgot Password?
+          </Link>
+        </div>
+
         {error && <p className={styles.errorMsg}>{error}</p>}
 
         <div className={styles.btnRow}>
-          <button type="button" className={styles.btnSecondary} onClick={() => router.push("/sign-up")}>
-            Create account
-          </button>
           <button type="submit" className={styles.btnPrimary} disabled={loading}>
             {loading ? "Signing in…" : "Sign In"}
           </button>

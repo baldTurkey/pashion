@@ -11,7 +11,7 @@ export default async function BrandDashboardPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // No session at all — nothing to show, send them to start signing up.
+  // No session at all, nothing to show, send them to start signing up.
   if (!user) {
     redirect("/sign-up/brand");
   }

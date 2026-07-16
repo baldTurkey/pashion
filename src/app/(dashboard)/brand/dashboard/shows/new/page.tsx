@@ -15,7 +15,7 @@ export default async function CreateShowPage() {
   return (
     <ComingSoon
       title="Post a Show"
-      description="Launching a design contest is coming soon — you'll be able to set a duration, quantity, materials, and requirements for designers."
+      description="Launching a design contest is coming soon, you'll be able to set a duration, quantity, materials, and requirements for designers."
       backHref="/brand/dashboard"
       backLabel="Back to dashboard"
     />
