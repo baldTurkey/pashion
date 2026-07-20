@@ -162,7 +162,7 @@ export default function Home() {
               const name = product.name ?? "Untitled product";
               const imageUrl = product.imageUrl ?? product.image_url ?? "";
               const price = Number(product.currentPrice ?? product.current_price ?? 0);
-              const shopProductId = product.product_id ?? product.id;
+              const shopProductId = String(product.product_id ?? product.id);
 
               return (
                 <article
@@ -188,7 +188,7 @@ export default function Home() {
 
                   <div className="mt-4 flex gap-3">
                     <Link
-                      href={`/shop/${shopProductId}`}
+                      href={`/shop/${encodeURIComponent(shopProductId)}`}
                       className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100"
                     >
                       View product
