@@ -6,6 +6,12 @@ type Product = {
   product_id?: string | null;
   name?: string | null;
   description?: string | null;
+  size?: string | null;
+  product_size?: string | null;
+  size_guide?: string | null;
+  sizeGuide?: string | null;
+  size_guide_url?: string | null;
+  sizeGuideUrl?: string | null;
   imageUrl?: string | null;
   image_url?: string | null;
   currentPrice?: number | null;
@@ -17,9 +23,9 @@ type Product = {
 };
 
 type ProductPageProps = {
-  params: {
+  params: Promise<{
     productId: string;
-  };
+  }>;
 };
 
 async function getProductByRouteId(routeId: string): Promise<Product | null> {
@@ -44,7 +50,8 @@ async function getProductByRouteId(routeId: string): Promise<Product | null> {
 }
 
 export default async function ProductDetailPage({ params }: ProductPageProps) {
-  const routeId = decodeURIComponent(params.productId);
+  const { productId } = await params;
+  const routeId = decodeURIComponent(productId);
   const product = await getProductByRouteId(routeId);
 
   if (!product) {
@@ -79,6 +86,9 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
   const price = Number(product.currentPrice ?? product.current_price ?? 0);
   const deliveryPrice = Number(product.deliveryPrice ?? product.delivery_price ?? 0);
   const deliveryInDays = Number(product.deliveryInDays ?? product.delivery_in_days ?? 3);
+  const size = product.size ?? product.product_size ?? null;
+  const sizeGuide = product.sizeGuide ?? product.size_guide ?? null;
+  const sizeGuideUrl = product.sizeGuideUrl ?? product.size_guide_url ?? null;
 
   return (
     <main className="space-y-8">
@@ -100,11 +110,29 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
 
           <div className="space-y-3">
             <p className="text-2xl font-semibold text-slate-900">$ {price}</p>
+            <p className="text-slate-600">Size: {size && String(size).trim().length > 0 ? size : "N/A"}</p>
             <p className="text-slate-600">Delivery: $ {deliveryPrice}</p>
             <p className="text-slate-600">Delivery in {deliveryInDays} day(s)</p>
             {product.description && <p className="pt-2 text-slate-700">{product.description}</p>}
 
             <div className="pt-4">
+              {sizeGuideUrl && String(sizeGuideUrl).trim().length > 0 ? (
+                <a
+                  href={sizeGuideUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mr-3 inline-block rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800"
+                >
+                  Open size guide
+                </a>
+              ) : sizeGuide && String(sizeGuide).trim().length > 0 ? (
+                <details className="mb-3 rounded-lg border border-slate-200 bg-slate-50 p-3">
+                  <summary className="w-fit cursor-pointer rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800">
+                    Open size guide
+                  </summary>
+                  <p className="pt-3 text-sm text-slate-700">{sizeGuide}</p>
+                </details>
+              ) : null}
               <Link
                 href="/home"
                 className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100"
