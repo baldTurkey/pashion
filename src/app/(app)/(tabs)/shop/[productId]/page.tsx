@@ -105,15 +105,14 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
     .filter(Boolean);
 
   return (
-    <main className="space-y-8">
-      <section className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+    <main className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+      <section className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm lg:col-span-2">
         <h1 className="text-3xl font-semibold tracking-tight text-slate-900">{name}</h1>
         <p className="mt-3 text-sm text-slate-500">Unique product route id: {routeId}</p>
 
-        <div className="mt-6 grid grid-cols-1 gap-8 lg:grid-cols-2">
-          <div className="h-80 w-full overflow-hidden rounded-xl bg-slate-100">
+        <div className="mt-6 space-y-8">
+          <div className="h-96 w-full overflow-hidden rounded-xl bg-slate-100">
             {imageUrl ? (
-              // Use img so existing remote image URLs work without next/image config changes.
               <img src={imageUrl} alt={name} className="h-full w-full object-cover" />
             ) : (
               <div className="flex h-full items-center justify-center text-sm text-slate-500">
@@ -123,7 +122,6 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
           </div>
 
           <div className="space-y-5">
-            <p className="text-2xl font-semibold text-slate-900">$ {price}</p>
             <p className="text-sm text-slate-500">Listed on {postedOn}</p>
 
             <div className="grid gap-3 text-slate-700">
@@ -204,6 +202,61 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
           </div>
         </div>
       </section>
+
+      <aside className="lg:sticky lg:top-4 lg:h-fit">
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+          <div className="flex items-baseline gap-2">
+            <span className="text-3xl font-bold text-slate-900">${price.toFixed(2)}</span>
+            <button className="rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-700 hover:bg-blue-200">
+              Price history
+            </button>
+          </div>
+
+          <div className="mt-4 space-y-1 text-sm text-slate-600">
+            <p>FREE delivery Sunday, July 26</p>
+            <p className="font-medium text-slate-900">for members. Order within 3 hrs 30 mins</p>
+          </div>
+
+          <div className="mt-4 flex items-center gap-2 text-sm text-slate-700">
+            <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+            </svg>
+            <span>Deliver to Acc Name - Westford 01234</span>
+          </div>
+
+          <div className="mt-4 rounded-lg bg-red-50 p-3 text-sm font-medium text-red-700">
+            Only 1 left in stock - order soon
+          </div>
+
+          <div className="mt-4 space-y-2">
+            <button className="w-full rounded-full bg-yellow-400 py-2 font-semibold text-slate-900 hover:bg-yellow-500">
+              Add to cart
+            </button>
+            <button className="w-full rounded-full bg-orange-400 py-2 font-semibold text-white hover:bg-orange-500">
+              Buy Now
+            </button>
+          </div>
+
+          <div className="mt-4 space-y-3 border-t border-slate-200 pt-4 text-xs text-slate-600">
+            <div className="flex justify-between">
+              <span className="font-medium text-slate-900">Shipper / Seller</span>
+              <span className="text-slate-700">Amazon.com</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="font-medium text-slate-900">Returns</span>
+              <span className="text-blue-600">FREE 30-day refund/replacement</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="font-medium text-slate-900">Gift options</span>
+              <span className="text-blue-600">Available at checkout</span>
+            </div>
+          </div>
+
+          <button className="mt-4 w-full text-center text-sm text-blue-600 hover:text-blue-700">
+            ▼ See more
+          </button>
+        </div>
+      </aside>
     </main>
   );
 }
