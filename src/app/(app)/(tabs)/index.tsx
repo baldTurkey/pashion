@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import SearchBar from "./search_bar";
 
 type Product = {
   id: string;
@@ -40,6 +41,7 @@ export default function Home() {
   const [dbError, setDbError] = useState<string | null>(null);
   const [rawCount, setRawCount] = useState(0);
   const [sampleColumns, setSampleColumns] = useState<string[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -75,6 +77,10 @@ export default function Home() {
       }),
     [deals]
   );
+
+  useEffect(() => {
+    setFilteredProducts(products);
+  }, [products]);
 
   const addToCart = (product: Product) => {
     const nextItem: CartItem = {
@@ -126,23 +132,15 @@ export default function Home() {
 
       <section className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
         <h2 className="text-2xl font-semibold text-slate-900">Deals for You</h2>
-        {(dbError || !loading) && (
-          <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
-            <p><strong>Debug:</strong> products query status</p>
-            <p>signedIn: {String(signedIn)}</p>
-            <p>rows fetched: {rawCount}</p>
-            <p>rows rendered: {products.length}</p>
-            <p>sample columns: {sampleColumns.length ? sampleColumns.join(", ") : "none"}</p>
-            {dbError && <p>database error: {dbError}</p>}
-          </div>
-        )}
+
+        <SearchBar products={products} onFilteredChange={setFilteredProducts} />
         {loading ? (
           <p className="mt-4 text-slate-500">Loading products...</p>
-        ) : products.length === 0 ? (
+        ) : filteredProducts.length === 0 ? (
           <p className="mt-4 text-slate-500">No products found.</p>
         ) : (
           <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {products.map((product) => {
+            {filteredProducts.map((product) => {
               const name = product.name ?? "Untitled product";
               const imageUrl = product.imageUrl ?? product.image_url ?? "";
               const price = Number(product.currentPrice ?? product.current_price ?? 0);
