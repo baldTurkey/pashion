@@ -10,9 +10,10 @@ export default async function Mplisting({ id }: { id: string }) {
     data: { session },
   } = await supabase.auth.getSession();
 
-  if (!session) {
-    redirect("/login");
-  }
+  //testing for 404 logni issue
+  // if (!session) {
+   // redirect("/login");
+  // }
 
   const { data: listing, error } = await supabase
     .from("mpformlistings")
