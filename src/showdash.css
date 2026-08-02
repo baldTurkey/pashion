@@ -1,0 +1,126 @@
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:wght@500&family=Inter:wght@400;500;600&display=swap");
+
+.csdash-root {
+  --paper: #F7F5F0;
+  --card: #FFFFFF;
+  --ink: #22201C;
+  --ink-soft: #6B6860;
+  --denim: #33455C;
+  --denim-dark: #22303F;
+  --denim-soft: #E7ECF1;
+  --thread: #B6AE9E;
+  --font-display: "Fraunces", "Georgia", serif;
+  --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  max-width: 960px;
+  margin: 0 auto;
+  background: var(--paper);
+  padding: 36px 20px 60px;
+  font-family: var(--font-body);
+  color: var(--ink);
+}
+
+.csdash-header {
+  margin-bottom: 24px;
+}
+
+.csdash-title {
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 500;
+  margin: 0 0 4px;
+}
+
+.csdash-subtitle {
+  font-size: 13.5px;
+  color: var(--ink-soft);
+  margin: 0;
+}
+
+.csdash-empty {
+  background: var(--card);
+  border: 1px solid rgba(182, 174, 158, 0.25);
+  border-radius: 10px;
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--ink-soft);
+  font-size: 14px;
+}
+
+.csdash-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 18px;
+}
+
+.csdash-card {
+  display: block;
+  background: var(--card);
+  border: 1px solid rgba(182, 174, 158, 0.25);
+  border-radius: 10px;
+  overflow: hidden;
+  text-decoration: none;
+  color: var(--ink);
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.csdash-card:hover {
+  box-shadow: 0 6px 18px rgba(34, 32, 28, 0.08);
+  transform: translateY(-2px);
+}
+
+.csdash-card-image-wrap {
+  aspect-ratio: 1 / 1;
+  background: var(--denim-soft);
+}
+
+.csdash-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.csdash-card-image-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-soft);
+  font-size: 12.5px;
+}
+
+.csdash-card-body {
+  padding: 12px 14px 14px;
+}
+
+.csdash-card-name {
+  font-size: 14.5px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.csdash-card-meta {
+  font-size: 13.5px;
+  color: var(--denim-dark);
+  font-weight: 600;
+}
+
+.csdash-card-quantity {
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  margin-top: 2px;
+}
+
+.csdash-back {
+  display: inline-block;
+  margin-bottom: 20px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--denim);
+  text-decoration: none;
+}

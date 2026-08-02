@@ -16,7 +16,7 @@ export default async function Mplisting({ id }: { id: string }) {
   // }
 
   const { data: listing, error } = await supabase
-    .from("mpformlistings")
+    .from("products")
     .select("*")
     .eq("id", id)
     .single();

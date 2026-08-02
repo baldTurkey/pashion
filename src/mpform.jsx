@@ -51,6 +51,8 @@ async function uploadFile(file, folder) {
   return data.publicUrl;
 }
 
+
+
 export default function marketplaceform() {
   const [images, setImages] = useState([]);
   const [itemName, setItemName] = useState("");
@@ -66,11 +68,45 @@ export default function marketplaceform() {
   const [submitted, setSubmitted] = useState(false);
   const [dragActive, setDragActive] = useState(false);
 
+
+  const [deliveryPrice, setDeliveryPrice] = useState("");
+  const [deliveryInDays, setDeliveryInDays] = useState("");
+
   const [saving, setSaving] = useState(false);
   const [submitError, setSubmitError] = useState(null);
 
   const fileInputRef = useRef(null);
   const guideInputRef = useRef(null);
+
+  const resetForm = () => {
+    setImages([]);
+    setItemName("");
+    setPrice("");
+    setDeliveryPrice("");
+    setDeliveryInDays("");
+    setDescription("");
+    setSize("");
+    setCustomSize("");
+    setSizeGuide(null);
+    setStyle("");
+    setCustomStyle("");
+    setCareInfo("");
+    setErrors({});
+    setSubmitted(false);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+    if (guideInputRef.current) guideInputRef.current.value = "";
+  };
+
+  if (fileInputRef.current) {
+    fileInputRef.current.value = "";
+  }
+  if (guideInputRef.current) {
+    guideInputRef.current.value = "";
+  }
+
+  images.forEach(img => {
+    if (img.url) URL.revokeObjectURL(img.url);
+  });
 
   const addImages = (fileList) => {
     const incoming = Array.from(fileList).filter((f) =>
@@ -89,7 +125,13 @@ export default function marketplaceform() {
   };
 
   const removeImage = (id) => {
-    setImages((prev) => prev.filter((img) => img.id !== id));
+    setImages((prev) => {
+      const removed = prev.find(img => img.id === id);
+      if (removed?.url) {
+        URL.revokeObjectURL(removed.url); // Clean up memory
+      }
+      return prev.filter((img) => img.id !== id);
+    });
   };
 
   const handleDrop = (e) => {
@@ -120,6 +162,11 @@ export default function marketplaceform() {
     if (!sizeGuide) e.sizeGuide = "Upload a size guide.";
     if (!style && !customStyle.trim()) e.style = "Choose or enter a style.";
     if (!careInfo.trim()) e.careInfo = "Add care and info details.";
+
+    // if (!deliveryPrice.trim() || isNaN(Number(deliveryPrice)) || Number(deliveryPrice) < 0)
+      // e.deliveryPrice = "Enter a valid delivery price.";
+    // if (!deliveryInDays.trim() || isNaN(Number(deliveryInDays)) || Number(deliveryInDays) <= 0)
+    //  e.deliveryInDays = "Enter valid delivery days.";
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -136,28 +183,30 @@ export default function marketplaceform() {
   setSaving(true);
   try {
     const photoUrls = await Promise.all(
-    images.map((img) => uploadFile(img.file, "photos"))
+      images.map((img) => uploadFile(img.file, "photos"))
     );
 
     let sizeGuideUrl = null;
-      if (sizeGuide?.file) {
-        sizeGuideUrl = await uploadFile(sizeGuide.file, "size-guides");
-      }
+    if (sizeGuide?.file) {
+      sizeGuideUrl = await uploadFile(sizeGuide.file, "size-guides");
+    }
  
-      const { error: insertError } = await supabaseBrowser.from("mpformlistings").insert([
-        {
-          item_name: itemName.trim(),
-          price: Number(price),
-          description: description.trim(),
-          size: size || customSize.trim(),
-          style: style === "Other" ? customStyle.trim() : style,
-          care_info: careInfo.trim(),
-          photo_urls: photoUrls,
-          size_guide_url: sizeGuideUrl,
-        },
-      ]);
+    const { error: insertError } = await supabaseBrowser.from("products").insert([
+      {
+        imageUrl: photoUrls[0] || null,
+        name: itemName.trim(),
+        currentPrice: price.toString(),
+        description: description.trim(),
+          // deliveryPrice: deliveryPrice.toString(),
+          // deliveryInDays: deliveryInDays.toString(),
+        size: size || customSize.trim(),
+        style: style === "Other" ? customStyle.trim() : style,
+        care_info: careInfo.trim(),
+        size_guide_url: sizeGuideUrl,
+      },
+    ]);
  
-      if (insertError) throw insertError;
+    if (insertError) throw insertError;
 
       setSubmitted(true);
       } catch (err) {
@@ -172,7 +221,7 @@ export default function marketplaceform() {
     }
   };
 
-  return (
+return (
     <div className="mpform-root">
       <div className="mpform-header">
         <h1 className="mpform-title">List a clothing item</h1>
@@ -311,6 +360,7 @@ export default function marketplaceform() {
               </button>
             ))}
           </div>
+
           <input
             className="mpform-input"
             placeholder="Or type an exact size / measurement"
@@ -351,6 +401,7 @@ export default function marketplaceform() {
             />
           )}
           {errors.sizeGuide && <ErrorText>{errors.sizeGuide}</ErrorText>}
+
         </div>
 
         <div className="mpform-section">
@@ -397,6 +448,46 @@ export default function marketplaceform() {
           {errors.careInfo && <ErrorText>{errors.careInfo}</ErrorText>}
         </div>
 
+        {/* <div className="mpform-section">
+          <FieldLabel number="09" required>
+            Delivery Price
+          </FieldLabel>
+          <div className="mpform-price-wrap">
+            <span className="mpform-price-sign">$</span>
+            <input
+              className="mpform-input mpform-price-input"
+              placeholder="0.00"
+              inputMode="decimal"
+              value={deliveryPrice}
+              onChange={(e) => {
+                const v = e.target.value;
+                if (/^\d*\.?\d{0,2}$/.test(v)) setDeliveryPrice(v);
+              }}
+            />
+            </div>
+            {errors.deliveryPrice && <ErrorText>{errors.deliveryPrice}</ErrorText>}
+        </div>
+
+        <div className="mpform-section">
+          <FieldLabel number="10" required>
+            Delivery In Days
+          </FieldLabel>
+          <input
+            className="mpform-input"
+            placeholder="3"
+            type="number"
+            value={deliveryInDays}
+            onChange={(e) => setDeliveryInDays(e.target.value)}
+          />
+          {errors.deliveryInDays && <ErrorText>{errors.deliveryInDays}</ErrorText>}
+        </div>
+        */}
+
+        {submitError && (
+          <div className="mpform-error" style={{ marginBottom: 16 }}>
+            {submitError}
+          </div>
+        )}
         <button type="submit" className="mpform-submit">
           Publish listing
         </button>
@@ -408,5 +499,5 @@ export default function marketplaceform() {
         )}
       </form>
     </div>
-  ); 
+  );
 }

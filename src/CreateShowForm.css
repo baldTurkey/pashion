@@ -1,0 +1,295 @@
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:wght@500&family=Inter:wght@400;500;600&display=swap");
+
+.csform-root {
+  --paper: #F7F5F0;
+  --card: #FFFFFF;
+  --ink: #22201C;
+  --ink-soft: #6B6860;
+  --denim: #33455C;
+  --denim-dark: #22303F;
+  --denim-soft: #E7ECF1;
+  --thread: #B6AE9E;
+  --font-display: "Fraunces", "Georgia", serif;
+  --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  max-width: 640px;
+  margin: 0 auto;
+  background: var(--paper);
+  padding: 36px 20px 60px;
+  font-family: var(--font-body);
+  color: var(--ink);
+}
+
+.csform-header {
+  margin-bottom: 24px;
+}
+
+.csform-title {
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 500;
+  margin: 0 0 4px;
+}
+
+.csform-subtitle {
+  font-size: 13.5px;
+  color: var(--ink-soft);
+  margin: 0;
+}
+
+.csform-section {
+  background: var(--card);
+  border: 1px solid rgba(182, 174, 158, 0.25);
+  border-radius: 10px;
+  padding: 24px 26px;
+  margin-bottom: 18px;
+}
+
+.csform-field-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.csform-field-number {
+  font-size: 11.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--thread);
+  font-weight: 600;
+}
+
+.csform-field-label label {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.csform-required {
+  color: var(--denim);
+  margin-left: 2px;
+}
+
+.csform-helper {
+  font-size: 13px;
+  color: var(--ink-soft);
+  margin: -4px 0 14px;
+}
+
+.csform-input,
+.csform-select,
+.csform-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 14px;
+  border: 1px solid rgba(182, 174, 158, 0.35);
+  border-radius: 8px;
+  font-family: var(--font-body);
+  font-size: 14.5px;
+  outline: none;
+  transition: border-color 0.15s ease;
+  background: var(--card);
+  color: var(--ink);
+}
+
+.csform-input::placeholder,
+.csform-textarea::placeholder {
+  color: var(--thread);
+}
+
+.csform-input:focus,
+.csform-select:focus,
+.csform-textarea:focus {
+  border-color: var(--denim);
+}
+
+.csform-textarea {
+  resize: vertical;
+  font-family: inherit;
+  line-height: 1.6;
+}
+
+.csform-textarea.tall {
+  min-height: 120px;
+}
+
+.csform-textarea.short {
+  min-height: 80px;
+}
+
+.csform-price-wrap {
+  display: flex;
+  align-items: center;
+  border: 1px solid rgba(182, 174, 158, 0.35);
+  border-radius: 8px;
+  padding: 0 14px;
+  background: var(--card);
+}
+
+.csform-price-sign {
+  color: var(--ink-soft);
+  margin-right: 4px;
+}
+
+.csform-price-input {
+  border: none;
+  padding-left: 0;
+}
+
+.csform-spacer {
+  height: 22px;
+}
+
+.csform-dropzone {
+  border: 1.5px dashed rgba(182, 174, 158, 0.6);
+  border-radius: 8px;
+  padding: 32px 16px;
+  text-align: center;
+  cursor: pointer;
+  background: var(--paper);
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.csform-dropzone.active {
+  border-color: var(--denim);
+  background: var(--denim-soft);
+}
+
+.csform-dropzone.full {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.csform-dropzone-title {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+
+.csform-dropzone-sub {
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+
+.csform-hidden-input {
+  display: none;
+}
+
+.csform-thumb-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.csform-thumb {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--denim-soft);
+}
+
+.csform-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.csform-thumb-remove {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 22px;
+  height: 22px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(34, 32, 28, 0.65);
+  color: #fff;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.csform-thumb-cover {
+  position: absolute;
+  bottom: 4px;
+  left: 4px;
+  background: rgba(34, 32, 28, 0.65);
+  color: #fff;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.csform-size-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.csform-size-chip {
+  padding: 8px 15px;
+  border: 1px solid rgba(182, 174, 158, 0.35);
+  border-radius: 999px;
+  background: var(--card);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.csform-size-chip.selected {
+  background: var(--denim-dark);
+  color: #fff;
+  border-color: var(--denim-dark);
+}
+
+.csform-error {
+  color: #A6453A;
+  font-size: 12.5px;
+  margin-top: 6px;
+}
+
+.csform-success {
+  color: #3B6B4E;
+  font-size: 13.5px;
+  margin-top: 16px;
+  text-align: center;
+}
+
+.csform-submit {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 8px;
+  background: var(--denim-dark);
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: 14.5px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 6px;
+  transition: opacity 0.15s ease;
+}
+
+.csform-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.csform-submit:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+@media (max-width: 480px) {
+  .csform-thumb-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

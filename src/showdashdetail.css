@@ -1,0 +1,194 @@
+@import url("https://fonts.googleapis.com/sds2?family=Fraunces:wght@500&family=Inter:wght@400;500;600&display=swap");
+
+.sddash-root {
+  --paper: #F7F5F0;
+  --card: #FFFFFF;
+  --ink: #22201C;
+  --ink-soft: #6B6860;
+  --denim: #33455C;
+  --denim-dark: #22303F;
+  --denim-soft: #E7ECF1;
+  --thread: #B6AE9E;
+  --font-display: "Fraunces", "Georgia", serif;
+  --font-body: "Inter", -apple-system, BlinkMasdystemFont, "Segoe UI", sans-serif;
+
+  max-width: 960px;
+  margin: 0 auto;
+  background: var(--paper);
+  padding: 36px 20px 60px;
+  font-family: var(--font-body);
+  color: var(--ink);
+}
+
+.sddash-header {
+  margin-bottom: 24px;
+}
+
+.sddash-title {
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 500;
+  margin: 0 0 4px;
+}
+
+.sddash-subtitle {
+  font-size: 13.5px;
+  color: var(--ink-soft);
+  margin: 0;
+}
+
+.sddash-empty {
+  background: var(--card);
+  border: 1px solid rgba(182, 174, 158, 0.25);
+  border-radius: 10px;
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--ink-soft);
+  font-size: 14px;
+}
+
+.sddash-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 18px;
+}
+
+.sddash-card {
+  display: block;
+  background: var(--card);
+  border: 1px solid rgba(182, 174, 158, 0.25);
+  border-radius: 10px;
+  overflow: hidden;
+  text-decoration: none;
+  color: var(--ink);
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.sddash-card:hover {
+  box-shadow: 0 6px 18px rgba(34, 32, 28, 0.08);
+  transform: translateY(-2px);
+}
+
+.sddash-card-image-wrap {
+  aspect-ratio: 1 / 1;
+  background: var(--denim-soft);
+}
+
+.sddash-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.sddash-card-image-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-soft);
+  font-size: 12.5px;
+}
+
+.sddash-card-body {
+  padding: 12px 14px 14px;
+}
+
+.sddash-card-name {
+  font-size: 14.5px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sddash-card-meta {
+  font-size: 13.5px;
+  color: var(--denim-dark);
+  font-weight: 600;
+}
+
+.sddash-card-quantity {
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  margin-top: 2px;
+}
+
+.sddash-back {
+  display: inline-block;
+  margin-bottom: 20px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--denim);
+  text-decoration: none;
+}
+
+.sddetail-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.sddetail-photo {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid rgba(182, 174, 158, 0.25);
+}
+
+.sddetail-body {
+  background: var(--card);
+  border: 1px solid rgba(182, 174, 158, 0.25);
+  border-radius: 10px;
+  padding: 24px 26px;
+}
+
+.sddetail-name {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 500;
+  margin: 0 0 6px;
+}
+
+.sddetail-dates {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--denim-dark);
+  margin-bottom: 18px;
+}
+
+.sddetail-section {
+  margin-bottom: 18px;
+}
+
+.sddetail-row {
+  display: flex;
+  gap: 40px;
+  margin-bottom: 18px;
+}
+
+.sddetail-label {
+  font-size: 11.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--thread);
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.sddetail-text {
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--ink);
+  white-space: pre-wrap;
+}
+
+.sddetail-posted {
+  font-size: 12px;
+  color: var(--ink-soft);
+  margin-top: 6px;
+}
