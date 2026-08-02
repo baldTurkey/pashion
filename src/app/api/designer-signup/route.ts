@@ -1,38 +1,27 @@
 import { NextResponse } from "next/server";
+import { createSupabaseServer } from "@/lib/supabase/server";
 import { createClient } from "@supabase/supabase-js";
 
-function getAdminClient() {
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!serviceRoleKey) {
-    throw new Error("Missing SUPABASE_SERVICE_ROLE_KEY");
-  }
-  return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, serviceRoleKey, {
-    auth: { persistSession: false, autoRefreshToken: false },
-  });
-}
-
-// Same pattern as /api/brand-signup: designers currently has RLS enabled with
-// zero policies (confirmed via `supabase db query --linked`), so a
-// cookie-authenticated insert would always fail, not just during the
-// email-confirmation window. Using the service role for both paths, gated by
-// an explicit userId+email ownership check, sidesteps that entirely.
 export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { userId, designerData, mode, email, password, userMetadata } = body;
 
-    if (!designerData) {
-      return NextResponse.json({ error: "Missing designer data" }, { status: 400 });
-    }
-
-    const adminSupabase = getAdminClient();
-
-    let resolvedUserId: string;
-
     if (mode === "dev") {
       if (!email || !password) {
         return NextResponse.json({ error: "Missing email or password" }, { status: 400 });
       }
+
+      const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+      if (!serviceRoleKey) {
+        return NextResponse.json({ error: "Missing SUPABASE_SERVICE_ROLE_KEY" }, { status: 500 });
+      }
+
+      const adminSupabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        serviceRoleKey,
+        { auth: { persistSession: false, autoRefreshToken: false } }
+      );
 
       const { data: createdUser, error: createUserError } = await adminSupabase.auth.admin.createUser({
         email,
@@ -45,38 +34,33 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: createUserError?.message || "Failed to create auth user" }, { status: 500 });
       }
 
-      resolvedUserId = createdUser.user.id;
-    } else {
-      if (!userId || !email) {
-        return NextResponse.json({ error: "Missing user ID or email" }, { status: 400 });
+      const { error } = await adminSupabase.from("designers").insert({
+        ...designerData,
+        designer_uuid: createdUser.user.id,
+        contact_info: designerData.contact_info,
+      });
+
+      if (error) {
+        return NextResponse.json({ error: error.message }, { status: 500 });
       }
 
-      const { data: userLookup, error: userLookupError } = await adminSupabase.auth.admin.getUserById(userId);
-
-      if (userLookupError || !userLookup.user || userLookup.user.email !== email) {
-        return NextResponse.json({ error: "Could not verify account ownership" }, { status: 403 });
-      }
-
-      resolvedUserId = userId;
+      return NextResponse.json({ success: true });
     }
 
-    const { data: existingDesigner } = await adminSupabase
-      .from("designers")
-      .select("designer_uuid")
-      .eq("designer_uuid", resolvedUserId)
-      .maybeSingle();
-
-    if (existingDesigner) {
-      return NextResponse.json({ error: "A designer profile already exists for this account" }, { status: 409 });
+    if (!userId) {
+      return NextResponse.json({ error: "Missing user ID" }, { status: 400 });
     }
 
-    const { error: insertError } = await adminSupabase.from("designers").insert({
+    const supabase = await createSupabaseServer();
+
+    const { error } = await supabase.from("designers").insert({
       ...designerData,
-      designer_uuid: resolvedUserId,
+      designer_uuid: userId,
+      contact_info: designerData.contact_info,
     });
 
-    if (insertError) {
-      return NextResponse.json({ error: insertError.message }, { status: 500 });
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
     return NextResponse.json({ success: true });

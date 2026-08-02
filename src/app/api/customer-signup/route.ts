@@ -1,37 +1,27 @@
 import { NextResponse } from "next/server";
+import { createSupabaseServer } from "@/lib/supabase/server";
 import { createClient } from "@supabase/supabase-js";
 
-function getAdminClient() {
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!serviceRoleKey) {
-    throw new Error("Missing SUPABASE_SERVICE_ROLE_KEY");
-  }
-  return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, serviceRoleKey, {
-    auth: { persistSession: false, autoRefreshToken: false },
-  });
-}
-
-// Same pattern as /api/brand-signup and /api/designer-signup: customers
-// currently has RLS enabled with zero policies, so a cookie-authenticated
-// insert would always fail. Using the service role for both paths, gated by
-// an explicit userId+email ownership check, sidesteps that entirely.
 export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { userId, customerData, mode, email, password, userMetadata } = body;
 
-    if (!customerData) {
-      return NextResponse.json({ error: "Missing customer data" }, { status: 400 });
-    }
-
-    const adminSupabase = getAdminClient();
-
-    let resolvedUserId: string;
-
     if (mode === "dev") {
       if (!email || !password) {
         return NextResponse.json({ error: "Missing email or password" }, { status: 400 });
       }
+
+      const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+      if (!serviceRoleKey) {
+        return NextResponse.json({ error: "Missing SUPABASE_SERVICE_ROLE_KEY" }, { status: 500 });
+      }
+
+      const adminSupabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        serviceRoleKey,
+        { auth: { persistSession: false, autoRefreshToken: false } }
+      );
 
       const { data: createdUser, error: createUserError } = await adminSupabase.auth.admin.createUser({
         email,
@@ -44,38 +34,33 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: createUserError?.message || "Failed to create auth user" }, { status: 500 });
       }
 
-      resolvedUserId = createdUser.user.id;
-    } else {
-      if (!userId || !email) {
-        return NextResponse.json({ error: "Missing user ID or email" }, { status: 400 });
+      const { error } = await adminSupabase.from("customers").insert({
+        ...customerData,
+        customer_uuid: createdUser.user.id,
+        contact_info: customerData.contact_info,
+      });
+
+      if (error) {
+        return NextResponse.json({ error: error.message }, { status: 500 });
       }
 
-      const { data: userLookup, error: userLookupError } = await adminSupabase.auth.admin.getUserById(userId);
-
-      if (userLookupError || !userLookup.user || userLookup.user.email !== email) {
-        return NextResponse.json({ error: "Could not verify account ownership" }, { status: 403 });
-      }
-
-      resolvedUserId = userId;
+      return NextResponse.json({ success: true });
     }
 
-    const { data: existingCustomer } = await adminSupabase
-      .from("customers")
-      .select("customer_uuid")
-      .eq("customer_uuid", resolvedUserId)
-      .maybeSingle();
-
-    if (existingCustomer) {
-      return NextResponse.json({ error: "A customer profile already exists for this account" }, { status: 409 });
+    if (!userId) {
+      return NextResponse.json({ error: "Missing user ID" }, { status: 400 });
     }
 
-    const { error: insertError } = await adminSupabase.from("customers").insert({
+    const supabase = await createSupabaseServer();
+
+    const { error } = await supabase.from("customers").insert({
       ...customerData,
-      customer_uuid: resolvedUserId,
+      customer_uuid: userId,
+      contact_info: customerData.contact_info,
     });
 
-    if (insertError) {
-      return NextResponse.json({ error: insertError.message }, { status: 500 });
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
     return NextResponse.json({ success: true });
