@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { Card } from "@/components/ui/card";
 
@@ -38,10 +39,54 @@ function formatAddedDate(value: string) {
 
 export default async function InventoryPage() {
 	const supabase = await createSupabaseServer();
+	const {
+		data: { user },
+	} = await supabase.auth.getUser();
+
+	if (!user) {
+		redirect("/sign-up/brand");
+	}
+
+	const { data: brand, error: brandError } = await supabase
+		.from("brands")
+		.select("brand_uuid, company_name")
+		.eq("account_id", user.id)
+		.maybeSingle();
+
+	if (brandError) {
+		return (
+			<div className="mx-auto w-full max-w-4xl px-4 py-10 sm:px-6">
+				<Card className="p-8 text-center">
+					<h1 className="font-serif text-2xl text-brand-ink">Could not load your brand</h1>
+					<p className="mt-2 text-sm text-brand-ink/70">{brandError.message}</p>
+				</Card>
+			</div>
+		);
+	}
+
+	if (!brand?.brand_uuid) {
+		return (
+			<div className="mx-auto w-full max-w-xl px-4 py-16 text-center">
+				<Card className="p-8">
+					<h1 className="font-serif text-2xl text-brand-ink">Finish your profile</h1>
+					<p className="mt-2 text-brand-ink/70">
+						We couldn&apos;t find a brand profile for this account yet.
+					</p>
+					<Link
+						href="/sign-up/brand"
+						className="mt-6 inline-flex rounded-full bg-brand-accent px-6 py-2.5 text-white hover:bg-brand-olive-dark"
+					>
+						Finish signing up
+					</Link>
+				</Card>
+			</div>
+		);
+	}
 
 	const { data, error } = await supabase
 		.from("inventory")
 		.select("*")
+		.eq("brand_id", brand.brand_uuid)
 		.order("created_at", { ascending: false });
 
 	const inventory: InventoryRow[] = ((data ?? []) as InventoryDbRow[]).map((row) => {
@@ -64,23 +109,24 @@ export default async function InventoryPage() {
 				<div>
 					<p className="text-xs uppercase tracking-[0.2em] text-brand-ink/60">Inventory</p>
 					<h1 className="mt-1 font-serif text-3xl text-brand-ink">Inventory Management</h1>
+					<p className="mt-2 text-sm text-brand-ink/60">Viewing items for {brand.company_name ?? "your brand"}.</p>
 				</div>
 
 				<div className="flex flex-wrap gap-2">
 					<Link
-						href="/inventory/orders"
+						href="/brands/inventory/orders"
 						className="inline-flex items-center rounded-full border border-brand-ink/15 bg-white px-4 py-2 text-sm font-semibold text-brand-ink transition hover:bg-brand-blush"
 					>
 						Orders
 					</Link>
 					<Link
-						href="/inventory/create-listing"
+						href="/brands/inventory/create-listing"
 						className="inline-flex items-center rounded-full bg-brand-accent px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-olive-dark"
 					>
 						Create Listing
 					</Link>
 					<Link
-						href="/inventory/my-listings"
+						href="/brands/inventory/my-listings"
 						className="inline-flex items-center rounded-full border border-brand-ink/15 bg-brand-cream px-4 py-2 text-sm font-semibold text-brand-ink transition hover:bg-brand-blush"
 					>
 						View My Listings
@@ -92,7 +138,7 @@ export default async function InventoryPage() {
 				<div className="flex items-center justify-between border-b border-brand-ink/10 bg-brand-cream/60 px-4 py-3 sm:px-6">
 					<h2 className="font-serif text-xl text-brand-ink">All Inventory Items</h2>
 					<Link
-						href="/inventory/add"
+						href="/brands/inventory/add"
 						className="inline-flex items-center gap-2 rounded-full bg-brand-olive px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-olive-dark"
 					>
 						<span className="text-base leading-none">+</span>

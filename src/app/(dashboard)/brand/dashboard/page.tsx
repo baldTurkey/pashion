@@ -67,10 +67,10 @@ export default async function BrandDashboardPage() {
             </div>
           </div>
           <Link
-            href="/brand/dashboard/listings/new"
-            className="inline-flex items-center justify-center rounded-full bg-brand-accent px-6 py-3 text-sm font-semibold text-white hover:bg-brand-olive-dark"
+            href="/brands/inventory"
+            className="inline-flex items-center justify-center rounded-full bg-brand-olive px-6 py-3 text-sm font-semibold text-white shadow-[0_10px_24px_rgba(63,75,59,0.28)] transition hover:-translate-y-0.5 hover:bg-brand-olive-dark"
           >
-            Create Listing
+            Open Inventory
           </Link>
         </div>
 
@@ -98,27 +98,16 @@ export default async function BrandDashboardPage() {
           </div>
         </section>
 
-        <section className="mt-6 grid gap-3 sm:grid-cols-3">
+        <section className="mt-6 rounded-2xl border border-brand-ink/10 bg-white p-5">
+          <p className="font-semibold text-brand-ink">Inventory Hub</p>
+          <p className="mt-1 text-sm text-brand-ink/60">
+            Manage stock, delivery statuses, and product records in one place.
+          </p>
           <Link
-            href="/brand/dashboard/listings/new"
-            className="rounded-2xl border border-brand-ink/10 p-5 text-left transition hover:bg-brand-blush/40"
+            href="/brands/inventory"
+            className="mt-4 inline-flex items-center rounded-full bg-brand-accent px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-olive-dark"
           >
-            <p className="font-semibold text-brand-ink">Create Listing</p>
-            <p className="mt-1 text-sm text-brand-ink/60">List a clothing item for the marketplace.</p>
-          </Link>
-          <Link
-            href="/brand/dashboard/listings"
-            className="rounded-2xl border border-brand-ink/10 p-5 text-left transition hover:bg-brand-blush/40"
-          >
-            <p className="font-semibold text-brand-ink">Manage Listings</p>
-            <p className="mt-1 text-sm text-brand-ink/60">Edit or review everything you've listed.</p>
-          </Link>
-          <Link
-            href="/brand/dashboard/shows/new"
-            className="rounded-2xl border border-brand-ink/10 p-5 text-left transition hover:bg-brand-blush/40"
-          >
-            <p className="font-semibold text-brand-ink">Post a Show</p>
-            <p className="mt-1 text-sm text-brand-ink/60">Launch a design contest for the community.</p>
+            Go to Inventory
           </Link>
         </section>
 
