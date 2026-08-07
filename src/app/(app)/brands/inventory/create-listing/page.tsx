@@ -1,23 +1,64 @@
-import Link from "next/link";
-import { Card } from "@/components/ui/card";
+import { redirect } from "next/navigation";
+import { createSupabaseServer } from "@/lib/supabase/server";
+import { CreateListingForm, type InventoryDraftItem } from "@/components/brand/inventory-forms";
 
-export default function InventoryCreateListingPage() {
+type InventoryDbRow = {
+  id: number | string | null;
+  name: string | null;
+  imageUrl?: string[] | null;
+  currentPrice?: string | null;
+  description: string | null;
+  size: string | null;
+  style: string | null;
+  care_info: string | null;
+  size_guide_url: string | null;
+  type: string | null;
+  stock: number | string | null;
+  supply?: string[] | null;
+};
+
+export default async function InventoryCreateListingPage() {
+  const supabase = await createSupabaseServer();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/sign-up/brand");
+  }
+
+  const { data: brand } = await supabase
+    .from("brands")
+    .select("brand_uuid")
+    .eq("account_id", user.id)
+    .maybeSingle();
+
+  if (!brand?.brand_uuid) {
+    redirect("/sign-up/brand");
+  }
+
+  const { data: inventoryData } = await supabase
+    .from("inventory")
+    .select("*")
+    .eq("brand_id", brand.brand_uuid)
+    .order("created_at", { ascending: false });
+
+  const inventoryItems: InventoryDraftItem[] = ((inventoryData ?? []) as InventoryDbRow[]).map((row) => ({
+    id: Number(row.id ?? 0),
+    name: row.name,
+    imageUrl: row.imageUrl ?? null,
+    currentPrice: row.currentPrice ?? null,
+    description: row.description,
+    size: row.size,
+    style: row.style,
+    care_info: row.care_info,
+    size_guide_url: row.size_guide_url,
+    type: row.type,
+    stock: Number(row.stock ?? 0),
+    supply: row.supply ?? null,
+  }));
+
   return (
-    <div className="mx-auto w-full max-w-4xl px-4 py-10 sm:px-6">
-      <Card className="p-8">
-        <p className="text-xs uppercase tracking-[0.2em] text-brand-ink/60">Create Listing</p>
-        <h1 className="mt-2 font-serif text-3xl text-brand-ink">Create a New Listing</h1>
-        <p className="mt-3 text-sm text-brand-ink/70">
-          This page is reserved for your listing creation form.
-        </p>
-
-        <Link
-          href="/brands/inventory"
-          className="mt-6 inline-flex rounded-full bg-brand-accent px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-olive-dark"
-        >
-          Back to Inventory
-        </Link>
-      </Card>
-    </div>
+    <CreateListingForm brandId={brand.brand_uuid} inventoryItems={inventoryItems} />
   );
 }

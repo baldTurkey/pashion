@@ -1,23 +1,28 @@
-import Link from "next/link";
-import { Card } from "@/components/ui/card";
+import { redirect } from "next/navigation";
+import { createSupabaseServer } from "@/lib/supabase/server";
+import { AddInventoryForm } from "@/components/brand/inventory-forms";
 
-export default function AddInventoryPage() {
+export default async function AddInventoryPage() {
+  const supabase = await createSupabaseServer();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/sign-up/brand");
+  }
+
+  const { data: brand } = await supabase
+    .from("brands")
+    .select("brand_uuid")
+    .eq("account_id", user.id)
+    .maybeSingle();
+
+  if (!brand?.brand_uuid) {
+    redirect("/sign-up/brand");
+  }
+
   return (
-    <div className="mx-auto w-full max-w-4xl px-4 py-10 sm:px-6">
-      <Card className="p-8">
-        <p className="text-xs uppercase tracking-[0.2em] text-brand-ink/60">Add Inventory</p>
-        <h1 className="mt-2 font-serif text-3xl text-brand-ink">Add to Inventory</h1>
-        <p className="mt-3 text-sm text-brand-ink/70">
-          This page is prepared for your product creation and upload workflow.
-        </p>
-
-        <Link
-          href="/brands/inventory"
-          className="mt-6 inline-flex rounded-full bg-brand-accent px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-olive-dark"
-        >
-          Back to Inventory
-        </Link>
-      </Card>
-    </div>
+    <AddInventoryForm brandId={brand.brand_uuid} />
   );
 }

@@ -18,3 +18,323 @@ html, body {
 * {
   box-sizing: border-box;
 }
+
+.mpform-field-label {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.25rem;
+}
+
+.mpform-field-label label {
+  color: #1c1917;
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.mpform-required {
+  margin-left: 0.2rem;
+  color: #a16207;
+}
+
+.mpform-error {
+  margin-top: 0.35rem;
+  border-radius: 1rem;
+  background: rgba(220, 38, 38, 0.08);
+  color: #b91c1c;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+}
+
+.mpform-helper {
+  margin: 0 0 0.75rem;
+  color: rgba(28, 25, 23, 0.68);
+  font-size: 0.875rem;
+}
+
+.mpform-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.mpform-spacer {
+  height: 1.25rem;
+}
+
+.mpform-input,
+.mpform-select,
+.mpform-textarea {
+  width: 100%;
+  border: 1px solid rgba(28, 25, 23, 0.14);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.95);
+  color: #1c1917;
+  padding: 0.85rem 1rem;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.mpform-input:focus,
+.mpform-select:focus,
+.mpform-textarea:focus {
+  border-color: #64748b;
+  box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.14);
+}
+
+.mpform-textarea {
+  resize: vertical;
+  min-height: 8rem;
+}
+
+.mpform-textarea.short {
+  min-height: 6rem;
+}
+
+.mpform-textarea.tall {
+  min-height: 10rem;
+}
+
+.mpform-dropzone {
+  display: grid;
+  place-items: center;
+  gap: 0.4rem;
+  border: 1.5px dashed rgba(28, 25, 23, 0.2);
+  border-radius: 1.5rem;
+  background: linear-gradient(180deg, rgba(255, 247, 237, 0.95), rgba(255, 255, 255, 0.95));
+  padding: 1.5rem;
+  cursor: pointer;
+  text-align: center;
+  transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.mpform-dropzone:hover,
+.mpform-dropzone.active {
+  border-color: #8c6f49;
+  box-shadow: 0 12px 30px rgba(28, 25, 23, 0.08);
+  transform: translateY(-1px);
+}
+
+.mpform-dropzone.full {
+  opacity: 0.8;
+  cursor: not-allowed;
+}
+
+.mpform-dropzone-title {
+  color: #1c1917;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.mpform-dropzone-sub {
+  color: rgba(28, 25, 23, 0.68);
+  font-size: 0.875rem;
+}
+
+.mpform-hidden-input {
+  display: none;
+}
+
+.mpform-thumb-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.mpform-thumb {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1rem;
+  background: #f5f5f4;
+  min-height: 140px;
+}
+
+.mpform-thumb img {
+  width: 100%;
+  height: 100%;
+  min-height: 140px;
+  object-fit: cover;
+  display: block;
+}
+
+.mpform-thumb-remove {
+  position: absolute;
+  top: 0.45rem;
+  right: 0.45rem;
+  display: inline-flex;
+  height: 1.9rem;
+  width: 1.9rem;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 9999px;
+  background: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.mpform-thumb-cover {
+  position: absolute;
+  left: 0.5rem;
+  bottom: 0.5rem;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #1c1917;
+  padding: 0.28rem 0.7rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.mpform-price-wrap {
+  position: relative;
+}
+
+.mpform-price-sign {
+  position: absolute;
+  left: 0.95rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(28, 25, 23, 0.72);
+  font-weight: 700;
+}
+
+.mpform-price-input {
+  padding-left: 2rem;
+}
+
+.mpform-size-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.mpform-size-chip {
+  border: 1px solid rgba(28, 25, 23, 0.14);
+  border-radius: 9999px;
+  background: #fff;
+  color: #1c1917;
+  padding: 0.6rem 0.95rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+
+.mpform-size-chip:hover {
+  transform: translateY(-1px);
+}
+
+.mpform-size-chip.selected {
+  border-color: #8c6f49;
+  background: #8c6f49;
+  color: #fff;
+}
+
+.mpform-size-quantity-grid {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.mpform-size-quantity-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 100px;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.mpform-size-quantity-row span {
+  color: #1c1917;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.mpform-guide-upload {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border: 1px solid rgba(28, 25, 23, 0.14);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 0.9rem 1rem;
+  cursor: pointer;
+}
+
+.mpform-guide-name {
+  color: #1c1917;
+  font-size: 0.92rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mpform-guide-action {
+  flex-shrink: 0;
+  border-radius: 9999px;
+  background: #f5f5f4;
+  color: #1c1917;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.mpform-guide-preview {
+  margin-top: 0.75rem;
+  width: 100%;
+  max-height: 18rem;
+  object-fit: cover;
+  border-radius: 1rem;
+  border: 1px solid rgba(28, 25, 23, 0.08);
+}
+
+.mpform-submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  border: 0;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #8c6f49, #5f4d34);
+  color: #fff;
+  padding: 0.95rem 1.25rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+}
+
+.mpform-submit:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 30px rgba(95, 77, 52, 0.2);
+}
+
+.mpform-submit:disabled {
+  cursor: wait;
+  opacity: 0.75;
+  transform: none;
+  box-shadow: none;
+}
+
+.mpform-success {
+  margin-top: 1rem;
+  border-radius: 1rem;
+  background: rgba(16, 185, 129, 0.1);
+  color: #047857;
+  padding: 0.8rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+@media (max-width: 640px) {
+  .mpform-guide-upload {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .mpform-guide-action {
+    width: fit-content;
+  }
+}

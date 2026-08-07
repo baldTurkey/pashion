@@ -10,6 +10,7 @@ type InventoryRow = {
 	currentPrice: string | null;
 	type: string | null;
 	stock: number;
+	supply: string[] | null;
 	shipping_status: string | null;
 };
 
@@ -21,8 +22,20 @@ type InventoryDbRow = {
 	current_price?: string | null;
 	type: string | null;
 	stock: number | string | null;
+	supply?: string[] | null;
 	shipping_status: string | null;
 };
+
+function getSupplyTotal(supply: string[] | null | undefined, stock: number) {
+	const firstValue = supply?.[0];
+	const parsedTotal = Number(firstValue);
+
+	if (Number.isFinite(parsedTotal) && parsedTotal >= 0) {
+		return parsedTotal;
+	}
+
+	return stock;
+}
 
 function formatAddedDate(value: string) {
 	const date = new Date(value);
@@ -98,7 +111,8 @@ export default async function InventoryPage() {
 			name: row.name,
 			currentPrice: row.currentPrice ?? row.current_price ?? null,
 			type: row.type,
-			stock: Number.isFinite(stockNumber) ? stockNumber : 0,
+			stock: getSupplyTotal(row.supply, Number.isFinite(stockNumber) ? stockNumber : 0),
+			supply: row.supply ?? null,
 			shipping_status: row.shipping_status,
 		};
 	});
