@@ -16,14 +16,17 @@ export default async function Mpdash() {
   // }
 
   const { data: listings, error } = await supabase
-    .from("mpformlistings")
-    .select("id, item_name, price, photo_urls, created_at")
+    .from("products")
+    .select("id, name, currentPrice, imageUrl, created_at")
     // .eq("user_id", session.user.id)
     .order("created_at", { ascending: false });
 
   if (error) {
     console.error("Failed to load listings:", error.message);
   }
+
+console.log("DEBUG listings:", listings);
+console.log("DEBUG error:", JSON.stringify(error, null, 2));
 
   return (
     <div className="mpdash-root">
@@ -45,10 +48,10 @@ export default async function Mpdash() {
               className="mpdash-card"
             >
               <div className="mpdash-card-image-wrap">
-                {listing.photo_urls?.[0] ? (
+              {listing.imageUrl ? (
                   <img
-                    src={listing.photo_urls[0]}
-                    alt={listing.item_name}
+                    src={listing.imageUrl}
+                    alt={listing.name}
                     className="mpdash-card-image"
                   />
                 ) : (
@@ -58,9 +61,9 @@ export default async function Mpdash() {
                 )}
               </div>
               <div className="mpdash-card-body">
-                <div className="mpdash-card-name">{listing.item_name}</div>
+                <div className="mpdash-card-name">{listing.name}</div>
                 <div className="mpdash-card-price">
-                  ${Number(listing.price).toFixed(2)}
+                  ${Number(listing.currentPrice).toFixed(2)}
                 </div>
               </div>
             </Link>

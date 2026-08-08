@@ -20,6 +20,19 @@
   color: var(--ink);
 }
 
+.mpdetail-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.mpdetail-topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .mpdash-header {
   margin-bottom: 24px;
 }
@@ -191,4 +204,117 @@
   font-size: 12px;
   color: var(--ink-soft);
   margin-top: 6px;
+}
+
+.mpdash-edit-btn {
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: 1px solid rgba(51, 69, 92, 0.4);
+  background: transparent;
+  color: #33455C;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  text-decoration: none;
+}
+
+.mpdash-edit-btn:hover {
+  background: rgba(51, 69, 92, 0.08);
+}
+
+.mpdash-remove-btn {
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: 1px solid rgba(161, 56, 46, 0.4);
+  background: transparent;
+  color: #A1382E;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.mpdash-remove-btn:hover {
+  background: rgba(161, 56, 46, 0.08);
+}
+
+.mpconfirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(34, 32, 28, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+ 
+.mpconfirm-box {
+  background: #FFFFFF;
+  border-radius: 10px;
+  padding: 24px;
+  max-width: 380px;
+  width: 100%;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+ 
+.mpconfirm-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #22201C;
+  margin-bottom: 8px;
+}
+ 
+.mpconfirm-text {
+  font-size: 14px;
+  color: #6B6860;
+  line-height: 1.5;
+  margin: 0 0 18px;
+}
+ 
+.mpconfirm-error {
+  color: #A1382E;
+  font-size: 12.5px;
+  margin-bottom: 12px;
+}
+ 
+.mpconfirm-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+ 
+.mpconfirm-btn {
+  padding: 9px 16px;
+  border-radius: 6px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  border: 1px solid transparent;
+}
+ 
+.mpconfirm-btn-no {
+  background: #F7F5F0;
+  color: #22201C;
+  border-color: rgba(182, 174, 158, 0.4);
+}
+ 
+.mpconfirm-btn-no:hover {
+  background: #EFEBE3;
+}
+ 
+.mpconfirm-btn-yes {
+  background: #A1382E;
+  color: #fff;
+}
+ 
+.mpconfirm-btn-yes:hover {
+  background: #872E25;
+}
+ 
+.mpconfirm-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }

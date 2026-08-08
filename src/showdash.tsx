@@ -40,7 +40,7 @@ export default async function MyShows() {
   return (
     <div className="csdash-root">
       <div className="csdash-header">
-        <h1 className="csdash-title">My shows</h1>
+        <h1 className="csdash-title">My Shows</h1>
         <p className="csdash-subtitle">
           {shows?.length ?? 0} show{shows?.length === 1 ? "" : "s"} posted
         </p>

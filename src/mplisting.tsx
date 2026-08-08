@@ -1,6 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { createSupabaseServer } from "@/lib/supabase/server";
+import DeleteListingButton from "@/deletelisting";
 import "./mpdash.css";
 
 export default async function Mplisting({ id }: { id: string }) {
@@ -21,6 +22,8 @@ export default async function Mplisting({ id }: { id: string }) {
     .eq("id", id)
     .single();
 
+    console.log("DEBUG listing:", listing);
+    console.log("DEBUG listing error:", JSON.stringify(error, null, 2));
   if (error || !listing) {
     notFound();
   }
@@ -34,28 +37,36 @@ export default async function Mplisting({ id }: { id: string }) {
  // }
 
   return (
+    
     <div className="mpdash-root">
-      <Link href="/dashboard" className="mpdash-back">
-        &larr; Back to your listings
-      </Link>
 
-      {listing.photo_urls?.length > 0 && (
+      <div className="mpdetail-topbar">
+        <Link href="/dashboard" className="mpdash-back">
+          &larr; Back to your listings
+        </Link>
+
+        <Link href={`/dashboard/edit/${listing.id}`} className="mpdash-edit-btn" >
+          Edit Listing
+        </Link>
+
+        <DeleteListingButton id={listing.id} />
+      </div>
+
+
+      {listing.imageUrl && (
         <div className="mpdetail-gallery">
-          {listing.photo_urls.map((url: string, idx: number) => (
-            <img
-              key={idx}
-              src={url}
-              alt={`${listing.item_name} photo ${idx + 1}`}
-              className="mpdetail-photo"
-            />
-          ))}
+          <img
+            src={listing.imageUrl}
+            alt={listing.name}
+            className="mpdetail-photo"
+          />
         </div>
       )}
 
       <div className="mpdetail-body">
-        <h1 className="mpdetail-name">{listing.item_name}</h1>
+        <h1 className="mpdetail-name">{listing.name}</h1>
         <div className="mpdetail-price">
-          ${Number(listing.price).toFixed(2)}
+          ${Number(listing.currentPrice).toFixed(2)}
         </div>
 
         <div className="mpdetail-section">
@@ -96,6 +107,8 @@ export default async function Mplisting({ id }: { id: string }) {
         <div className="mpdetail-posted">
           Posted {new Date(listing.created_at).toLocaleDateString()}
         </div>
+
+        
       </div>
     </div>
   );
