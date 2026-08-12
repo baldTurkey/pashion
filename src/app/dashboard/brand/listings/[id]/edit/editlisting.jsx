@@ -2,8 +2,8 @@
 
 import React, { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import "./mpform.css";
-import { supabaseBrowser } from "./lib/supabase/client.ts";
+import "../../../../../../components/mpform";
+import { supabaseBrowser } from "../../../../../../lib/supabase/client.ts";
 
 const SIZES = ["XS", "S", "M", "L", "XL", "XXL", "One size"];
 const STYLES = [
@@ -164,7 +164,7 @@ export default function EditListingForm({ listing }) {
 
       if (updateError) throw updateError;
 
-      router.push(`/listings/${listing.id}`);
+      router.push(`/dashboard/brand/listings/${listing.id}`);
       router.refresh();
     } catch (err) {
       console.error(

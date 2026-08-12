@@ -1,4 +1,3 @@
-import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import "./mpdash.css";
@@ -31,10 +30,16 @@ console.log("DEBUG error:", JSON.stringify(error, null, 2));
   return (
     <div className="mpdash-root">
       <div className="mpdash-header">
-        <h1 className="mpdash-title">Your listings</h1>
+        <h1 className="mpdash-title">My listings</h1>
         <p className="mpdash-subtitle">
           {listings?.length ?? 0} item{listings?.length === 1 ? "" : "s"} posted
         </p>
+        
+        <div className="mpdash-action-row" style={{ marginTop: '12px' }}>
+          <Link href="/dashboard/brand/listings/new" className="bv-btn bv-btn-primary">
+            Create new listing
+          </Link>
+        </div>
       </div>
 
       {!listings || listings.length === 0 ? (
@@ -44,7 +49,7 @@ console.log("DEBUG error:", JSON.stringify(error, null, 2));
           {listings.map((listing) => (
             <Link
               key={listing.id}
-              href={`/listings/${listing.id}`}
+              href={`/dashboard/brand/listings/${listing.id}`}
               className="mpdash-card"
             >
               <div className="mpdash-card-image-wrap">

@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { createSupabaseServer } from "@/lib/supabase/server";
-import EditListingForm from "@/editlisting";
+import EditListingForm from "./editlisting.jsx";
 
 export default async function EditListingPage({
   params,

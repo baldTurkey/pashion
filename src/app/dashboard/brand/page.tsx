@@ -1,6 +1,21 @@
 import Link from "next/link";
+import { createSupabaseServer } from "@/lib/supabase/server";
 
-export default function BrandOverviewPage() {
+export default async function BrandOverviewPage() {
+  const supabase = await createSupabaseServer();
+
+  const { data: listings } = await supabase
+    .from("products")
+    .select("id, name, currentPrice")
+    .order("created_at", { ascending: false })
+    .limit(5);
+
+  const { data: shows } = await supabase
+    .from("shows")
+    .select("id, category, style, startDate, endDate")
+    .order("created_at", { ascending: false })
+    .limit(5);
+
   return (
     <div>
       <h1 className="bv-page-title">Overview</h1>
@@ -33,7 +48,7 @@ export default function BrandOverviewPage() {
         <div className="bv-card">
           <div className="bv-card-header">
             <h2 className="bv-card-title">My listings</h2>
-            <Link href="/dashboard" className="bv-card-link">
+            <Link href="/dashboard/brand/listings" className="bv-card-link">
               View all
             </Link>
           </div>
@@ -41,12 +56,24 @@ export default function BrandOverviewPage() {
             <thead>
               <tr>
                 <th>Name</th>
+                <th>Price</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td className="bv-empty-row">No listings yet</td>
-              </tr>
+              {!listings || listings.length === 0 ? (
+                <tr>
+                  <td colSpan={2} className="bv-empty-row">
+                    No listings yet
+                  </td>
+                </tr>
+              ) : (
+                listings.map((listing) => (
+                  <tr key={listing.id}>
+                    <td>{listing.name}</td>
+                    <td>${Number(listing.currentPrice).toFixed(2)}</td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
@@ -54,23 +81,36 @@ export default function BrandOverviewPage() {
         <div className="bv-card">
           <div className="bv-card-header">
             <h2 className="bv-card-title">Shows</h2>
-            <Link href="/dashboard/shows" className="bv-card-link">
+            <Link href="/dashboard/brand/shows" className="bv-card-link">
               View all
             </Link>
           </div>
           <table className="bv-table">
             <thead>
               <tr>
-                <th>Live</th>
-                <th>Drafts</th>
+                <th>Name</th>
+                <th>Dates</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td colSpan={2} className="bv-empty-row">
-                  No shows yet
-                </td>
-              </tr>
+              {!shows || shows.length === 0 ? (
+                <tr>
+                  <td colSpan={2} className="bv-empty-row">
+                    No shows yet
+                  </td>
+                </tr>
+              ) : (
+                shows.map((show) => (
+                  <tr key={show.id}>
+                    <td>{show.category || show.style || "Untitled"}</td>
+                    <td>
+                      {show.startDate && show.endDate 
+                        ? `${new Date(show.startDate).toLocaleDateString()} - ${new Date(show.endDate).toLocaleDateString()}`
+                        : "Dates TBD"}
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

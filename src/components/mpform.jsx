@@ -2,7 +2,7 @@
 
 import React, { useState, useRef } from "react";
 import "./mpform.css";
-import {supabaseBrowser} from "./lib/supabase/client.ts";
+import {supabaseBrowser} from "../lib/supabase/client.ts";
 
 const MIN_IMAGES = 1;
 const MAX_IMAGES = 8;

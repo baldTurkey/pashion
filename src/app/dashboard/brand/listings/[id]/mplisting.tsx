@@ -1,8 +1,9 @@
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { createSupabaseServer } from "@/lib/supabase/server";
-import DeleteListingButton from "@/deletelisting";
-import "./mpdash.css";
+import DeleteListingButton from "./deletelisting";
+import EditListingForm from "./edit/editlisting";
+import "@/components/mpdash.css";
 
 export default async function Mplisting({ id }: { id: string }) {
   const supabase = await createSupabaseServer();
@@ -41,15 +42,19 @@ export default async function Mplisting({ id }: { id: string }) {
     <div className="mpdash-root">
 
       <div className="mpdetail-topbar">
-        <Link href="/dashboard" className="mpdash-back">
-          &larr; Back to your listings
+
+        <Link href="/dashboard/brand/listings" className="mpdash-back">
+          &larr; Back to my listings
         </Link>
 
-        <Link href={`/dashboard/edit/${listing.id}`} className="mpdash-edit-btn" >
-          Edit Listing
-        </Link>
+        <div className="mpdetail-topbar-actions">
+          <Link href={`/dashboard/brand/listings/${listing.id}/edit`} className="mpdash-edit-btn" >
+            Edit Listing
+          </Link>
 
-        <DeleteListingButton id={listing.id} />
+          <DeleteListingButton id={listing.id} />
+        </div>
+
       </div>
 
 
@@ -64,7 +69,9 @@ export default async function Mplisting({ id }: { id: string }) {
       )}
 
       <div className="mpdetail-body">
+
         <h1 className="mpdetail-name">{listing.name}</h1>
+        
         <div className="mpdetail-price">
           ${Number(listing.currentPrice).toFixed(2)}
         </div>

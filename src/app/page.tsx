@@ -1,6 +1,6 @@
 import React from 'react';
 import { createSupabaseServer } from '@/lib/supabase/server';
-import Mpform from '@/mpform';
+import Mpform from '@/components/mpform';
 import Link from 'next/link';
 
 export default async function Home() {

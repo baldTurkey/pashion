@@ -2,7 +2,7 @@
 
 import React, { useState, useRef } from "react";
 import "./CreateShowForm.css";
-import { supabaseBrowser } from "./lib/supabase/client.ts";
+import { supabaseBrowser } from "../lib/supabase/client.ts";
 
 
 const MIN_IMAGES = 1;

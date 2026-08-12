@@ -9,8 +9,8 @@ export default function InventoryPage() {
         <Link href="/dashboard/brand/inventory/add" className="bv-btn bv-btn-primary">
           Add to inventory
         </Link>
-        <Link href="/" className="bv-btn">
-          Create listing
+        <Link href="/dashboard/brand/listings/new" className="bv-btn">
+          Create Listing
         </Link>
         <Link href="/dashboard/brand/inventory/drafts" className="bv-btn">
           Drafts

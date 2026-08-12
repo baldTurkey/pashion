@@ -3,27 +3,26 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import "./brandview.css";
-import BrandShell from "./BrandShell";
 
 const NAV_ITEMS = [
   { label: "Overview", href: "/dashboard/brand" },
   { label: "Inventory", href: "/dashboard/brand/inventory" },
-  { label: "My listings", href: "/dashboard" },
+  { label: "My listings", href: "/dashboard/brand/listings" },
   { label: "Shows", href: "/dashboard/brand/shows" },
   { label: "Orders", href: "/dashboard/brand/orders" },
   { label: "Profile", href: "/dashboard/brand/profile" },
 ];
 
-export default function BrandLayout({
+export default function BrandShell({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <BrandShell>{children}</BrandShell>;
+  const pathname = usePathname();
 
-  // return (
-   //  <div className="bv-root">
-       /* <aside className="bv-sidebar">
+  return (
+    <div className="bv-root">
+      <aside className="bv-sidebar">
         <div className="bv-brand-row">
           <div className="bv-brand-icon">B</div>
           <div className="bv-brand-name">Brand name</div>
@@ -32,12 +31,9 @@ export default function BrandLayout({
         <nav>
           {NAV_ITEMS.map((item) => {
             const isActive =
-                item.href === "/dashboard/brand"
+              item.href === "/dashboard/brand"
                 ? pathname === "/dashboard/brand"
-                : item.href === "/dashboard"
-                ? pathname === "/dashboard"
                 : pathname?.startsWith(item.href);
-                
 
             return (
               <Link
@@ -55,5 +51,4 @@ export default function BrandLayout({
       <main className="bv-main">{children}</main>
     </div>
   );
-  */
 }

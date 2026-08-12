@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabaseBrowser } from "./lib/supabase/client.ts";
+import { supabaseBrowser } from "@/lib/supabase/client";
 
 export default function DeleteListingButton({ id }) {
   const router = useRouter();
@@ -21,7 +21,7 @@ export default function DeleteListingButton({ id }) {
 
       if (deleteError) throw deleteError;
 
-      router.push("/dashboard");
+      router.push("/dashboard/brand/listings");
       router.refresh();
     } catch (err) {
       console.error("Failed to delete listing:", err?.message);

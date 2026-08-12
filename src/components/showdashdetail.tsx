@@ -47,7 +47,7 @@ export default async function ShowDetail({ id }: { id: string }) {
   return (
     <div className="sddash-root">
       <Link href="/shows/brand" className="sddash-back">
-        &larr; Back to your shows
+        &larr; Back to my shows
       </Link>
 
       {show.image && (
