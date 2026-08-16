@@ -1,4 +1,4 @@
-import React from 'react';
+/* import React from 'react';
 import { createSupabaseServer } from '@/lib/supabase/server';
 
 export default async function Home() {
@@ -12,7 +12,7 @@ export default async function Home() {
     <main className="flex min-h-screen flex-col items-center justify-center p-24 bg-slate-900 text-white">
       <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex flex-col gap-4">
         <h1 className="text-4xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-violet-500">
-          Hi Guys :D Welcome to Pashion 
+          Hi Guys :D Welcome to Pashion  HIII :)
         </h1>
         <p className="text-slate-400">
           Status: <span className="text-emerald-400 font-semibold">Connected to Cloud Database Successfully, the legend of korra is mid</span>
@@ -26,5 +26,27 @@ export default async function Home() {
         </div>
       </div>
     </main>
+  );
+} */
+
+import HPHero from "@/components/hompage/Hero";
+import Ticker from "@/components/hompage/Ticker";
+import Browse from "@/components/hompage/Browse";
+import WhoWeAre from "@/components/hompage/WhoWeAre";
+import HowItWorks from "@/components/hompage/HowItWorks";
+import Marketplace from "@/components/hompage/Marketplace";
+import Signup from "@/components/hompage/HPSign";
+  
+export default function HomePage() {
+  return (
+    <>
+      <Ticker />
+      <HPHero />
+      <WhoWeAre />
+      <HowItWorks />
+      <Browse />
+      <Marketplace />
+      <Signup />
+    </>
   );
 }

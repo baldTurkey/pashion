@@ -8,7 +8,7 @@ const NAV_LINKS = [
 export function NavBar() {
   return (
     <header className="sticky top-0 z-10 flex justify-center px-4 py-4">
-      <nav className="flex w-full max-w-4xl items-center justify-between gap-4 rounded-full bg-white/90 px-6 py-3 shadow-sm backdrop-blur">
+      <nav className="flex w-full max-w-4xl items-center justify-between gap-4 rounded-full bg-color-fantasy/50 px-6 py-3 shadow-sm backdrop-blur">
         <div className="flex items-center gap-6">
           {NAV_LINKS.map((link) => (
             <Link
