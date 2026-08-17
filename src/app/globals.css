@@ -3,16 +3,21 @@
 @tailwind utilities;
 
 :root {
-  color-scheme: light;
+  color-scheme: dark;
 }
 
 html, body {
   /* Ensure full height across all devices */
   height: 100%;
   margin: 0;
-  padding: 0;
-  background-color: #0f172a; /* Tailwind's slate-900 */
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background-color: #0f172a;
   color: #f3f2f2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
 }
 
 * {
