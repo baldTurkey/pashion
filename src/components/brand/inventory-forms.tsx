@@ -873,6 +873,7 @@ function CreateListingFields({
           type: type.trim() || null,
           supply: buildSupplyArray(supplyQuantities),
           brand_id: brandId,
+          inventory_id: selectedInventory?.id ?? null,
         },
       ]);
 

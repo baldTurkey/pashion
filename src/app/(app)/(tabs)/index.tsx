@@ -50,7 +50,11 @@ export default function Home() {
       } = await supabase.auth.getUser();
       setSignedIn(Boolean(user));
 
-      const { data, error } = await supabase.from("products").select("*").limit(24);
+      const { data, error } = await supabase
+        .from("products")
+        .select("*")
+        .eq("listing_status", "published")
+        .limit(24);
 
       if (error) {
         console.error("Product fetch error:", error.message);

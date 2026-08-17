@@ -11,6 +11,7 @@ export interface BrandContactInfo {
 
 export interface Brand {
   account_id: string;
+  brand_uuid: string;
   company_name: string;
   first_name: string;
   last_name: string;
