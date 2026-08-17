@@ -41,6 +41,12 @@ export default async function BrandDashboardPage() {
     );
   }
 
+  const { count: liveListingsCount, error: liveListingsError } = await supabase
+    .from("products")
+    .select("*", { count: "exact", head: true })
+    .eq("brand_id", brand.brand_uuid)
+    .eq("listing_status", "published");
+
   return (
     <div className="mx-auto max-w-4xl px-4 py-16">
       <Card className="p-8">
@@ -79,13 +85,10 @@ export default async function BrandDashboardPage() {
           <p className="mt-2 text-sm text-brand-ink/70">
             Live Listings, Marketplace, and Shows all come from the same place you manage your brand.
           </p>
-          {/* Honest zeros, not sample data — there's no listings/shows table yet
-              (that's the Marketplace milestone), so this reflects the real,
-              empty state rather than Shorya's placeholder demo numbers. */}
           <div className="mt-5 grid grid-cols-3 gap-3">
             <div className="rounded-xl border border-brand-ink/10 bg-white p-4">
               <p className="text-xs uppercase tracking-wide text-brand-ink/50">Live Listings</p>
-              <p className="mt-1 text-2xl font-semibold text-brand-ink">0</p>
+              <p className="mt-1 text-2xl font-semibold text-brand-ink">{liveListingsError ? 0 : liveListingsCount ?? 0}</p>
             </div>
             <div className="rounded-xl border border-brand-ink/10 bg-white p-4">
               <p className="text-xs uppercase tracking-wide text-brand-ink/50">Drafts</p>

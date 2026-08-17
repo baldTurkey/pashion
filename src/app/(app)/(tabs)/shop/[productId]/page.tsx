@@ -35,13 +35,19 @@ async function getProductByRouteId(routeId: string): Promise<Product | null> {
     .from("products")
     .select("*")
     .eq("product_id", routeId)
+    .eq("listing_status", "published")
     .maybeSingle();
 
   if (byProductId.data) {
     return byProductId.data as Product;
   }
 
-  const byId = await supabase.from("products").select("*").eq("id", routeId).maybeSingle();
+  const byId = await supabase
+    .from("products")
+    .select("*")
+    .eq("id", routeId)
+    .eq("listing_status", "published")
+    .maybeSingle();
   if (byId.data) {
     return byId.data as Product;
   }

@@ -381,6 +381,12 @@ export default function InventoryPage() {
 						Create Listing
 					</Link>
 					<Link
+						href="/brands/inventory/drafts"
+						className="inline-flex items-center rounded-full border border-brand-ink/15 bg-white px-4 py-2 text-sm font-semibold text-brand-ink transition hover:bg-brand-blush"
+					>
+						Drafts
+					</Link>
+					<Link
 						href="/brands/inventory/my-listings"
 						className="inline-flex items-center rounded-full border border-brand-ink/15 bg-brand-cream px-4 py-2 text-sm font-semibold text-brand-ink transition hover:bg-brand-blush"
 					>
