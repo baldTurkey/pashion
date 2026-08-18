@@ -3,6 +3,7 @@ import { createSupabaseServer } from "@/lib/supabase/server";
 import { LogoutButton } from "@/components/layout/logout-button";
 
 const NAV_LINKS = [
+  { href: "/browse", label: "Shop" },
   { href: "/brands", label: "Designers" },
   { href: "/shows", label: "Fashion Shows" },
 ];
@@ -36,6 +37,9 @@ export async function NavBar() {
         <div className="flex items-center gap-3 sm:gap-6">
           {user ? (
             <>
+              <Link href="/cart" className="text-sm font-medium text-brand-ink hover:text-brand-accent">
+                Cart
+              </Link>
               <Link href="/account" className="text-sm font-medium text-brand-ink hover:text-brand-accent">
                 Account
               </Link>
