@@ -8,7 +8,7 @@ interface Listing {
   
   const LISTINGS: Listing[] = [
     {
-      brand: "Hannah Thomas",
+      brand: "Hannah",
       title: "Look 67 — 676767",
       status: "Voting",
       meta: "123 votes",
@@ -22,14 +22,14 @@ interface Listing {
       gradient: "linear-gradient(160deg, var(--silver), var(--vanilla))",
     },
     {
-      brand: "P Money",
+      brand: "P M$ney",
       title: "Look 13 — Bad luck",
       status: "Winner",
       meta: "In production",
       gradient: "linear-gradient(160deg, var(--tobago), var(--rose))",
     },
     {
-      brand: "Air-In-Der-Sky",
+      brand: "Ar-In-Der-Sky",
       title: "Look 7 — Prime Number",
       status: "Voting",
       meta: "789 votes",
