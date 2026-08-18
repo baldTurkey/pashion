@@ -10,10 +10,7 @@ export async function GET(request: Request) {
 
   if (code) {
     const supabase = await createSupabaseServer();
-    // Exchanges the one-time code from the email link for a real session,
-    // and (via createSupabaseServer's cookie handlers) writes it into cookies
-    // on this response — this is the step that was missing entirely before,
-    // which is why confirming an email never actually logged anyone in.
+    // Exchanges the one-time code from the email link for a real session,and writes it into cookies on this response 
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
       return NextResponse.redirect(`${origin}${next}`);

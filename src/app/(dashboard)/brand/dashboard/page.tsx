@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { getBrandByAccountId } from "@/lib/brands/queries";
 import { Card } from "@/components/ui/card";
+import { ConnectPayoutsButton } from "@/components/brand/connect-payouts-button";
 
 export default async function BrandDashboardPage() {
   const supabase = await createSupabaseServer();
@@ -79,6 +80,22 @@ export default async function BrandDashboardPage() {
             Open Inventory
           </Link>
         </div>
+
+        {brand.stripe_payouts_enabled ? (
+          <div className="mb-6 flex items-center rounded-2xl border border-brand-ink/10 bg-white p-5">
+            <p className="text-sm text-brand-ink/70">✓ Stripe payouts connected</p>
+          </div>
+        ) : (
+          <div className="mb-6 flex flex-col gap-3 rounded-2xl border border-brand-accent/30 bg-brand-blush/30 p-5 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="font-semibold text-brand-ink">Connect Stripe to start selling</p>
+              <p className="mt-1 text-sm text-brand-ink/60">
+                Required before you can create a listing — this is what lets you receive payouts.
+              </p>
+            </div>
+            <ConnectPayoutsButton />
+          </div>
+        )}
 
         <section className="rounded-2xl border border-brand-ink/10 bg-brand-cream p-6">
           <h2 className="font-serif text-xl text-brand-ink">Current Collection</h2>

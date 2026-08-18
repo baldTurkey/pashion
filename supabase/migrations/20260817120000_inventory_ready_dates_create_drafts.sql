@@ -67,6 +67,7 @@ revoke all on function public.materialize_due_inventory_drafts() from public;
 grant execute on function public.materialize_due_inventory_drafts() to anon, authenticated;
 
 drop policy if exists "products_select_own_brand" on public.products;
+drop policy if exists "products_select_published_or_own_brand" on public.products;
 create policy "products_select_published_or_own_brand" on public.products
   for select using (
     products.listing_status = 'published'

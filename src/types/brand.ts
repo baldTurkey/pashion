@@ -23,5 +23,7 @@ export interface Brand {
   contact_info: BrandContactInfo;
   slug: string;
   shipping_range: string | null;
+  stripe_account_id: string | null;
+  stripe_payouts_enabled: boolean;
   created_at: string;
 }
