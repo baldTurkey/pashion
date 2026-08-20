@@ -1,320 +1,237 @@
-@import url("https://fonts.googleapis.com/css2?family=Fraunces:wght@500&family=Inter:wght@400;500;600&display=swap");
-
-.mpdash-root {
-  --paper: #F7F5F0;
-  --card: #FFFFFF;
-  --ink: #22201C;
-  --ink-soft: #6B6860;
-  --denim: #33455C;
-  --denim-dark: #22303F;
-  --denim-soft: #E7ECF1;
-  --thread: #B6AE9E;
-  --font-display: "Fraunces", "Georgia", serif;
-  --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-
-  max-width: 960px;
-  margin: 0 auto;
-  background: var(--paper);
-  padding: 36px 20px 60px;
-  font-family: var(--font-body);
-  color: var(--ink);
+.mpdash-root{
+    --fantasy:#F7F3ED;  
+    --rose:#DBA1A2;  
+    --vanilla:#EFD8D6;  
+    --silver:#C2C6B9;  
+    --tobago:#422B23;  
+    --tobago-70: rgba(66,43,35,0.7); 
+    --tobago-40: rgba(66,43,35,0.4);  
+    --tobago-15: rgba(66,43,35,0.15);  
+    --tobago-08: rgba(66,43,35,0.08);  
+    --fantasy-70: rgba(247,243,237,0.7);   
+    --display: 'Fraunces', serif;  
+    --body: 'Work Sans', sans-serif;  
+    --mono: 'Space Mono', monospace;   
+    --maxw: 1240px;
+    max-width: var(--maxw, 1240px);
+    margin: 0 auto;
+    padding: 56px 40px 100px;
 }
 
-.mpdetail-topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+.mpdash-header{
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
 }
 
-.mpdetail-topbar-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+.mpdash-title{
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: clamp(28px, 3.4vw, 40px);
+    letter-spacing: -0.01em;
+    margin: 0;
+    color: var(--tobago);
 }
 
-.mpdash-header {
-  margin-bottom: 24px;
+.mpdash-new-btn{
+    font-family: var(--body);
+    font-weight: 600;
+    font-size: 14px;
+    padding: 12px 22px;
+    border: 1px solid var(--tobago);
+    border-radius: 2px;
+    background: var(--tobago);
+    color: var(--fantasy);
+    transition: background .18s ease, transform .18s ease;
 }
 
-.mpdash-title {
-  font-family: var(--font-display);
-  font-size: 30px;
-  font-weight: 500;
-  margin: 0 0 4px;
+.mpdash-new-btn:hover{
+    background: #5a3c2e;
+    transform: translateY(-1px);
 }
 
-.mpdash-subtitle {
-  font-size: 13.5px;
-  color: var(--ink-soft);
-  margin: 0;
+.mpdash-grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 22px;
 }
 
-.mpdash-empty {
-  background: var(--card);
-  border: 1px solid rgba(182, 174, 158, 0.25);
-  border-radius: 10px;
-  padding: 40px 20px;
-  text-align: center;
-  color: var(--ink-soft);
-  font-size: 14px;
+.mpdash-card{
+    background: var(--fantasy);
+    border: 1px solid var(--tobago-15);
+    border-radius: 2px;
+    overflow: hidden;
+    transition: transform .22s ease, box-shadow .22s ease;
 }
 
-.mpdash-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 18px;
+.mpdash-card:hover{
+    transform: translateY(-4px);
+    box-shadow: 0 16px 30px rgba(66,43,35,0.14);
 }
 
-.mpdash-card {
-  display: block;
-  background: var(--card);
-  border: 1px solid rgba(182, 174, 158, 0.25);
-  border-radius: 10px;
-  overflow: hidden;
-  text-decoration: none;
-  color: var(--ink);
-  transition: box-shadow 0.15s ease, transform 0.15s ease;
+.mpdash-card-thumb{
+    aspect-ratio: 3/4;
+    background: var(--vanilla);
+    overflow: hidden;
 }
 
-.mpdash-card:hover {
-  box-shadow: 0 6px 18px rgba(34, 32, 28, 0.08);
-  transform: translateY(-2px);
+.mpdash-card-thumb img{
+    width: 100%; height: 100%;
+    object-fit: cover;
 }
 
-.mpdash-card-image-wrap {
-  aspect-ratio: 1 / 1;
-  background: var(--denim-soft);
+.mpdash-card-body{
+    padding: 14px 16px 18px;
 }
 
-.mpdash-card-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
+.mpdash-card-name{
+    font-family: var(--display);
+    font-size: 16.5px;
+    font-weight: 600;
+    color: var(--tobago);
+    margin: 0 0 4px;
 }
 
-.mpdash-card-image-placeholder {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--ink-soft);
-  font-size: 12.5px;
+.mpdash-card-price{
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--tobago-70);
 }
 
-.mpdash-card-body {
-  padding: 12px 14px 14px;
+.mpdash-card-actions{
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
 }
 
-.mpdash-card-name {
-  font-size: 14.5px;
-  font-weight: 600;
-  margin-bottom: 4px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.mpdash-edit-btn,
+.mpdash-remove-btn{
+    flex: 1;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 9px 10px;
+    border-radius: 2px;
+    text-align: center;
+    transition: background .18s ease, color .18s ease, border-color .18s ease;
 }
 
-.mpdash-card-price {
-  font-size: 13.5px;
-  color: var(--denim-dark);
-  font-weight: 600;
+.mpdash-edit-btn{
+    border: 1px solid var(--tobago-40);
+    color: var(--tobago);
+    background: transparent;
 }
 
-.mpdash-back {
-  display: inline-block;
-  margin-bottom: 20px;
-  font-size: 13.5px;
-  font-weight: 600;
-  color: var(--denim);
-  text-decoration: none;
+.mpdash-edit-btn:hover{
+    border-color: var(--tobago);
+    background: var(--tobago-08);
 }
 
-.mpdetail-gallery {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: 10px;
-  margin-bottom: 24px;
+.mpdash-remove-btn{
+    border: 1px solid var(--tobago-40);
+    color: #b3453f;
+    background: transparent;
 }
 
-.mpdetail-photo {
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  object-fit: cover;
-  border-radius: 8px;
-  border: 1px solid rgba(182, 174, 158, 0.25);
+.mpdash-remove-btn:hover{
+    border-color: #b3453f;
+    background: rgba(179,69,63,0.08);
 }
 
-.mpdetail-body {
-  background: var(--card);
-  border: 1px solid rgba(182, 174, 158, 0.25);
-  border-radius: 10px;
-  padding: 24px 26px;
+.mpdash-empty{
+    text-align: center;
+    padding: 80px 20px;
+    color: var(--tobago-70);
 }
 
-.mpdetail-name {
-  font-family: var(--font-display);
-  font-size: 26px;
-  font-weight: 500;
-  margin: 0 0 6px;
+.mpdash-empty p{
+    font-size: 15px;
+    margin: 0 0 20px;
 }
 
-.mpdetail-price {
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--denim-dark);
-  margin-bottom: 18px;
+.mpconfirm-overlay{
+    position: fixed;
+    inset: 0;
+    background: rgba(66,43,35,0.45);
+    backdrop-filter: blur(3px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: 20px;
 }
 
-.mpdetail-section {
-  margin-bottom: 18px;
+.mpconfirm-box{
+    background: var(--fantasy);
+    border-radius: 2px;
+    max-width: 380px;
+    width: 100%;
+    padding: 32px;
+    position: relative;
 }
 
-.mpdetail-row {
-  display: flex;
-  gap: 40px;
-  margin-bottom: 18px;
+.mpconfirm-title{
+    font-family: var(--display);
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--tobago);
+    margin: 0 0 10px;
 }
 
-.mpdetail-label {
-  font-size: 11.5px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--thread);
-  font-weight: 600;
-  margin-bottom: 5px;
+.mpconfirm-text{
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--tobago-70);
+    margin: 0 0 24px;
 }
 
-.mpdetail-text {
-  font-size: 14.5px;
-  line-height: 1.6;
-  color: var(--ink);
-  white-space: pre-wrap;
+.mpconfirm-error{
+    font-family: var(--mono);
+    font-size: 12px;
+    color: #b3453f;
+    margin-bottom: 16px;
 }
 
-.mpdetail-link {
-  font-size: 13.5px;
-  font-weight: 600;
-  color: var(--denim);
+.mpconfirm-actions{
+    display: flex;
+    gap: 12px;
 }
 
-.mpdetail-posted {
-  font-size: 12px;
-  color: var(--ink-soft);
-  margin-top: 6px;
+.mpconfirm-btn{
+    flex: 1;
+    font-family: var(--body);
+    font-weight: 600;
+    font-size: 13.5px;
+    padding: 11px 16px;
+    border-radius: 2px;
+    transition: background .18s ease, color .18s ease;
 }
 
-.mpdash-edit-btn {
-  padding: 8px 16px;
-  border-radius: 6px;
-  border: 1px solid rgba(51, 69, 92, 0.4);
-  background: transparent;
-  color: #33455C;
-  font-size: 13.5px;
-  font-weight: 600;
-  cursor: pointer;
-  font-family: inherit;
-  text-decoration: none;
+.mpconfirm-btn-no{
+    border: 1px solid var(--tobago-40);
+    background: transparent;
+    color: var(--tobago);
 }
 
-.mpdash-edit-btn:hover {
-  background: rgba(51, 69, 92, 0.08);
+.mpconfirm-btn-no:hover{ 
+    background: var(--tobago-08); 
 }
 
-.mpdash-remove-btn {
-  padding: 8px 16px;
-  border-radius: 6px;
-  border: 1px solid rgba(161, 56, 46, 0.4);
-  background: transparent;
-  color: #A1382E;
-  font-size: 13.5px;
-  font-weight: 600;
-  cursor: pointer;
-  font-family: inherit;
+.mpconfirm-btn-yes{
+    border: 1px solid #b3453f;
+    background: #b3453f;
+    color: var(--fantasy);
 }
 
-.mpdash-remove-btn:hover {
-  background: rgba(161, 56, 46, 0.08);
+.mpconfirm-btn-yes:hover{ 
+    background: #8f342f; 
 }
 
-.mpconfirm-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(34, 32, 28, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: 20px;
-}
- 
-.mpconfirm-box {
-  background: #FFFFFF;
-  border-radius: 10px;
-  padding: 24px;
-  max-width: 380px;
-  width: 100%;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-}
- 
-.mpconfirm-title {
-  font-size: 18px;
-  font-weight: 600;
-  color: #22201C;
-  margin-bottom: 8px;
-}
- 
-.mpconfirm-text {
-  font-size: 14px;
-  color: #6B6860;
-  line-height: 1.5;
-  margin: 0 0 18px;
-}
- 
-.mpconfirm-error {
-  color: #A1382E;
-  font-size: 12.5px;
-  margin-bottom: 12px;
-}
- 
-.mpconfirm-actions {
-  display: flex;
-  gap: 10px;
-  justify-content: flex-end;
-}
- 
-.mpconfirm-btn {
-  padding: 9px 16px;
-  border-radius: 6px;
-  font-size: 13.5px;
-  font-weight: 600;
-  cursor: pointer;
-  font-family: inherit;
-  border: 1px solid transparent;
-}
- 
-.mpconfirm-btn-no {
-  background: #F7F5F0;
-  color: #22201C;
-  border-color: rgba(182, 174, 158, 0.4);
-}
- 
-.mpconfirm-btn-no:hover {
-  background: #EFEBE3;
-}
- 
-.mpconfirm-btn-yes {
-  background: #A1382E;
-  color: #fff;
-}
- 
-.mpconfirm-btn-yes:hover {
-  background: #872E25;
-}
- 
-.mpconfirm-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+.mpconfirm-btn:disabled{
+    opacity: 0.55;
+    cursor: not-allowed;
 }
