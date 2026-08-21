@@ -40,9 +40,9 @@ export async function createPendingOrder(
   const { error: itemsError } = await adminClient.from("order_items").insert(
     items.map((item) => ({
       order_id: order.id,
-      listing_id: item.listingId,
+      product_id: item.productId,
       brand_id: item.brandId,
-      listing_name: item.name,
+      product_name: item.name,
       unit_price_cents: item.unitPriceCents,
       quantity: item.quantity,
     }))
@@ -75,9 +75,9 @@ export async function getOrderByStripeSessionId(adminClient: SupabaseClient, ses
 
 export interface OrderItemForPayout {
   id: string;
-  listing_id: string;
+  product_id: string;
   brand_id: string;
-  listing_name: string;
+  product_name: string;
   unit_price_cents: number;
   quantity: number;
   stripe_transfer_id: string | null;
@@ -86,7 +86,7 @@ export interface OrderItemForPayout {
 export async function getOrderItems(adminClient: SupabaseClient, orderId: string): Promise<OrderItemForPayout[]> {
   const { data, error } = await adminClient
     .from("order_items")
-    .select("id, listing_id, brand_id, listing_name, unit_price_cents, quantity, stripe_transfer_id")
+    .select("id, product_id, brand_id, product_name, unit_price_cents, quantity, stripe_transfer_id")
     .eq("order_id", orderId);
 
   if (error) throw error;

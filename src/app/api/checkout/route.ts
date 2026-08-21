@@ -40,8 +40,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Cart is empty" }, { status: 400 });
     }
 
-    // orders/order_items have no insert policy for regular users (see the
-    // migration) — only the service role can write them.
+    // orders/order_items have no insert policy for regular users — only the service role can write them.
     const adminClient = getAdminClient();
     const { orderId } = await createPendingOrder(adminClient, user.id, items, shipping);
 

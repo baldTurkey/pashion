@@ -35,8 +35,7 @@ export default function ForgotPasswordPage() {
         redirectTo: `${window.location.origin}/auth/callback?next=/reset-password`,
       });
 
-      // Don't reveal whether that email has an account — same success message
-      // either way, except for a genuine rate-limit error worth surfacing.
+
       if (resetError && resetError.message.toLowerCase().includes("rate limit")) {
         setError("Too many reset attempts were sent recently. Please wait a few minutes and try again.");
       } else {

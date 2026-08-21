@@ -2,9 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
 
-export function AddToCartButton({ listingId }: { listingId: string }) {
+export function AddToCartButton({ productId, className }: { productId: string; className?: string }) {
   const router = useRouter();
   const [status, setStatus] = useState<"idle" | "adding" | "added" | "error">("idle");
 
@@ -14,7 +13,7 @@ export function AddToCartButton({ listingId }: { listingId: string }) {
       const res = await fetch("/api/cart", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ listingId, quantity: 1 }),
+        body: JSON.stringify({ productId, quantity: 1 }),
       });
 
       if (res.status === 401) {
@@ -35,8 +34,8 @@ export function AddToCartButton({ listingId }: { listingId: string }) {
   };
 
   return (
-    <Button onClick={handleClick} disabled={status === "adding"} size="sm" className="w-full">
-      {status === "adding" ? "Adding…" : status === "added" ? "Added ✓" : status === "error" ? "Try again" : "Add to Cart"}
-    </Button>
+    <button type="button" onClick={handleClick} disabled={status === "adding"} className={className}>
+      {status === "adding" ? "Adding…" : status === "added" ? "Added ✓" : status === "error" ? "Try again" : "Add to cart"}
+    </button>
   );
 }

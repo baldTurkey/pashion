@@ -48,13 +48,11 @@ export async function POST(request: Request) {
     if (isFirstTime) {
       const items = await getOrderItems(adminClient, order.id);
 
-      // Decrement stock for each purchased listing.
-      for (const item of items) {
-        await adminClient.rpc("decrement_listing_inventory", {
-          p_listing_id: item.listing_id,
-          p_quantity: item.quantity,
-        });
-      }
+      // stock is not decremented here. Unlike this branch's original
+      // `listings` table, `products` has no single reliable stock count —
+      // most rows have no `inventory_id` at all, and the rest track supply
+      // as a free-text per-size breakdown, not something safe to decrement
+      // blindly.
 
       // Cart is now an order — clear it.
       await adminClient.from("cart_items").delete().eq("customer_id", order.customer_id);
@@ -69,7 +67,7 @@ export async function POST(request: Request) {
           userLookup.user.email,
           order.id,
           items.map((item) => ({
-            name: item.listing_name,
+            name: item.product_name,
             quantity: item.quantity,
             unitPriceCents: item.unit_price_cents,
           }))
@@ -95,19 +93,23 @@ export async function POST(request: Request) {
         );
       }
 
+      // order_items.brand_id stores brands.brand_uuid (matching
+      // products.brand_id), not account_id — account_id is only needed here
+      // to know whether payouts are connected; brand_uuid is what ties the
+      // transfer back to the right order_items.
       const brandIds = [...totalsByBrand.keys()];
       const { data: brands } = await adminClient
         .from("brands")
-        .select("account_id, stripe_account_id")
-        .in("account_id", brandIds);
+        .select("brand_uuid, stripe_account_id")
+        .in("brand_uuid", brandIds);
 
       let anyTransferFailed = false;
 
       for (const brand of brands ?? []) {
         if (!brand.stripe_account_id) continue; // shouldn't happen — listings require payouts to be connected
 
-        const amount = totalsByBrand.get(brand.account_id)!;
-        const brandItems = untransferred.filter((item) => item.brand_id === brand.account_id);
+        const amount = totalsByBrand.get(brand.brand_uuid)!;
+        const brandItems = untransferred.filter((item) => item.brand_id === brand.brand_uuid);
 
         try {
           const transfer = await getStripe().transfers.create({
@@ -125,7 +127,7 @@ export async function POST(request: Request) {
           // brands in the same order. Log and keep going; the 500 below
           // tells Stripe to retry this event, which will naturally pick
           // this brand back up since its items still lack a transfer_id.
-          console.error(`Stripe transfer failed for order ${order.id}, brand ${brand.account_id}:`, err);
+          console.error(`Stripe transfer failed for order ${order.id}, brand ${brand.brand_uuid}:`, err);
           anyTransferFailed = true;
         }
       }

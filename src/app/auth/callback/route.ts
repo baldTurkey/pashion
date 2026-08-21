@@ -10,12 +10,16 @@ export async function GET(request: Request) {
 
   if (code) {
     const supabase = await createSupabaseServer();
-    // Exchanges the one-time code from the email link for a real session,and writes it into cookies on this response 
+    // Exchanges the one-time code from the email link for a real session and writes it into cookies on this response 
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
       return NextResponse.redirect(`${origin}${next}`);
     }
   }
 
-  return NextResponse.redirect(`${origin}/sign-up/brand?error=confirmation-failed`);
+  // This callback is shared by every email-link flow (brand/designer/member
+  // confirmation and password recovery), so on failure it can't assume the
+  // brand signup page is the right place to send someone back to — login is
+  // the one destination that makes sense regardless of which flow failed.
+  return NextResponse.redirect(`${origin}/login?error=confirmation-failed`);
 }
