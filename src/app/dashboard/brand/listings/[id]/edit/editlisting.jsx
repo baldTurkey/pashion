@@ -2,7 +2,7 @@
 
 import React, { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import "../../../../../../components/mpform";
+import mpform from "@/components/mpform.jsx";
 import { supabaseBrowser } from "../../../../../../lib/supabase/client.ts";
 
 const SIZES = ["XS", "S", "M", "L", "XL", "XXL", "One size"];
@@ -148,7 +148,10 @@ export default function EditListingForm({ listing }) {
         finalSizeGuideUrl = await uploadFile(newSizeGuideFile, "size-guides");
       }
 
-      const { error: updateError } = await supabaseBrowser
+      const { data: { user }, error: userErr } = await supabaseBrowser.auth.getUser();
+      console.log("AUTH CHECK — user:", user, "error:", userErr);
+
+      const { data: updatedRows, error: updateError } = await supabaseBrowser
         .from("products")
         .update({
           imageUrl,
@@ -160,9 +163,14 @@ export default function EditListingForm({ listing }) {
           care_info: careInfo.trim(),
           size_guide_url: finalSizeGuideUrl,
         })
-        .eq("id", listing.id);
+        .eq("id", listing.id)
+        .select();
 
       if (updateError) throw updateError;
+
+      if (!updatedRows || updatedRows.length === 0) {
+        throw new Error("No row was updated — check RLS policy or id match.");
+      }
 
       router.push(`/dashboard/brand/listings/${listing.id}`);
       router.refresh();

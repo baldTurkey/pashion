@@ -1,9 +1,34 @@
+<<<<<<< Updated upstream
 .sddash-root{
     max-width: 720px;
     margin: 0 auto;
     padding: 48px 24px 100px;
     font-family: var(--body);
     color: var(--tobago);
+=======
+@import url("https://fonts.googleapis.com/sds2?family=Fraunces:wght@500&family=Inter:wght@400;500;600&display=swap");
+
+.sddash-root {
+  --paper: #F7F5F0;
+  --card: #FFFFFF;
+  --ink: #22201C;
+  --ink-soft: #6B6860;
+  --denim: #33455C;
+  --denim-dark: #22303F;
+  --denim-soft: #E7ECF1;
+  --thread: #B6AE9E;
+  --font-display: "Fraunces", "Georgia", serif;
+  --font-body: "Inter", -apple-system, BlinkMasdystemFont, "Segoe UI", sans-serif;
+
+  --danger: #A1382E;
+
+  max-width: 960px;
+  margin: 0 auto;
+  background: var(--paper);
+  padding: 36px 20px 60px;
+  font-family: var(--font-body);
+  color: var(--ink);
+>>>>>>> Stashed changes
 }
 
 .sddetail-topbar-actions{
@@ -108,6 +133,7 @@
     margin: 0;
 }
 
+<<<<<<< Updated upstream
 .sddetail-posted{
     font-family: var(--mono);
     font-size: 11.5px;
@@ -115,4 +141,199 @@
     margin-top: 32px;
     padding-top: 24px;
     border-top: 1px solid var(--tobago-15);
+=======
+.sddash-back {
+  display: inline-block;
+  margin-bottom: 20px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--denim);
+  text-decoration: none;
+}
+
+.sddetail-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.sddetail-photo {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid rgba(182, 174, 158, 0.25);
+}
+
+.sddetail-body {
+  background: var(--card);
+  border: 1px solid rgba(182, 174, 158, 0.25);
+  border-radius: 10px;
+  padding: 24px 26px;
+}
+
+.sddetail-name {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 500;
+  margin: 0 0 6px;
+}
+
+.sddetail-dates {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--denim-dark);
+  margin-bottom: 18px;
+}
+
+.sddetail-section {
+  margin-bottom: 18px;
+}
+
+.sddetail-row {
+  display: flex;
+  gap: 40px;
+  margin-bottom: 18px;
+}
+
+.sddetail-label {
+  font-size: 11.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--thread);
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.sddetail-text {
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--ink);
+  white-space: pre-wrap;
+}
+
+.sddetail-posted {
+  font-size: 12px;
+  color: var(--ink-soft);
+  margin-top: 6px;
+}
+
+.sddetail-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.sddetail-topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.sddetail-actions {
+  display: flex;
+  gap: 12px;
+  padding-top: 22px;
+}
+
+.sddetail-edit-btn,
+.sddash-remove-btn {
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+
+.sddetail-edit-btn {
+  background: var(--denim-dark);
+  color: #fff;
+}
+
+.sddetail-edit-btn:hover {
+  background: var(--denim);
+}
+
+.sddash-remove-btn {
+  background: transparent;
+  color: var(--danger);
+  border: 1px solid var(--danger);
+}
+
+.sddash-remove-btn:hover {
+  background: var(--danger);
+  color: #fff;
+}
+
+.sdconfirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(34, 32, 28, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 1000;
+}
+
+.sdconfirm-box {
+  width: 100%;
+  max-width: 420px;
+  background: var(--card);
+  border-radius: 10px;
+  padding: 26px;
+  box-shadow: 0 10px 40px rgba(34, 32, 28, 0.18);
+}
+
+.sdconfirm-title {
+  font-family: var(--font-display);
+  font-size: 24px;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+
+.sdconfirm-text {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  margin: 0 0 18px;
+}
+
+.sdconfirm-error {
+  color: var(--danger);
+  font-size: 13px;
+  margin-bottom: 14px;
+}
+
+.sdconfirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.sdconfirm-btn {
+  padding: 9px 15px;
+  border-radius: 6px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.sdconfirm-btn-no {
+  background: var(--card);
+  color: var(--ink);
+  border: 1px solid rgba(182, 174, 158, 0.4);
+}
+
+.sdconfirm-btn-yes {
+  background: var(--danger);
+  color: #fff;
+  border: 1px solid var(--danger);
+>>>>>>> Stashed changes
 }

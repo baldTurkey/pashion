@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import "./showdashdetail.css";
+import DeleteShowButton from "../app/dashboard/brand/shows/[id]/deleteshows"
 
 function formatDate(dateStr: string | null) {
   if (!dateStr) return null;
@@ -46,10 +47,24 @@ export default async function ShowDetail({ id }: { id: string }) {
 
   return (
     <div className="sddash-root">
-      <Link href="/shows/brand" className="sddash-back">
-        &larr; Back to my shows
-      </Link>
 
+      <div className="sddetail-topbar-actions">
+
+      <Link href="/dashboard/brand/shows" className="sddash-back">
+          &larr; Back to my shows
+        </Link>
+
+        <Link
+          href={`/dashboard/brand/shows/${show.id}/edit`}
+          className="sddetail-edit-btn"
+        >
+          Edit Show
+        </Link>
+
+        <DeleteShowButton id={show.id} />
+      </div>
+
+      {/* photos */}
       {show.image && (
         <div className="sddetail-gallery">
           <img
@@ -61,8 +76,10 @@ export default async function ShowDetail({ id }: { id: string }) {
       )}
 
       <div className="sddetail-body">
+
+        {/* Item name */}
         <h1 className="sddetail-name">
-          {show.category || show.style || "Untitled show"}
+          {show.name || "Untitled show"}
         </h1>
 
         {(dateRangeStart || dateRangeEnd) && (
@@ -73,17 +90,25 @@ export default async function ShowDetail({ id }: { id: string }) {
           </div>
         )}
 
+        {/* Quantity + style */}
         <div className="sddetail-row">
           <div>
             <div className="sddetail-label">Quantity</div>
             <div className="sddetail-text">{show.quantity ?? "—"}</div>
           </div>
           <div>
-            <div className="sddetail-label">Style</div>
-            <div className="sddetail-text">{show.style || "—"}</div>
+            <div className="sddetail-label">Category</div>
+            <div className="sddetail-text">{show.category || "—"}</div>
           </div>
         </div>
 
+        {/* Style */}
+        <div className="sddetail-section">
+          <div className="sddetail-label">Style</div>
+          <div className="sddetail-text">{show.style || "—"}</div>
+        </div>
+
+        {/* Event dis. */}
         <div className="sddetail-section">
           <div className="sddetail-label">Event description</div>
           <p className="sddetail-text">
@@ -91,6 +116,19 @@ export default async function ShowDetail({ id }: { id: string }) {
           </p>
         </div>
 
+        {/* dates */}
+        {(dateRangeStart || dateRangeEnd) && (
+          <div className="sddetail-section">
+            <div className="sddetail-label">Dates</div>
+            <div className="sddetail-text">
+              {dateRangeStart || "—"}
+              {dateRangeStart && dateRangeEnd ? " – " : ""}
+              {dateRangeEnd || "—"}
+            </div>
+          </div>
+        )}
+        
+        {/* Materials */}
         <div className="sddetail-section">
           <div className="sddetail-label">Materials</div>
           <p className="sddetail-text">
@@ -98,10 +136,11 @@ export default async function ShowDetail({ id }: { id: string }) {
           </p>
         </div>
 
-        <div className="sddetail-posted">
+      <div className="sddetail-posted">
           Posted {new Date(show.created_at).toLocaleDateString()}
         </div>
       </div>
+
     </div>
   );
 }

@@ -6,7 +6,7 @@ export default function NewShowPage() {
   return (
     <BrandShell>
       <div style={{ maxWidth: 640, margin: "0 auto 12px" }}>
-        <Link href="/dashboard/shows" className="bv-btn">
+        <Link href="/dashboard/brand/shows" className="bv-btn">
           &larr; Back to my shows
         </Link>
       </div>

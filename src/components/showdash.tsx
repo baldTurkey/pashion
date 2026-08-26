@@ -29,7 +29,7 @@ export default async function MyShows() {
 
   const { data: shows, error } = await supabase
     .from("shows")
-    .select("id, image, quantity, category, style, startDate, endDate, created_at")
+    .select("id, image, name, quantity, category, style, startDate, endDate, created_at")
     // .eq("user_id", session.user.id)
     .order("created_at", { ascending: false });
 
@@ -53,7 +53,7 @@ export default async function MyShows() {
           {shows.map((show) => (
             <Link
               key={show.id}
-              href={`/shows/${show.id}`}
+              href={`/dashboard/brand/shows/${show.id}`}
               className="csdash-card"
             >
               <div className="csdash-card-image-wrap">
@@ -70,12 +70,20 @@ export default async function MyShows() {
                 )}
               </div>
               <div className="csdash-card-body">
+
                 <div className="csdash-card-name">
-                  {show.category || show.style || "Untitled show"}
+                  {show.name || "Untitled show"}
                 </div>
+
                 <div className="csdash-card-meta">
-                  {formatDateRange(show.startDate, show.endDate)}
+                  Category: {show.category}
                 </div>
+
+                <div className="csdash-card-subtext">
+                  Dates: {formatDateRange(show.startDate, show.endDate)}
+                </div>
+
+
                 {show.quantity != null && (
                   <div className="csdash-card-quantity">
                     Qty: {show.quantity}

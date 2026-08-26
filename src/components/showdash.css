@@ -102,12 +102,25 @@
 }
 
 .csdash-card-meta {
+<<<<<<< Updated upstream
   font-size: 16.5px;
   color: var(--tobago);
   font-weight: 600;
   font-family: var(--display);
   margin: 0 0 4px
+=======
+  font-size: 13.5px;
+  color: var(--denim-dark);
+  font-weight: 500;
+>>>>>>> Stashed changes
 }
+
+.csdash-card-subtext {
+  font-size: 13.5px;
+  color: var(--denim-dark);
+  font-weight: 500;
+}
+
 
 .csdash-card-quantity {
   font-size: 12.5px;

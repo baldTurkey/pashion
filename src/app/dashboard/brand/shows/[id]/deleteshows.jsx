@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabaseBrowser } from "@/lib/supabase/client";
 
-export default function DeleteListingButton({ id }) {
+export default function DeleteShowButton({ id }) {
   const router = useRouter();
   const [showConfirm, setShowConfirm] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -13,22 +13,22 @@ export default function DeleteListingButton({ id }) {
   const handleDelete = async () => {
     setDeleting(true);
     setError(null);
+
     try {
-      const { data: deletedRows, error: deleteError } = await supabaseBrowser
-        .from("products")
+      const { error: deleteError } = await supabaseBrowser
+        .from("shows")
         .delete()
-        .eq("id", id)
-        .select();
+        .eq("id", id);
 
-        if (!deletedRows || deletedRows.length === 0) {
-          throw new Error("No row was deleted — check RLS policy or id match.");
-        }
+      if (deleteError) throw deleteError;
 
-      router.push("/dashboard/brand/listings");
+      router.push("/dashboard/brand/shows");
       router.refresh();
     } catch (err) {
-      console.error("Failed to delete listing:", err?.message);
-      setError("Something went wrong while removing this listing. Please try again.");
+      console.error("Failed to delete show:", err?.message);
+      setError(
+        "Something went wrong while removing this show. Please try again."
+      );
       setDeleting(false);
     }
   };
@@ -38,32 +38,36 @@ export default function DeleteListingButton({ id }) {
       <button
         type="button"
         onClick={() => setShowConfirm(true)}
-        className="mpdash-remove-btn"
+        className="sddash-remove-btn"
       >
-        Remove Listing
+        Remove Show
       </button>
 
       {showConfirm && (
-        <div className="mpconfirm-overlay">
-          <div className="mpconfirm-box">
-            <div className="mpconfirm-title">Remove this listing?</div>
-            <p className="mpconfirm-text">
-              This can't be undone. The listing will be permanently removed.
+        <div className="sdconfirm-overlay">
+          <div className="sdconfirm-box">
+            <div className="sdconfirm-title">Remove this show?</div>
+
+            <p className="sdconfirm-text">
+              This can't be undone. The show will be permanently removed.
             </p>
-            {error && <div className="mpconfirm-error">{error}</div>}
-            <div className="mpconfirm-actions">
+
+            {error && <div className="sdconfirm-error">{error}</div>}
+
+            <div className="sdconfirm-actions">
               <button
                 type="button"
                 onClick={() => setShowConfirm(false)}
-                className="mpconfirm-btn mpconfirm-btn-no"
+                className="sdconfirm-btn sdconfirm-btn-no"
                 disabled={deleting}
               >
                 No, go back
               </button>
+
               <button
                 type="button"
                 onClick={handleDelete}
-                className="mpconfirm-btn mpconfirm-btn-yes"
+                className="sdconfirm-btn sdconfirm-btn-yes"
                 disabled={deleting}
               >
                 {deleting ? "Removing..." : "Yes, remove it"}

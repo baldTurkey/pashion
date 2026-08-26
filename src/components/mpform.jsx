@@ -181,6 +181,12 @@ export default function marketplaceform() {
     }
 
   setSaving(true);
+
+    const { data: brand, error: brandError } = await supabaseBrowser
+    .from("brands")
+    .select("brand_uuid")
+    .eq("account_id", user.id)
+    .single();
   try {
     const photoUrls = await Promise.all(
       images.map((img) => uploadFile(img.file, "photos"))
