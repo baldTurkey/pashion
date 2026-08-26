@@ -1,27 +1,12 @@
 @import url("https://fonts.googleapis.com/css2?family=Fraunces:wght@500&family=Inter:wght@400;500;600&display=swap");
 
 .csform-root {
-  --fantasy:#F7F3ED;  
-  --rose:#DBA1A2;  
-  --vanilla:#EFD8D6;  
-  --silver:#C2C6B9;  
-  --tobago:#422B23;  
-  --tobago-70: rgba(66,43,35,0.7);  
-  --tobago-40: rgba(66,43,35,0.4);  
-  --tobago-15: rgba(66,43,35,0.15);  
-  --tobago-08: rgba(66,43,35,0.08); 
-  --fantasy-70: rgba(247,243,237,0.7);   
-  --display: 'Fraunces', serif;  
-  --body: 'Work Sans', sans-serif;  
-  --mono: 'Space Mono', monospace;   
-  
-  --maxw: 1240px;
-
   margin: 0 auto;
-  background: var(--paper);
-  padding: 36px 20px 60px;
-  font-family: var(--font-body);
-  color: var(--ink);
+  max-width: 720px;
+  background: var(--fantasy);
+  padding: 64px 24px 100px;
+  font-family: var(--body);
+  color: var(--tobago);
 }
 
 .csform-header {
@@ -29,17 +14,17 @@
 }
 
 .csform-title {
-  font-family: var(--font-display);
+  font-family: var(--display);
   font-size: clamp(30px, 4vw, 42px);
   font-weight: 600;
-  margin: 0 0 4px;
+  margin: 0 0 10px;
   color: var(--tobago);
 }
 
 .csform-subtitle {
   font-size: 15px;
   line-height: 1.6;
-  color: var(--tobago);
+  color: var(--tobago-70);
   margin: 0;
 }
 
@@ -61,9 +46,10 @@
 }
 
 .csform-field-number {
+  font-family: var(--mono);
   font-size: 11px;
   letter-spacing: 0.1em;
-  color: var(--mono);
+  color: var(--rose);
   width: 22px;
 }
 
@@ -136,6 +122,14 @@
   min-height: 90px;
 }
 
+.csform-select{
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23422B23' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 4px center;
+  padding-right: 24px;
+}
+
 .csform-price-wrap {
   display: flex;
   align-items: center;
@@ -165,7 +159,7 @@
   padding: 40px 24px;
   text-align: center;
   cursor: pointer;
-  background: var(--paper);
+  background: var(--fantasy);
   transition: border-color 0.2s ease, background 0.2s ease;
 }
 
@@ -177,7 +171,7 @@
 
 .csform-dropzone.full {
   opacity: 0.5;
-  cursor: not-allowed;
+  pointer-events: none;
 }
 
 .csform-dropzone-title {
@@ -223,17 +217,20 @@
 
 .csform-thumb-remove {
   position: absolute;
-  top: 4px;
-  right: 4px;
+  top: 6px;
+  right: 6px;
   width: 22px;
   height: 22px;
   border: none;
   border-radius: 50%;
-  background: rgba(34, 32, 28, 0.65);
-  color: #fff;
+  background: var(--fantasy);
+  color: var(--tobago);
   font-size: 14px;
   line-height: 1;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .csform-thumb-cover {
@@ -250,12 +247,6 @@
 }
 
 .csform-size-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.csform-size-chip {
   padding: 9px 16px;
   border: 1px solid var(--tobago-40);
   border-radius: 20px;
@@ -266,6 +257,10 @@
   font-weight: 500;
   cursor: pointer;
   transition: background .18s ease, color .18s ease, border-color .18s ease;
+}
+
+.csform-size-chip:hover{
+  border-color: var(--tobago);
 }
 
 .csform-size-chip.selected {
@@ -281,10 +276,12 @@
 }
 
 .csform-success {
-  color: #3B6B4E;
+  color: var(--rose);
   font-size: 13.5px;
-  margin-top: 16px;
+  margin-top: 18px;
   text-align: center;
+  font-family: var(--mono);
+  letter-spacing: center;
 }
 
 .csform-submit {
@@ -300,15 +297,17 @@
   cursor: pointer;
   margin-top: 12px;
   transition: background .2s ease, transform .2s ease;
+  letter-spacing: 0.01em;
 }
 
 .csform-submit:disabled {
-  opacity: 0.6;
+  opacity: 0.55;
   cursor: not-allowed;
 }
 
 .csform-submit:hover:not(:disabled) {
-  opacity: 0.9;
+  background: #5a3c2e;
+  transform: translateY(-1px);
 }
 
 @media (max-width: 480px) {

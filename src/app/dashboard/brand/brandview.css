@@ -1,30 +1,32 @@
 @import url("https://fonts.googleapis.com/css2?family=Fraunces:wght@500&family=Inter:wght@400;500;600&display=swap");
 
 .bv-root {
-  --paper: #F7F5F0;
-  --card: #FFFFFF;
-  --ink: #22201C;
-  --ink-soft: #6B6860;
-  --denim: #33455C;
-  --denim-dark: #22303F;
-  --denim-soft: #E7ECF1;
-  --thread: #B6AE9E;
-  --danger: #A1382E;
-  --font-display: "Fraunces", "Georgia", serif;
-  --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --fantasy:#F7F3ED;  
+  --rose:#DBA1A2;  
+  --vanilla:#EFD8D6;  
+  --silver:#C2C6B9;  
+  --tobago:#422B23;  
+  --tobago-70: rgba(66,43,35,0.7); 
+  --tobago-40: rgba(66,43,35,0.4);  
+  --tobago-15: rgba(66,43,35,0.15);  
+  --tobago-08: rgba(66,43,35,0.08);  
+  --fantasy-70: rgba(247,243,237,0.7);   
+  --display: 'Fraunces', serif;  
+  --body: 'Work Sans', sans-serif;  
+  --mono: 'Space Mono', monospace;  
 
   display: flex;
   min-height: 100vh;
-  background: var(--paper);
-  font-family: var(--font-body);
-  color: var(--ink);
+  background: var(--fantasy);
+  font-family: var(--body);
+  color: var(--tobago);
 }
 
 .bv-sidebar {
   width: 220px;
   flex-shrink: 0;
   background: var(--card);
-  border-right: 1px solid rgba(182, 174, 158, 0.2);
+  border-right: 1px solid var(--tobago-15);
   padding: 28px 18px;
   display: flex;
   flex-direction: column;
@@ -43,21 +45,21 @@
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  border: 1.5px solid var(--denim);
+  border: 1.5px solid var(--rose);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--font-display);
+  font-family: var(--display);
   font-size: 15px;
-  color: var(--denim);
+  color: var(--tobago);
   flex-shrink: 0;
 }
 
 .bv-brand-name {
-  font-family: var(--font-display);
+  font-family: var(--display);
   font-size: 17px;
   font-weight: 500;
-  color: var(--ink);
+  color: var(--tobago);
 }
 
 .bv-nav-link {
@@ -66,19 +68,19 @@
   border-radius: 6px;
   font-size: 14px;
   font-weight: 500;
-  font-family: var(--font-body);
-  color: var(--ink-soft);
+  font-family: var(--body);
+  color: var(--tobogo);
   text-decoration: none;
 }
 
 .bv-nav-link:hover {
-  background: var(--denim-soft);
+  background: var(--rose);
   color: var(--ink);
 }
 
 .bv-nav-link.active {
-  background: var(--denim);
-  color: #fff;
+  background: var(--rose);
+  color: var(--tobago);
   font-weight: 600;
 }
 
@@ -90,10 +92,10 @@
 }
 
 .bv-page-title {
-  font-family: var(--font-display);
+  font-family: var(--display);
   font-size: 34px;
   font-weight: 500;
-  color: var(--ink);
+  color: var(--tobago);
   margin: 0 0 24px;
 }
 
@@ -110,9 +112,9 @@
 }
 
 .bv-card {
-  background: var(--card);
+  background: var(--tobago-08);
   border-radius: 10px;
-  border: 1px solid rgba(182, 174, 158, 0.2);
+  border: 1px solid var(--tobago-40);
   padding: 22px 24px;
 }
 
@@ -124,19 +126,19 @@
 }
 
 .bv-card-title {
-  font-family: var(--font-body);
+  font-family: var(--body);
   font-size: 14px;
   font-weight: 600;
-  color: var(--ink);
+  color: var(--tobago);
   margin: 0;
 }
 
 .bv-card-link {
   font-size: 12.5px;
   font-weight: 600;
-  color: var(--denim);
+  color: var(--tobago);
   text-decoration: none;
-  font-family: var(--font-body);
+  font-family: var(--body);
 }
 
 .bv-card-link:hover {
@@ -156,15 +158,15 @@
   color: var(--thread);
   font-weight: 600;
   padding: 0 0 8px;
-  border-bottom: 1px solid rgba(182, 174, 158, 0.2);
+  border-bottom: 1px solid var(--tobago-40);
 }
 
 .bv-table td {
   padding: 11px 0;
   font-size: 13.5px;
-  font-family: var(--font-body);
+  font-family: var(--body);
   color: var(--ink);
-  border-bottom: 1px solid rgba(182, 174, 158, 0.15);
+  border-bottom: 1px solid var(--tobago-15);
 }
 
 .bv-table tr:last-child td {
@@ -172,7 +174,7 @@
 }
 
 .bv-empty-row {
-  color: var(--ink-soft);
+  color: var(--tobago);
   font-size: 13px;
   padding: 14px 0;
   text-align: center;
@@ -182,28 +184,27 @@
   display: inline-block;
   padding: 8px 16px;
   border-radius: 6px;
-  border: 1px solid rgba(51, 69, 92, 0.4);
+  border: 1px solid var(--tobago);
   background: transparent;
-  color: var(--denim);
+  color: var(--tobago);
   font-size: 13.5px;
   font-weight: 600;
-  font-family: var(--font-body);
+  font-family: var(--body);
   cursor: pointer;
   text-decoration: none;
 }
 
 .bv-btn:hover {
-  background: rgba(51, 69, 92, 0.08);
+  background: var(--rose);
 }
 
 .bv-btn-primary {
-  background: var(--denim-dark);
-  color: #fff;
-  border-color: var(--denim-dark);
+  background: var(--rose);
+  color: var(--tobago);
 }
 
 .bv-btn-primary:hover {
-  background-color: #3c73b7;
+  background-color: var(--rose);
 }
 
 .bv-action-row {
@@ -214,12 +215,12 @@
 }
 
 .bv-placeholder-box {
-  background: var(--card);
-  border: 1.5px dashed var(--thread);
+  background: var(--vanilla);
+  border: 1.5px dashed var(--rose);
   border-radius: 8px;
   padding: 40px 24px;
   text-align: center;
-  color: var(--ink-soft);
+  color: var(--tobago);
   font-size: 13.5px;
-  font-family: var(--font-body);
+  font-family: var(--body);
 }

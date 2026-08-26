@@ -1,21 +1,9 @@
 .sddash-root{
-    --fantasy:#F7F3ED;  
-    --rose:#DBA1A2;  
-    --vanilla:#EFD8D6;  
-    --silver:#C2C6B9;  
-    --tobago:#422B23;  
-    --tobago-70: rgba(66,43,35,0.7);  
-    --tobago-40: rgba(66,43,35,0.4);  
-    --tobago-15: rgba(66,43,35,0.15);  
-    --tobago-08: rgba(66,43,35,0.08); 
-    --fantasy-70: rgba(247,243,237,0.7);   
-    --display: 'Fraunces', serif;  
-    --body: 'Work Sans', sans-serif;  
-    --mono: 'Space Mono', monospace;   
-
     max-width: 720px;
     margin: 0 auto;
     padding: 48px 24px 100px;
+    font-family: var(--body);
+    color: var(--tobago);
 }
 
 .sddetail-topbar-actions{
