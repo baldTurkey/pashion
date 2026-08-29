@@ -1,18 +1,4 @@
-.mpdash-root{
-    --fantasy:#F7F3ED;  
-    --rose:#DBA1A2;  
-    --vanilla:#EFD8D6;  
-    --silver:#C2C6B9;  
-    --tobago:#422B23;  
-    --tobago-70: rgba(66,43,35,0.7); 
-    --tobago-40: rgba(66,43,35,0.4);  
-    --tobago-15: rgba(66,43,35,0.15);  
-    --tobago-08: rgba(66,43,35,0.08);  
-    --fantasy-70: rgba(247,243,237,0.7);   
-    --display: 'Fraunces', serif;  
-    --body: 'Work Sans', sans-serif;  
-    --mono: 'Space Mono', monospace;   
-
+.mpdash-root{ 
     max-width: var(--maxw, 1240px);
     margin: 0 auto;
     padding: 56px 40px 100px;
@@ -28,7 +14,6 @@
     flex-wrap: wrap;
 }
 
-<<<<<<< Updated upstream
 .mpdash-title{
     font-family: var(--display);
     font-weight: 600;
@@ -37,12 +22,11 @@
     margin: 0 0 6px;
     color: var(--tobago);
     width: 100%;
-=======
+}
 .mpdetail-topbar-actions {
   display: flex;
   align-items: center;
   gap: 20px;
->>>>>>> Stashed changes
 }
 
 .mpdash-subtitle{
@@ -85,12 +69,14 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;  
+    border-radius: 10px;
 }
 
 .mpdash-new-btn:hover,
 .bv-btn.bv-btn-primary:hover{
-    background: #5a3c2e;
-    transform: translateY(-1px);
+    background: var(--rose);
+    color: var(--tobago)
+    /* transform: translateY(-1px); */
 }
 
 .mpdash-grid{
@@ -114,16 +100,17 @@
     box-shadow: 0 16px 30px rgba(66,43,35,0.14);
 }
 
-.mpdash-card-thum
+.mpdash-card-thumb,
 .mpdash-card-image-wrap{
     aspect-ratio: 3/4;
     background: var(--vanilla);
     overflow: hidden;
 }
 
-.mpdash-card-thumb img
+.mpdash-card-thumb img,
 .mpdash-card-image{
-    width: 100%; height: 100%;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
 }
 
@@ -251,18 +238,16 @@
     display: block;
 }
  
-<<<<<<< Updated upstream
 .mpdetail-body{
     border-top: 1px solid var(--tobago-15);
     padding-top: 32px;
     max-width: 720px;
-=======
+}
 .mpconfirm-actions {
   display: flex;
   gap: 10px;
   justify-content: flex-end;
   margin-bottom: 20px;
->>>>>>> Stashed changes
 }
  
 .mpdetail-name{

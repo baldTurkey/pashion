@@ -39,11 +39,22 @@ export default async function MyShows() {
 
   return (
     <div className="csdash-root">
+
       <div className="csdash-header">
         <h1 className="csdash-title">My Shows</h1>
+        
         <p className="csdash-subtitle">
           {shows?.length ?? 0} show{shows?.length === 1 ? "" : "s"} posted
         </p>
+
+        <div className="csdash-action row" style={{ marginTop: '12px' }}>
+          <div className="csdash-newbtn">
+            <Link href="/dashboard/brand/shows/new" className="csdash-new-btn">
+              Create New Show
+            </Link>
+          </div>
+        </div>
+
       </div>
 
       {!shows || shows.length === 0 ? (
