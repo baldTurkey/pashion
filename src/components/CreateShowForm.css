@@ -1,0 +1,317 @@
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:wght@500&family=Inter:wght@400;500;600&display=swap");
+
+.csform-root {
+  margin: 0 auto;
+  max-width: 720px;
+  background: var(--fantasy);
+  padding: 64px 24px 100px;
+  font-family: var(--body);
+  color: var(--tobago);
+}
+
+.csform-header {
+  margin-bottom: 48px;
+}
+
+.csform-title {
+  font-family: var(--display);
+  font-size: clamp(30px, 4vw, 42px);
+  font-weight: 600;
+  margin: 0 0 10px;
+  color: var(--tobago);
+}
+
+.csform-subtitle {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--tobago-70);
+  margin: 0;
+}
+
+.csform-section {
+  padding: 32px 0;
+  border-top: 1px solid var(--tobago-15);
+}
+
+.csform-section:first-of-type{
+  border-top: none;
+  padding-top: 0;
+}
+
+.csform-field-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.csform-field-number {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--rose);
+  width: 22px;
+}
+
+.csform-field-label label {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--tobago-70);
+}
+
+.csform-required {
+  color: var(--rose);
+  margin-left: 3px;
+}
+
+.csform-helper {
+  font-size: 13px;
+  color: var(--tobago-70);
+  margin: -6px 0 16px;
+}
+
+.csform-error{
+  font-family: var(--mono);
+  font-size: 12px;
+  color: #b3453f;
+  margin-top: 8px;
+}
+
+.csform-input,
+.csform-select,
+.csform-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 4px;
+  border: none;
+  border-radius: 0;
+  border-bottom: 1px solid var(--tobago-40);
+  font-family: var(--body);
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.15s ease;
+  background: transparent;
+  color: var(--tobago);
+  resize: vertical;
+}
+
+.csform-input::placeholder,
+.csform-textarea::placeholder {
+  color: var(--tobago);
+}
+
+.csform-input:focus,
+.csform-select:focus,
+.csform-textarea:focus {
+  border-color: var(--tobago-40);
+}
+
+.csform-textarea {
+  resize: vertical;
+  font-family: inherit;
+  line-height: 1.6;
+}
+
+.csform-textarea.tall {
+  min-height: 140px;
+}
+
+.csform-textarea.short {
+  min-height: 90px;
+}
+
+.csform-select{
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23422B23' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 4px center;
+  padding-right: 24px;
+}
+
+.csform-price-wrap {
+  display: flex;
+  align-items: center;
+  border: 1px solid rgba(182, 174, 158, 0.35);
+  border-radius: 8px;
+  padding: 0 14px;
+  background: var(--card);
+}
+
+.csform-price-sign {
+  color: var(--ink-soft);
+  margin-right: 4px;
+}
+
+.csform-price-input {
+  border: none;
+  padding-left: 0;
+}
+
+.csform-spacer {
+  height: 28px;
+}
+
+.csform-dropzone {
+  border: 1px dashed var(--tobago-40);
+  border-radius: 2px;
+  padding: 40px 24px;
+  text-align: center;
+  cursor: pointer;
+  background: var(--fantasy);
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.csform-dropzone:hover,
+.csform-dropzone.active{
+  border-color: var(--tobago);
+  background: var(--tobago-08);
+}
+
+.csform-dropzone.full {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.csform-dropzone-title {
+  font-family: var(--display);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--tobago);
+  margin-bottom: 4px;
+}
+
+.csform-dropzone-sub {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--tobago-70);
+}
+
+.csform-hidden-input {
+  display: none;
+}
+
+.csform-thumb-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.csform-thumb {
+  position: relative;
+  aspect-ratio: 3/4;
+  border-radius: 2px;
+  overflow: hidden;
+  background: var(--vanilla);
+}
+
+.csform-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.csform-thumb-remove {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 22px;
+  height: 22px;
+  border: none;
+  border-radius: 50%;
+  background: var(--fantasy);
+  color: var(--tobago);
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.csform-thumb-cover {
+  position: absolute;
+  bottom: 8px; left: 8px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: var(--fantasy);
+  color: var(--tobago);
+  padding: 3px 8px;
+  border-radius: 20px;
+}
+
+.csform-size-chips {
+  padding: 9px 16px;
+  border: 1px solid var(--tobago-40);
+  border-radius: 20px;
+  background: transparent;
+  color: var(--tobago);
+  font-family: var(--body);
+  font-size: 13.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background .18s ease, color .18s ease, border-color .18s ease;
+}
+
+.csform-size-chip:hover{
+  border-color: var(--tobago);
+}
+
+.csform-size-chip.selected {
+  background: var(--tobago);
+  color: var(--fantasy);
+  border-color: var(--tobago);
+}
+
+.csform-error {
+  color: #A6453A;
+  font-size: 12.5px;
+  margin-top: 6px;
+}
+
+.csform-success {
+  color: var(--rose);
+  font-size: 13.5px;
+  margin-top: 18px;
+  text-align: center;
+  font-family: var(--mono);
+  letter-spacing: center;
+}
+
+.csform-submit {
+  width: 100%;
+  padding: 16px 24px;
+  border: 1px solid var(--tobago);
+  border-radius: 2px;
+  background: var(--tobago);
+  color: var(--fantasy);
+  font-family: var(--body);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 12px;
+  transition: background .2s ease, transform .2s ease;
+  letter-spacing: 0.01em;
+}
+
+.csform-submit:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.csform-submit:hover:not(:disabled) {
+  background: #5a3c2e;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 480px) {
+  .csform-thumb-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

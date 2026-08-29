@@ -1,0 +1,509 @@
+"use client";
+
+import React, { useState, useRef } from "react";
+import "./mpform.css";
+import {supabaseBrowser} from "../lib/supabase/client.ts";
+
+const MIN_IMAGES = 1;
+const MAX_IMAGES = 8;
+
+const SIZES = ["XS", "S", "M", "L", "XL", "XXL", "One size"];
+const STYLES = [
+  "Casual",
+  "Formal",
+  "Streetwear",
+  "Vintage",
+  "Athleisure",
+  "Bohemian",
+  "Minimalist",
+  "Other",
+];
+
+function FieldLabel({ number, children, required }) {
+  return (
+    <div className="mpform-field-label">
+      <span className="mpform-field-number">{number}</span>
+      <label>
+        {children}
+        {required && <span className="mpform-required">*</span>}
+      </label>
+    </div>
+  );
+}
+
+function ErrorText({ children }) {
+  return <div className="mpform-error">{children}</div>;
+}
+
+async function uploadFile(file, folder) {
+  const ext = file.name.split(".").pop();
+  const path = `${folder}/${Date.now()}-${Math.random()
+    .toString(36)
+    .slice(2)}.${ext}`;
+ 
+  const { error: uploadError } = await supabaseBrowser.storage
+    .from("listing-photos")
+    .upload(path, file);
+ 
+  if (uploadError) throw uploadError;
+ 
+  const { data } = supabaseBrowser.storage.from("listing-photos").getPublicUrl(path);
+  return data.publicUrl;
+}
+
+
+
+export default function marketplaceform() {
+  const [images, setImages] = useState([]);
+  const [itemName, setItemName] = useState("");
+  const [price, setPrice] = useState("");
+  const [description, setDescription] = useState("");
+  const [size, setSize] = useState("");
+  const [customSize, setCustomSize] = useState("");
+  const [sizeGuide, setSizeGuide] = useState(null);
+  const [style, setStyle] = useState("");
+  const [customStyle, setCustomStyle] = useState("");
+  const [careInfo, setCareInfo] = useState("");
+  const [errors, setErrors] = useState({});
+  const [submitted, setSubmitted] = useState(false);
+  const [dragActive, setDragActive] = useState(false);
+
+
+  const [deliveryPrice, setDeliveryPrice] = useState("");
+  const [deliveryInDays, setDeliveryInDays] = useState("");
+
+  const [saving, setSaving] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
+
+  const fileInputRef = useRef(null);
+  const guideInputRef = useRef(null);
+
+  const resetForm = () => {
+    setImages([]);
+    setItemName("");
+    setPrice("");
+    setDeliveryPrice("");
+    setDeliveryInDays("");
+    setDescription("");
+    setSize("");
+    setCustomSize("");
+    setSizeGuide(null);
+    setStyle("");
+    setCustomStyle("");
+    setCareInfo("");
+    setErrors({});
+    setSubmitted(false);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+    if (guideInputRef.current) guideInputRef.current.value = "";
+  };
+
+  if (fileInputRef.current) {
+    fileInputRef.current.value = "";
+  }
+  if (guideInputRef.current) {
+    guideInputRef.current.value = "";
+  }
+
+  images.forEach(img => {
+    if (img.url) URL.revokeObjectURL(img.url);
+  });
+
+  const addImages = (fileList) => {
+    const incoming = Array.from(fileList).filter((f) =>
+      f.type.startsWith("image/")
+    );
+    if (incoming.length === 0) return;
+    setImages((prev) => {
+      const room = MAX_IMAGES - prev.length;
+      const toAdd = incoming.slice(0, Math.max(room, 0)).map((file) => ({
+        file,
+        url: URL.createObjectURL(file),
+        id: `${file.name}-${file.size}-${Date.now()}-${Math.random()}`,
+      }));
+      return [...prev, ...toAdd];
+    });
+  };
+
+  const removeImage = (id) => {
+    setImages((prev) => {
+      const removed = prev.find(img => img.id === id);
+      if (removed?.url) {
+        URL.revokeObjectURL(removed.url); // Clean up memory
+      }
+      return prev.filter((img) => img.id !== id);
+    });
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setDragActive(false);
+    addImages(e.dataTransfer.files);
+  };
+
+  const handleSizeGuide = (fileList) => {
+    const file = fileList && fileList[0];
+    if (!file) return;
+    setSizeGuide({
+      file,
+      name: file.name,
+      isImage: file.type.startsWith("image/"),
+      url: file.type.startsWith("image/") ? URL.createObjectURL(file) : null,
+    });
+  };
+
+  const validate = () => {
+    const e = {};
+    if (images.length < MIN_IMAGES) e.images = "Add at least 1 photo.";
+    if (!itemName.trim()) e.itemName = "Enter an item name.";
+    if (!price.trim() || isNaN(Number(price)) || Number(price) <= 0)
+      e.price = "Enter a valid price.";
+    if (!description.trim()) e.description = "Add a description.";
+    if (!size && !customSize.trim()) e.size = "Choose or enter a size.";
+    if (!sizeGuide) e.sizeGuide = "Upload a size guide.";
+    if (!style && !customStyle.trim()) e.style = "Choose or enter a style.";
+    if (!careInfo.trim()) e.careInfo = "Add care and info details.";
+
+    // if (!deliveryPrice.trim() || isNaN(Number(deliveryPrice)) || Number(deliveryPrice) < 0)
+      // e.deliveryPrice = "Enter a valid delivery price.";
+    // if (!deliveryInDays.trim() || isNaN(Number(deliveryInDays)) || Number(deliveryInDays) <= 0)
+    //  e.deliveryInDays = "Enter valid delivery days.";
+    setErrors(e);
+    return Object.keys(e).length === 0;
+  };
+
+  const handleSubmit = async (ev) => {
+    ev.preventDefault();
+    setSubmitError(null);
+
+    if (!validate()) {
+      setSubmitted(false);
+      return;
+    }
+
+  setSaving(true);
+
+    const { data: brand, error: brandError } = await supabaseBrowser
+    .from("brands")
+    .select("brand_uuid")
+    .eq("account_id", user.id)
+    .single();
+  try {
+    const photoUrls = await Promise.all(
+      images.map((img) => uploadFile(img.file, "photos"))
+    );
+
+    let sizeGuideUrl = null;
+    if (sizeGuide?.file) {
+      sizeGuideUrl = await uploadFile(sizeGuide.file, "size-guides");
+    }
+ 
+    const { error: insertError } = await supabaseBrowser.from("products").insert([
+      {
+        imageUrl: photoUrls[0] || null,
+        name: itemName.trim(),
+        currentPrice: price.toString(),
+        description: description.trim(),
+          // deliveryPrice: deliveryPrice.toString(),
+          // deliveryInDays: deliveryInDays.toString(),
+        size: size || customSize.trim(),
+        style: style === "Other" ? customStyle.trim() : style,
+        care_info: careInfo.trim(),
+        size_guide_url: sizeGuideUrl,
+      },
+    ]);
+ 
+    if (insertError) throw insertError;
+
+      setSubmitted(true);
+      } catch (err) {
+      console.error("Failed to publish listing:", err?.message, err?.details, err?.hint, err?.code);
+      setSubmitError(
+        "Uh oh.. Something went wrong while publishing. Please try again."
+      );
+      setSubmitted(false);
+    
+    } finally {
+      setSaving(false);
+    }
+  };
+
+return (
+    <div className="mpform-root">
+      <div className="mpform-header">
+        <h1 className="mpform-title">List a clothing item</h1>
+        <p className="mpform-subtitle">
+          Add photos and details so buyers know exactly what they're getting.
+        </p>
+      </div>
+
+      <form onSubmit={handleSubmit}>
+        {/* pictures */}
+        <div className="mpform-section">
+          <FieldLabel number="01" required>
+            Photos of the item
+          </FieldLabel>
+          <p className="mpform-helper">
+            {images.length} of {MAX_IMAGES} added &middot; at least 1 required
+          </p>
+
+          <div
+            onDragOver={(e) => {
+              e.preventDefault();
+              setDragActive(true);
+            }}
+            onDragLeave={() => setDragActive(false)}
+            onDrop={handleDrop}
+            onClick={() => fileInputRef.current?.click()}
+            className={`mpform-dropzone ${dragActive ? "active" : ""} ${
+              images.length >= MAX_IMAGES ? "full" : ""
+            }`}
+          >
+            <div className="mpform-dropzone-title">
+              Drop photos here or click to browse
+            </div>
+            <div className="mpform-dropzone-sub">
+              JPG or PNG, up to {MAX_IMAGES} photos
+            </div>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              multiple
+              disabled={images.length >= MAX_IMAGES}
+              onChange={(e) => {
+                addImages(e.target.files);
+                e.target.value = "";
+              }}
+              className="mpform-hidden-input"
+            />
+          </div>
+
+          {images.length > 0 && (
+            <div className="mpform-thumb-grid">
+              {images.map((img, idx) => (
+                <div className="mpform-thumb" key={img.id}>
+                  <img src={img.url} alt={`Item photo ${idx + 1}`} />
+                  <button
+                    type="button"
+                    onClick={() => removeImage(img.id)}
+                    aria-label={`Remove photo ${idx + 1}`}
+                    className="mpform-thumb-remove"
+                  >
+                    &times;
+                  </button>
+                  {idx === 0 && (
+                    <span className="mpform-thumb-cover">Cover</span>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+          {errors.images && <ErrorText>{errors.images}</ErrorText>}
+        </div>
+
+        <div className="mpform-section">
+          <FieldLabel number="02" required>
+            Item name
+          </FieldLabel>
+          <input
+            className="mpform-input"
+            placeholder="Wool blend overcoat"
+            value={itemName}
+            onChange={(e) => setItemName(e.target.value)}
+          />
+          {errors.itemName && <ErrorText>{errors.itemName}</ErrorText>}
+
+          <div className="mpform-spacer" />
+
+          <FieldLabel number="03" required>
+            Price
+          </FieldLabel>
+          <div className="mpform-price-wrap">
+            <span className="mpform-price-sign">$</span>
+            <input
+              className="mpform-input mpform-price-input"
+              placeholder="0.00"
+              inputMode="decimal"
+              value={price}
+              onChange={(e) => {
+                const v = e.target.value;
+                if (/^\d*\.?\d{0,2}$/.test(v)) setPrice(v);
+              }}
+            />
+          </div>
+          {errors.price && <ErrorText>{errors.price}</ErrorText>}
+        </div>
+
+        <div className="mpform-section">
+          <FieldLabel number="04" required>
+            Description
+          </FieldLabel>
+          <textarea
+            className="mpform-textarea tall"
+            placeholder="Describe the fit, fabric, condition, and anything a buyer should know."
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
+          {errors.description && <ErrorText>{errors.description}</ErrorText>}
+        </div>
+
+        <div className="mpform-section">
+          <FieldLabel number="05" required>
+            Size
+          </FieldLabel>
+          <div className="mpform-size-chips">
+            {SIZES.map((s) => (
+              <button
+                type="button"
+                key={s}
+                onClick={() => {
+                  setSize(s);
+                  setCustomSize("");
+                }}
+                className={`mpform-size-chip ${size === s ? "selected" : ""}`}
+              >
+                {s}
+              </button>
+            ))}
+          </div>
+
+          <input
+            className="mpform-input"
+            placeholder="Or type an exact size / measurement"
+            value={customSize}
+            onChange={(e) => {
+              setCustomSize(e.target.value);
+              if (e.target.value) setSize("");
+            }}
+          />
+          {errors.size && <ErrorText>{errors.size}</ErrorText>}
+
+          <div className="mpform-spacer" />
+
+          <FieldLabel number="06">Size guide</FieldLabel>
+          <div
+            onClick={() => guideInputRef.current?.click()}
+            className="mpform-guide-upload"
+          >
+            <div className="mpform-guide-name">
+              {sizeGuide ? sizeGuide.name : "Upload a size chart image or PDF"}
+            </div>
+            <span className="mpform-guide-action">
+              {sizeGuide ? "Replace" : "Browse"}
+            </span>
+            <input
+              ref={guideInputRef}
+              type="file"
+              accept="image/*,application/pdf"
+              onChange={(e) => handleSizeGuide(e.target.files)}
+              className="mpform-hidden-input"
+            />
+          </div>
+          {sizeGuide?.isImage && (
+            <img
+              src={sizeGuide.url}
+              alt="Size guide preview"
+              className="mpform-guide-preview"
+            />
+          )}
+          {errors.sizeGuide && <ErrorText>{errors.sizeGuide}</ErrorText>}
+
+        </div>
+
+        <div className="mpform-section">
+          <FieldLabel number="07" required>
+            Style
+          </FieldLabel>
+          <select
+            className="mpform-select"
+            value={style}
+            onChange={(e) => {
+              setStyle(e.target.value);
+              if (e.target.value !== "Other") setCustomStyle("");
+            }}
+          >
+            <option value="">Select a style</option>
+            {STYLES.map((s) => (
+              <option key={s} value={s}>
+                {s}
+              </option>
+            ))}
+          </select>
+          {style === "Other" && (
+            <input
+              className="mpform-input"
+              style={{ marginTop: 10 }}
+              placeholder="Describe the style"
+              value={customStyle}
+              onChange={(e) => setCustomStyle(e.target.value)}
+            />
+          )}
+          {errors.style && <ErrorText>{errors.style}</ErrorText>}
+        </div>
+
+        <div className="mpform-section">
+          <FieldLabel number="08" required>
+            Care and info
+          </FieldLabel>
+          <textarea
+            className="mpform-textarea short"
+            placeholder="Machine wash cold, tumble dry low, do not bleach..."
+            value={careInfo}
+            onChange={(e) => setCareInfo(e.target.value)}
+          />
+          {errors.careInfo && <ErrorText>{errors.careInfo}</ErrorText>}
+        </div>
+
+        {/* <div className="mpform-section">
+          <FieldLabel number="09" required>
+            Delivery Price
+          </FieldLabel>
+          <div className="mpform-price-wrap">
+            <span className="mpform-price-sign">$</span>
+            <input
+              className="mpform-input mpform-price-input"
+              placeholder="0.00"
+              inputMode="decimal"
+              value={deliveryPrice}
+              onChange={(e) => {
+                const v = e.target.value;
+                if (/^\d*\.?\d{0,2}$/.test(v)) setDeliveryPrice(v);
+              }}
+            />
+            </div>
+            {errors.deliveryPrice && <ErrorText>{errors.deliveryPrice}</ErrorText>}
+        </div>
+
+        <div className="mpform-section">
+          <FieldLabel number="10" required>
+            Delivery In Days
+          </FieldLabel>
+          <input
+            className="mpform-input"
+            placeholder="3"
+            type="number"
+            value={deliveryInDays}
+            onChange={(e) => setDeliveryInDays(e.target.value)}
+          />
+          {errors.deliveryInDays && <ErrorText>{errors.deliveryInDays}</ErrorText>}
+        </div>
+        */}
+
+        {submitError && (
+          <div className="mpform-error" style={{ marginBottom: 16 }}>
+            {submitError}
+          </div>
+        )}
+        <button type="submit" className="mpform-submit">
+          Publish listing
+        </button>
+
+        {submitted && (
+          <div className="mpform-success">
+            Listing ready — all fields look good.
+          </div>
+        )}
+      </form>
+    </div>
+  );
+}

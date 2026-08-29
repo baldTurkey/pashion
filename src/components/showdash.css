@@ -1,0 +1,173 @@
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:wght@500&family=Inter:wght@400;500;600&display=swap");
+
+.csdash-root {
+  max-width: var(--maxw, 1240px);
+  margin: 0 auto;
+  background: var(--fantasy);
+  padding: 56px 40px 100px;
+  font-family: var(--body);
+  color: var(--tobago);
+}
+
+.csdash-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+}
+
+.csdash-title {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(28px, 3.4vw, 40px);
+  letter-spacing: -0.01em;
+  margin: 0 0 6px;
+  color: var(--tobago);
+  width: 100%;
+}
+
+.csdash-subtitle {
+  font-size: 15px;
+  color: var(--tobago-70);
+  margin: 0;
+  line-height: 1.6;
+  margin-top: 10px;
+}
+
+.csdash-action-row {
+  display: flex;
+  gap: 12px;
+}
+
+.csdash-newbtn {
+  font-family: var(--body);
+  font-weight: 600;
+  font-size: 14px;
+  padding: 12px 22px;
+  border: 1px solid var(--tobago);
+  border-radius: 2px;
+  background: var(--tobago);
+  color: var(--fantasy);
+  transition: background .18s ease, transform .18s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;  
+  border-radius: 10px;
+}
+
+.csdash-newbtn:hover {
+  background: var(--rose);
+  color: var(--tobago)
+}
+
+.csdash-empty {
+  background: var(--card);
+  border-radius: 10px;
+  border-top: 1px solid var(--tobago-15);
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--tobago-70);
+  font-size: 15px;
+}
+
+.csdash-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 22px;
+}
+
+.csdash-card {
+  display: block;
+  background: var(--fantasy);
+  border: 1px solid var(--tobago-15);
+  border-radius: 2px;
+  overflow: hidden;
+  text-decoration: none;
+  color: var(--tobago);
+  transition: box-shadow 0.22s ease, box-shadow 0.22s ease;
+}
+
+.csdash-card:hover {
+  box-shadow: 0 6px 30px rgba(66,43,35,0.14);
+  transform: translateY(-4px);
+}
+
+.csdash-card-image-wrap {
+  aspect-ratio: 3/4;
+  background: var(--vanilla);
+  overflow: hidden;
+}
+
+.csdash-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.csdash-card-image-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--tobago-40);
+}
+
+.csdash-card-body {
+  padding: 14px 16px 18px;
+  background-color: var(--tobago-08);
+}
+
+.csdash-card-name {
+  font-family: var(--display);
+  font-size: 16.5px;
+  font-weight: 600;
+  color: var(--tobago);
+  margin: 0 0 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.csdash-card-meta {
+  font-size: 16.5px;
+  color: var(--tobago);
+  font-weight: 600;
+  font-family: var(--display);
+  margin: 0 0 4px;
+}
+
+.csdash-card-subtext {
+  font-size: 13.5px;
+  color: var(--denim-dark);
+  font-weight: 500;
+}
+
+
+.csdash-card-quantity {
+  font-size: 12.5px;
+  font-family: var(--mono);
+  color: var(--tobago-70);
+  margin-top: 4px;
+}
+
+.csdash-back {
+  display: inline-block;
+  margin-bottom: 20px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--tobago-70);
+  text-decoration: none;
+  transform: color 0.18s ease;
+}
+
+.csdash-back:hover {
+  color: var(--tobago);
+}

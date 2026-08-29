@@ -1,5 +1,7 @@
 import React from 'react';
 import { createSupabaseServer } from '@/lib/supabase/server';
+import Mpform from '@/components/mpform';
+import Link from 'next/link';
 
 export default async function Home() {
   
@@ -25,6 +27,18 @@ export default async function Home() {
           )}
         </div>
       </div>
+
+      {session && (
+        <Link
+          href="/dashboard"
+          className="text-emerald-400 underline font-semibold hover:text-emerald-300"
+        >
+          View Listings
+        </Link>
+      )
+      }
+
+      <Mpform />
     </main>
   );
 }
