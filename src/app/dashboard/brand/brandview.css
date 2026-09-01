@@ -116,6 +116,7 @@
   border-radius: 10px;
   border: 1px solid var(--tobago-40);
   padding: 22px 24px;
+  overflow: hidden;
 }
 
 .bv-card-header {
@@ -123,6 +124,8 @@
   align-items: center;
   justify-content: space-between;
   margin-bottom: 14px;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .bv-card-title {
@@ -139,6 +142,7 @@
   color: var(--tobago);
   text-decoration: none;
   font-family: var(--body);
+  white-space: nowrap;
 }
 
 .bv-card-link:hover {
@@ -223,4 +227,147 @@
   color: var(--tobago);
   font-size: 13.5px;
   font-family: var(--body);
+}
+
+.bv-menu-toggle {
+  display: none;
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 1001;
+  background: var(--tobago);
+  color: var(--fantasy);
+  border: none;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 20px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.bv-menu-toggle:hover {
+  background: var(--rose);
+}
+
+/* mobile responsive or en google espanol "respuesta móvil" */
+
+@media (max-width: 820px) {
+  .bv-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 1000;
+    width: 240px;
+    transform: translateX(-100%);
+    background: var(--fantasy);
+    box-shadow: 2px 0 20px rgba(0,0,0,0.1);
+    overflow-y: auto;
+    padding-top: 60px;
+  }
+
+  .bv-sidebar.open {
+    transform: translateX(0);
+  }
+
+  .bv-menu-toggle {
+    display: block;
+  }
+
+  .bv-main {
+    padding: 60px 16px 40px;
+    max-width: 100%;
+  }
+
+  .bv-page-title {
+    font-size: 28px;
+    margin-bottom: 16px;
+  }
+
+  .bv-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .bv-card {
+    padding: 16px 18px;
+  }
+
+  .bv-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .bv-action-row {
+    flex-direction: column;
+  }
+
+  .bv-action-row .bv-btn {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* Mobile phones */
+@media (max-width: 480px) {
+  .bv-main {
+    padding: 56px 12px 32px;
+  }
+
+  .bv-page-title {
+    font-size: 24px;
+  }
+
+  .bv-card {
+    padding: 14px 14px;
+    border-radius: 8px;
+  }
+
+  .bv-card-title {
+    font-size: 13px;
+  }
+
+  .bv-table th {
+    font-size: 10px;
+  }
+
+  .bv-table td {
+    font-size: 12.5px;
+    padding: 10px 0;
+  }
+
+  .bv-btn {
+    font-size: 12.5px;
+    padding: 10px 14px;
+  }
+
+  .bv-menu-toggle {
+    top: 8px;
+    left: 8px;
+    padding: 8px 12px;
+    font-size: 18px;
+  }
+
+  .bv-sidebar {
+    width: 200px;
+    padding-top: 50px;
+  }
+
+  .bv-brand-row {
+    margin-bottom: 16px;
+  }
+
+  .bv-brand-name {
+    font-size: 15px;
+  }
+
+  .bv-nav-link {
+    font-size: 13px;
+    padding: 10px 12px;
+  }
+
+  .bv-placeholder-box {
+    padding: 30px 16px;
+    font-size: 13px;
+  }
 }

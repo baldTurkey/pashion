@@ -345,3 +345,125 @@
     text-align: center;
     color: var(--rose);
 }
+
+/* mobile repsonsive <3 */ 
+@media (max-width: 820px) {
+    .mpform-root {
+      padding: 40px 16px 80px;
+    }
+  
+    .mpform-title {
+      font-size: clamp(26px, 4vw, 34px);
+    }
+  
+    .mpform-section {
+      padding: 24px 0;
+    }
+  
+    .mpform-size-chips {
+      gap: 8px;
+    }
+  
+    .mpform-size-chip {
+      font-size: 12px;
+      padding: 7px 12px;
+    }
+  
+    .mpform-thumb-grid {
+      grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+      gap: 10px;
+    }
+  
+    .mpform-dropzone {
+      padding: 30px 16px;
+    }
+  
+    .mpform-dropzone-title {
+      font-size: 14px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .mpform-root {
+      padding: 24px 12px 60px;
+    }
+  
+    .mpform-title {
+      font-size: 22px;
+    }
+  
+    .mpform-subtitle {
+      font-size: 13px;
+    }
+  
+    .mpform-section {
+      padding: 18px 0;
+    }
+  
+    .mpform-field-label {
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+  
+    .mpform-field-number {
+      font-size: 10px;
+      width: 18px;
+    }
+  
+    .mpform-field-label label {
+      font-size: 10px;
+    }
+  
+    .mpform-input,
+    .mpform-select,
+    .mpform-textarea {
+      font-size: 14px;
+      padding: 10px 4px;
+    }
+  
+    .mpform-size-chips {
+      gap: 6px;
+    }
+  
+    .mpform-size-chip {
+      font-size: 11px;
+      padding: 6px 10px;
+    }
+  
+    .mpform-thumb-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+  
+    .mpform-dropzone {
+      padding: 24px 12px;
+    }
+  
+    .mpform-dropzone-title {
+      font-size: 13px;
+    }
+  
+    .mpform-dropzone-sub {
+      font-size: 10px;
+    }
+  
+    .mpform-textarea.tall {
+      min-height: 100px;
+    }
+  
+    .mpform-textarea.short {
+      min-height: 70px;
+    }
+  
+    .mpform-submit {
+      font-size: 14px;
+      padding: 14px 20px;
+    }
+  
+    .mpform-guide-upload {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 12px 14px;
+    }
+}

@@ -171,3 +171,146 @@
 .csdash-back:hover {
   color: var(--tobago);
 }
+
+/* Mobile responsive :) */
+@media (max-width: 820px) {
+  .csdash-root {
+    padding: 32px 16px 80px;
+  }
+
+  .csdash-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .csdash-title {
+    font-size: clamp(24px, 4vw, 32px);
+    width: 100%;
+  }
+
+  .csdash-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 16px;
+  }
+
+  .csdash-action-row {
+    width: 100%;
+  }
+
+  .csdash-newbtn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .csdash-newbtn a {
+    width: 100%;
+    text-align: center;
+  }
+
+  .sddash-root {
+    padding: 32px 16px 80px;
+  }
+
+  .sddetail-topbar-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .sddetail-topbar-actions .sddetail-edit-btn,
+  .sddetail-topbar-actions .sddash-remove-btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  .sddetail-row {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .sddetail-body {
+    padding: 20px 18px;
+  }
+
+  .sddetail-name {
+    font-size: clamp(24px, 4vw, 30px);
+  }
+
+  .sddetail-gallery {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .csdash-root {
+    padding: 20px 12px 60px;
+  }
+
+  .csdash-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .csdash-card-body {
+    padding: 10px 12px 14px;
+  }
+
+  .csdash-card-name {
+    font-size: 14px;
+  }
+
+  .csdash-card-meta {
+    font-size: 13px;
+  }
+
+  .csdash-card-subtext {
+    font-size: 11px;
+  }
+
+  .csdash-card-quantity {
+    font-size: 11px;
+  }
+
+  .sddash-root {
+    padding: 20px 12px 60px;
+  }
+
+  .sddetail-body {
+    padding: 16px 14px;
+  }
+
+  .sddetail-name {
+    font-size: 22px;
+  }
+
+  .sddetail-text {
+    font-size: 14px;
+  }
+
+  .sddetail-gallery {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .sddetail-photo {
+    aspect-ratio: 1/1;
+  }
+
+  .sdconfirm-box {
+    padding: 20px;
+    margin: 16px;
+  }
+
+  .sdconfirm-title {
+    font-size: 20px;
+  }
+
+  .sdconfirm-actions {
+    flex-direction: column;
+  }
+
+  .sdconfirm-btn {
+    width: 100%;
+    text-align: center;
+  }
+}

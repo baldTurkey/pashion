@@ -401,3 +401,128 @@
     opacity: 0.55;
     cursor: not-allowed;
 }
+
+/* always on that phone */
+@media (max-width: 820px) {
+    .mpdash-root {
+        padding: 32px 16px 80px;
+    }
+  
+    .mpdash-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+    }
+  
+    .mpdash-title {
+      font-size: clamp(24px, 4vw, 32px);
+      width: 100%;
+    }
+  
+    .mpdash-grid {
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 16px;
+    }
+  
+    .mpdash-action-row {
+      width: 100%;
+    }
+  
+    .mpdash-action-row .bv-btn,
+    .mpdash-action-row .bv-btn-primary {
+      width: 100%;
+      justify-content: center;
+    }
+  
+    .mpdetail-topbar {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+    }
+  
+    .mpdetail-topbar-actions {
+      width: 100%;
+      flex-wrap: wrap;
+    }
+  
+    .mpdetail-topbar-actions .mpdash-edit-btn,
+    .mpdetail-topbar-actions .mpdash-remove-btn {
+      flex: 1;
+      min-width: 80px;
+      text-align: center;
+    }
+  
+    .mpdetail-row {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+  
+    .mpdetail-body {
+      padding-top: 24px;
+    }
+  
+    .mpdetail-name {
+      font-size: clamp(24px, 4vw, 30px);
+    }
+  
+    .mpconfirm-box {
+      margin: 16px;
+      padding: 24px;
+    }
+  
+    .mpconfirm-actions {
+      flex-direction: column;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .mpdash-root {
+      padding: 20px 12px 60px;
+    }
+  
+    .mpdash-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+  
+    .mpdash-card-body {
+      padding: 10px 12px 14px;
+    }
+  
+    .mpdash-card-name {
+      font-size: 14px;
+    }
+  
+    .mpdash-card-price {
+      font-size: 11px;
+    }
+  
+    .mpdash-edit-btn,
+    .mpdash-remove-btn {
+      font-size: 10px;
+      padding: 6px 8px;
+    }
+  
+    .mpdetail-topbar-actions {
+      flex-direction: column;
+      width: 100%;
+    }
+  
+    .mpdetail-topbar-actions .mpdash-edit-btn,
+    .mpdetail-topbar-actions .mpdash-remove-btn {
+      width: 100%;
+      text-align: center;
+    }
+  
+    .mpdetail-photo {
+      max-height: 300px;
+    }
+  
+    .mpconfirm-box {
+      padding: 20px;
+    }
+  
+    .mpconfirm-title {
+      font-size: 18px;
+    }
+}
