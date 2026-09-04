@@ -1,7 +1,8 @@
 import ShowDetail from "@/components/showdashdetail";
 
-export default function ShowDetailPage({ params }: { params: { id: string } }) {
+export default async function ShowDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   return (
-      <ShowDetail id={params.id} />
+      <ShowDetail id={id} />
   );
 }

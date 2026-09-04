@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { createSupabaseServer } from "@/lib/supabase/server";
+import { AddToCartButton } from "@/components/shop/add-to-cart-button";
 
 type Product = {
   id: string;
@@ -235,9 +236,12 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
           </div>
 
           <div className="mt-4 space-y-2">
-            <button className="w-full rounded-full bg-yellow-400 py-2 font-semibold text-slate-900 hover:bg-yellow-500">
-              Add to cart
-            </button>
+            {product.product_id && (
+              <AddToCartButton
+                productId={product.product_id}
+                className="w-full rounded-full bg-yellow-400 py-2 font-semibold text-slate-900 hover:bg-yellow-500 disabled:opacity-60"
+              />
+            )}
             <button className="w-full rounded-full bg-orange-400 py-2 font-semibold text-white hover:bg-orange-500">
               Buy Now
             </button>

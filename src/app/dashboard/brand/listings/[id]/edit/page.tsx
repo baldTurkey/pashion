@@ -5,14 +5,15 @@ import EditListingForm from "./editlisting.jsx";
 export default async function EditListingPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const { id } = await params;
   const supabase = await createSupabaseServer();
 
   const { data: listing, error } = await supabase
     .from("products")
     .select("*")
-    .eq("id", params.id)
+    .eq("id", id)
     .single();
 
   if (error || !listing) {

@@ -3,19 +3,21 @@
 @tailwind utilities;
 
 :root {
-  --fantasy:#F7F3ED;  
-  --rose:#DBA1A2;  
-  --vanilla:#EFD8D6;  
-  --silver:#C2C6B9;  
-  --tobago:#422B23;  
-  --tobago-70: rgba(66,43,35,0.7); 
-  --tobago-40: rgba(66,43,35,0.4);  
-  --tobago-15: rgba(66,43,35,0.15);  
-  --tobago-08: rgba(66,43,35,0.08);  
-  --fantasy-70: rgba(247,243,237,0.7);   
-  --display: 'Fraunces', serif;  
-  --body: 'Work Sans', sans-serif;  
-  --mono: 'Space Mono', monospace;  
+  color-scheme: light;
+
+  --fantasy:#F7F3ED;
+  --rose:#DBA1A2;
+  --vanilla:#EFD8D6;
+  --silver:#C2C6B9;
+  --tobago:#422B23;
+  --tobago-70: rgba(66,43,35,0.7);
+  --tobago-40: rgba(66,43,35,0.4);
+  --tobago-15: rgba(66,43,35,0.15);
+  --tobago-08: rgba(66,43,35,0.08);
+  --fantasy-70: rgba(247,243,237,0.7);
+  --display: 'Fraunces', serif;
+  --body: 'Work Sans', sans-serif;
+  --mono: 'Space Mono', monospace;
 
   --danger: rgb(255, 100, 100);
 }
@@ -26,8 +28,8 @@ html, body {
   height: 100%;
   margin: 0;
   font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  background-color: #0f172a;
-  color: #f3f2f2;
+  background-color: #F5F1E8;
+  color: #22261F;
   display: flex;
   flex-direction: column;
   justify-content: center;

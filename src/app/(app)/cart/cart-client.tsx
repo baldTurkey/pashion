@@ -7,11 +7,7 @@ import { OrderSummary } from "@/components/cart/order-summary";
 import { EmptyCart } from "@/components/cart/empty-cart";
 import type { CartItem } from "@/types/cart";
 
-// Same UI/state logic as the old mock-data cart page — the only difference
-// is each mutation also calls the cart API so it actually persists. Updates
-// local state immediately (feels instant) then fires the request; we don't
-// roll back on failure yet, matching how thin the rest of this app's error
-// handling is right now.
+
 export function CartClient({ initialItems }: { initialItems: CartItem[] }) {
   const [items, setItems] = useState<CartItem[]>(initialItems);
 

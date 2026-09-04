@@ -1,6 +1,6 @@
 -- orders/order_items: written only by the service role (checkout route
 -- creates the pending order; the Stripe webhook flips it to paid and fills
--- in transfer ids)same "service role bypasses RLS for privileged writes"
+-- in transfer ids), same "service role bypasses RLS for privileged writes"
 -- pattern used by the signup routes. Regular users only get read access to
 -- their own rows.
 

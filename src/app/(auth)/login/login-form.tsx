@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
 import { supabaseBrowser } from "@/lib/supabase/client";
@@ -24,7 +24,12 @@ const DASHBOARD_BY_ROLE: Record<string, string> = {
 
 export default function LoginPage() {
   const router = useRouter();
-  const [error, setError] = useState("");
+  const searchParams = useSearchParams();
+  const [error, setError] = useState(() =>
+    searchParams.get("error") === "confirmation-failed"
+      ? "That link expired or was already used. Please try again."
+      : ""
+  );
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const isSubmittingRef = useRef(false);
