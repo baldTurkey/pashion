@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { supabaseBrowser } from "@/lib/supabase/client";
+import { useFakeProgress } from "@/lib/hooks/use-fake-progress";
+import { ProgressBar } from "@/components/ui/progress-bar";
 
 const MIN_IMAGES = 1;
 const MAX_IMAGES = 8;
@@ -292,6 +294,7 @@ function AddInventoryFields({
   const [dragActive, setDragActive] = useState(false);
   const [saving, setSaving] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const uploadProgress = useFakeProgress();
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const guideInputRef = useRef<HTMLInputElement | null>(null);
@@ -396,6 +399,7 @@ function AddInventoryFields({
     }
 
     setSaving(true);
+    uploadProgress.start();
 
     try {
       const photoUrls = await Promise.all(
@@ -449,6 +453,8 @@ function AddInventoryFields({
       setSubmitError(getFriendlySubmitError("Could not save inventory.", error));
       setSubmitted(false);
     } finally {
+      uploadProgress.finish();
+      setTimeout(() => uploadProgress.reset(), 400);
       setSaving(false);
     }
   };
@@ -670,6 +676,13 @@ function AddInventoryFields({
         </div>
       )}
 
+      {saving && (
+        <div className="space-y-1.5">
+          <ProgressBar percent={uploadProgress.progress} />
+          <p className="text-xs text-brand-ink/50">Uploading photos…</p>
+        </div>
+      )}
+
       <button type="submit" className="mpform-submit" disabled={saving}>
         {saving ? "Saving..." : "Add to inventory"}
       </button>
@@ -704,6 +717,7 @@ function CreateListingFields({
   const [dragActive, setDragActive] = useState(false);
   const [saving, setSaving] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const uploadProgress = useFakeProgress();
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const guideInputRef = useRef<HTMLInputElement | null>(null);
@@ -847,6 +861,7 @@ function CreateListingFields({
     }
 
     setSaving(true);
+    uploadProgress.start();
 
     try {
       const photoUrls = await Promise.all(
@@ -899,6 +914,8 @@ function CreateListingFields({
       setSubmitError(getFriendlySubmitError("Could not create listing.", error));
       setSubmitted(false);
     } finally {
+      uploadProgress.finish();
+      setTimeout(() => uploadProgress.reset(), 400);
       setSaving(false);
     }
   };
@@ -1152,6 +1169,13 @@ function CreateListingFields({
       {submitError && (
         <div className="mpform-error" style={{ marginBottom: 16 }}>
           {submitError}
+        </div>
+      )}
+
+      {saving && (
+        <div className="space-y-1.5">
+          <ProgressBar percent={uploadProgress.progress} />
+          <p className="text-xs text-brand-ink/50">Uploading photos…</p>
         </div>
       )}
 

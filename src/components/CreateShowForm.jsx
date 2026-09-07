@@ -3,6 +3,8 @@
 import React, { useState, useRef } from "react";
 import "./CreateShowForm.css";
 import { supabaseBrowser } from "@/lib/supabase/client";
+import { useFakeProgress } from "@/lib/hooks/use-fake-progress";
+import { ProgressBar } from "@/components/ui/progress-bar";
 
 
 const MIN_IMAGES = 1;
@@ -71,6 +73,7 @@ export default function CreateShowForm() {
   const [dragActive, setDragActive] = useState(false);
   const [saving, setSaving] = useState(false);
   const [submitError, setSubmitError] = useState(null);
+  const uploadProgress = useFakeProgress();
 
   const fileInputRef = useRef(null);
 
@@ -162,6 +165,7 @@ export default function CreateShowForm() {
     }
 
     setSaving(true);
+    uploadProgress.start();
     try {
       const photoUrls = await Promise.all(
         images.map((img) => uploadFile(img.file, "photos"))
@@ -199,6 +203,8 @@ export default function CreateShowForm() {
       );
       setSubmitted(false);
     } finally {
+      uploadProgress.finish();
+      setTimeout(() => uploadProgress.reset(), 400);
       setSaving(false);
     }
   };
@@ -434,6 +440,11 @@ export default function CreateShowForm() {
         {submitError && (
           <div className="csform-error" style={{ marginBottom: 16 }}>
             {submitError}
+          </div>
+        )}
+        {saving && (
+          <div style={{ marginBottom: 16 }}>
+            <ProgressBar percent={uploadProgress.progress} />
           </div>
         )}
         <button type="submit" className="csform-submit" disabled={saving}>
