@@ -28,7 +28,7 @@ export async function NavBar() {
 
   return (
     <header className="sticky top-0 z-10 flex justify-center px-2 py-4 sm:px-4">
-      <nav className="flex w-full max-w-4xl items-center justify-between gap-0 rounded-full bg-white/90 px-3 py-3 shadow-sm backdrop-blur sm:gap-4 sm:px-6">
+      <nav className="flex w-full max-w-4xl items-center justify-between gap-0 rounded-full bg-color-fantasy/50 px-3 py-3 shadow-sm backdrop-blur sm:gap-4 sm:px-6">
         <div className="flex items-center gap-2 sm:gap-6">
           {NAV_LINKS.map((link) => (
             <Link

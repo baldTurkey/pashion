@@ -19,8 +19,8 @@ export function DashboardNavBar() {
 
   return (
     <header className="sticky top-0 z-10 flex justify-center px-4 py-4">
-      <nav className="flex w-full max-w-4xl items-center justify-between gap-4 rounded-full bg-white/90 px-6 py-3 shadow-sm backdrop-blur">
-        <Link href="/" className="flex items-center gap-2 font-serif text-lg font-semibold text-brand-olive-dark">
+      <nav className="flex w-full max-w-4xl items-center justify-between gap-4 rounded-full bg-rose-200 px-6 py-3 shadow-sm backdrop-blur">
+        <Link href="/" className="flex items-center gap-2 font-serif text-lg font-semibold text-color-tabago">
           <Shirt size={20} />
           Pashion
         </Link>
