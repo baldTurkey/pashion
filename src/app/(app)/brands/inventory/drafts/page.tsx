@@ -34,7 +34,7 @@ export default async function InventoryDraftsPage() {
             Apply the latest Supabase migration to activate ready-to-sell drafts.
           </p>
           <Link
-            href="/brands/inventory"
+            href="/dashboard/brand/inventory"
             className="mt-6 inline-flex rounded-full bg-brand-accent px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-olive-dark"
           >
             Back to Inventory
@@ -71,7 +71,7 @@ export default async function InventoryDraftsPage() {
           <p className="mt-2 text-sm text-brand-ink/70">Approve ready inventory before it appears in your live listings.</p>
         </div>
         <Link
-          href="/brands/inventory"
+          href="/dashboard/brand/inventory"
           className="inline-flex items-center rounded-full border border-brand-ink/15 bg-white px-4 py-2 text-sm font-semibold text-brand-ink transition hover:bg-brand-blush"
         >
           Back to Inventory

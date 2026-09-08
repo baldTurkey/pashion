@@ -88,7 +88,16 @@
   flex: 1;
   padding: 36px 20px 60px;
   min-width: 0;
-  max-width: 900px;
+  max-width: 1400px;
+  width: 100%;
+}
+
+.bv-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 24px;
 }
 
 .bv-page-title {
@@ -96,7 +105,7 @@
   font-size: 34px;
   font-weight: 500;
   color: var(--tobago);
-  margin: 0 0 24px;
+  margin: 0;
 }
 
 .bv-grid {
@@ -106,6 +115,11 @@
 }
 
 @media (max-width: 720px) {
+  .bv-page-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
   .bv-grid {
     grid-template-columns: 1fr;
   }
@@ -142,6 +156,15 @@
 }
 
 .bv-card-link:hover {
+  text-decoration: underline;
+}
+
+.bv-row-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.bv-row-link:hover {
   text-decoration: underline;
 }
 

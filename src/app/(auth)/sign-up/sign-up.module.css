@@ -248,6 +248,29 @@
   box-shadow: 0 2px 8px rgba(169, 100, 122, 0.2);
 }
 
+.roleFlower {
+  transform-origin: center;
+}
+
+.roleCard:hover .roleFlower {
+  animation: roleFlowerSpin 0.8s ease-in-out;
+}
+
+@keyframes roleFlowerSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .roleCard:hover .roleFlower {
+    animation: none;
+  }
+}
+
 .roleLabel {
   display: block;
   font-weight: 600;

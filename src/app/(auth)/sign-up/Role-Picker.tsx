@@ -2,7 +2,10 @@
 
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Building2, Heart, Truck } from "lucide-react";
+import Image from "next/image";
+import flower from "../../../components/ui/flower.png";
+import starheart from "../../../components/ui/starheart.png";
+import account from "../../../components/ui/account.png";
 import styles from "./sign-up.module.css";
 
 const ROLE_OPTIONS = [
@@ -10,19 +13,19 @@ const ROLE_OPTIONS = [
     href: "/sign-up/brand",
     label: "Brand",
     description: "Manage your brand's presence and engage with the community",
-    icon: Building2,
+    image: flower,
   },
   {
     href: "/sign-up/designer",
     label: "Designer",
     description: "Create and manage your design projects",
-    icon: Building2,
+    image: flower,
   },
   {
     href: "/sign-up/member",
     label: "Member",
     description: "Look at and purchase all the cool new stuff",
-    icon: Truck,
+    image: flower,
   },
 ];
 
@@ -36,7 +39,6 @@ export default function RolePickerPage() {
 
       <div className={styles.roleGrid}>
         {ROLE_OPTIONS.map((role) => {
-          const Icon = role.icon;
           return (
             <button
               key={role.href}
@@ -45,7 +47,7 @@ export default function RolePickerPage() {
               onClick={() => router.push(role.href)}
             >
               <div className={styles.roleIcon}>
-                <Icon size={22} />
+                <Image className={styles.roleFlower} src={role.image} alt="" width={56} height={56} />
               </div>
               <div>
                 <span className={styles.roleLabel}>{role.label}</span>

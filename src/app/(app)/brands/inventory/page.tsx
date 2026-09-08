@@ -369,28 +369,34 @@ export default function InventoryPage() {
 
 				<div className="flex flex-wrap gap-2">
 					<Link
-						href="/brands/inventory/orders"
+						href="/dashboard/brand/inventory/orders"
 						className="inline-flex items-center rounded-full border border-brand-ink/15 bg-white px-4 py-2 text-sm font-semibold text-brand-ink transition hover:bg-brand-blush"
 					>
 						Orders
 					</Link>
 					<Link
-						href="/brands/inventory/create-listing"
+						href="/dashboard/brand/inventory/create-listing"
 						className="inline-flex items-center rounded-full bg-brand-accent px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-olive-dark"
 					>
 						Create Listing
 					</Link>
 					<Link
-						href="/brands/inventory/drafts"
+						href="/dashboard/brand/inventory/drafts"
 						className="inline-flex items-center rounded-full border border-brand-ink/15 bg-white px-4 py-2 text-sm font-semibold text-brand-ink transition hover:bg-brand-blush"
 					>
 						Drafts
 					</Link>
 					<Link
-						href="/brands/inventory/my-listings"
+						href="/dashboard/brand/listings"
 						className="inline-flex items-center rounded-full border border-brand-ink/15 bg-brand-cream px-4 py-2 text-sm font-semibold text-brand-ink transition hover:bg-brand-blush"
 					>
 						View My Listings
+					</Link>
+					<Link
+						href="/dashboard/brand"
+						className="inline-flex items-center rounded-full border border-brand-ink/15 bg-white px-4 py-2 text-sm font-semibold text-brand-ink transition hover:bg-brand-blush"
+					>
+						Back to Brand Dashboard
 					</Link>
 				</div>
 			</div>
@@ -427,7 +433,7 @@ export default function InventoryPage() {
 							</button>
 						)}
 						<Link
-							href="/brands/inventory/add"
+							href="/dashboard/brand/inventory/add"
 							className="inline-flex items-center gap-2 rounded-full bg-brand-olive px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-olive-dark"
 						>
 							<span className="text-base leading-none">+</span>

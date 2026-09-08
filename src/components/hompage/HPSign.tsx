@@ -43,7 +43,7 @@ export default function Signup() {
           {!submitted ? (
             <div>
               <div className="form-top">
-                <h3>Create your account</h3>
+                <h3>Reach Out!</h3>
                 <span>01 / 01</span>
               </div>
               <form onSubmit={handleSubmit}>
@@ -80,7 +80,7 @@ export default function Signup() {
                     <textarea id="message" name="message" rows={3}></textarea>
                   </div>
                 </div>
-                <button type="submit" className="btn btn-solid">Sign up</button>
+                <button type="submit" className="btn btn-solid">Reach Out</button>
                 <p className="form-note">
                   By signing up you agree to be our testers, mwah hahahah.
                 </p>

@@ -58,7 +58,7 @@ export default async function InventoryMyListingsPage() {
         )}
 
         <Link
-          href="/brands/inventory"
+          href="/dashboard/brand/inventory"
           className="mt-6 inline-flex rounded-full bg-brand-accent px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-olive-dark"
         >
           Back to Inventory

@@ -74,7 +74,7 @@ export default async function BrandDashboardPage() {
             </div>
           </div>
           <Link
-            href="/brands/inventory"
+            href="/dashboard/brand"
             className="inline-flex items-center justify-center rounded-full bg-brand-olive px-6 py-3 text-sm font-semibold text-white shadow-[0_10px_24px_rgba(63,75,59,0.28)] transition hover:-translate-y-0.5 hover:bg-brand-olive-dark"
           >
             Open Inventory
