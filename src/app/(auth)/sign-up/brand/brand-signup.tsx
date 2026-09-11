@@ -129,6 +129,20 @@ export default function BrandSignUpPage() {
           return;
         }
 
+        // admin.createUser() only creates the auth user server-side — it doesn't
+        // give the browser a session, so sign in here or the dashboard's auth
+        // check will bounce us straight back to sign-up.
+        const { error: signInError } = await supabaseBrowser.auth.signInWithPassword({
+          email: data.email,
+          password: data.password,
+        });
+
+        if (signInError) {
+          setError(signInError.message);
+          setLoading(false);
+          return;
+        }
+
         // Dev bypass creates the account fully confirmed already (no email
         // step), so there's no reason to show the "check your email" page —
         // go straight to the dashboard.

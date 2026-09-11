@@ -90,6 +90,19 @@ export default function CustomerSignUpPage() {
           return;
         }
 
+        // admin.createUser() only creates the auth user server-side — it doesn't
+        // give the browser a session, so sign in here to log the customer in.
+        const { error: signInError } = await supabaseBrowser.auth.signInWithPassword({
+          email: data.email,
+          password: data.password,
+        });
+
+        if (signInError) {
+          setError(signInError.message);
+          setLoading(false);
+          return;
+        }
+
         router.push("/");
         return;
       }
