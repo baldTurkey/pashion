@@ -1,31 +1,35 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { createSupabaseServer } from "@/lib/supabase/server";
+import { getBrandByAccountId } from "@/lib/brands/queries";
 import "./mpdash.css";
 
 export default async function Mpdash() {
   const supabase = await createSupabaseServer();
 
-  //testing bc of login issue
-  // const {
-    // data: { session },
-  // } = await supabase.auth.getSession();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  // if (!session) {
-   // redirect("/login");
-  // }
+  if (!user) {
+    redirect("/sign-up/brand");
+  }
+
+  const brand = await getBrandByAccountId(supabase, user.id);
+
+  if (!brand) {
+    redirect("/sign-up/brand");
+  }
 
   const { data: listings, error } = await supabase
     .from("products")
     .select("id, name, currentPrice, imageUrl, created_at")
-    // .eq("user_id", session.user.id)
+    .eq("brand_id", brand.brand_uuid)
     .order("created_at", { ascending: false });
 
   if (error) {
     console.error("Failed to load listings:", error.message);
   }
-
-console.log("DEBUG listings:", listings);
-console.log("DEBUG error:", JSON.stringify(error, null, 2));
 
   return (
     <div className="mpdash-root">

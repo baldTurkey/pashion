@@ -876,6 +876,8 @@ function CreateListingFields({
         sizeGuideUrl = sizeGuide.url;
       }
 
+      const stockTotal = sumSupplyQuantities(supplyQuantities);
+
       const { error: insertError } = await supabaseBrowser.from("products").insert([
         {
           imageUrl: photoUrls[0] || null,
@@ -887,6 +889,7 @@ function CreateListingFields({
           size_guide_url: sizeGuideUrl,
           type: type.trim() || null,
           supply: buildSupplyArray(supplyQuantities),
+          stock: stockTotal,
           brand_id: brandId,
           inventory_id: selectedInventory?.id ?? null,
         },

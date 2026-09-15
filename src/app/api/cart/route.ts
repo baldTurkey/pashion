@@ -21,6 +21,22 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Missing productId" }, { status: 400 });
     }
 
+    // Stock is nullable/untracked for older listings — only block adding to
+    // cart for products that actually declare a tracked quantity.
+    const { data: product, error: productError } = await supabase
+      .from("products")
+      .select("stock")
+      .eq("product_id", productId)
+      .maybeSingle();
+
+    if (productError) {
+      return NextResponse.json({ error: productError.message }, { status: 500 });
+    }
+
+    if (typeof product?.stock === "number" && product.stock < (quantity ?? 1)) {
+      return NextResponse.json({ error: "Not enough stock available" }, { status: 409 });
+    }
+
     await addCartItem(supabase, user.id, productId, quantity ?? 1);
 
     return NextResponse.json({ success: true });

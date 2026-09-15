@@ -27,11 +27,31 @@ export async function POST(request: Request) {
     let stripeAccountId = brand.stripe_account_id;
 
     if (!stripeAccountId) {
-      const account = await getStripe().accounts.create({
-        type: "express",
-        email: user.email,
-        business_type: "individual",
-        business_profile: { name: brand.company_name },
+      // Accounts v2 API (v1 accounts.create is deprecated for new Connect integrations).
+      const account = await getStripe().v2.core.accounts.create({
+        contact_email: user.email,
+        display_name: brand.company_name,
+        dashboard: "express",
+        // Express dashboard requires the platform (not Stripe) to collect fees/cover losses.
+        defaults: {
+          responsibilities: { fees_collector: "application", losses_collector: "application" },
+        },
+        // No country field is collected from brands yet; Stripe onboarding lets them confirm/correct it.
+        identity: { country: "US", entity_type: "individual" },
+        configuration: {
+          // card_payments also grants payouts (stripe_balance.payouts) — that capability isn't requestable directly.
+          merchant: {
+            capabilities: {
+              card_payments: { requested: true },
+            },
+          },
+          // Lets the platform's transfers.create(destination: ...) pay this brand out of the platform balance.
+          recipient: {
+            capabilities: {
+              stripe_balance: { stripe_transfers: { requested: true } },
+            },
+          },
+        },
       });
 
       stripeAccountId = account.id;
@@ -48,11 +68,16 @@ export async function POST(request: Request) {
     }
 
     const origin = new URL(request.url).origin;
-    const accountLink = await getStripe().accountLinks.create({
+    const accountLink = await getStripe().v2.core.accountLinks.create({
       account: stripeAccountId,
-      refresh_url: `${origin}/brand/dashboard?stripe=refresh`,
-      return_url: `${origin}/brand/dashboard?stripe=return`,
-      type: "account_onboarding",
+      use_case: {
+        type: "account_onboarding",
+        account_onboarding: {
+          configurations: ["merchant", "recipient"],
+          refresh_url: `${origin}/brand/dashboard?stripe=refresh`,
+          return_url: `${origin}/brand/dashboard?stripe=return`,
+        },
+      },
     });
 
     return NextResponse.json({ url: accountLink.url });

@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { createSupabaseServer } from "@/lib/supabase/server";
+import { getBrandByAccountId } from "@/lib/brands/queries";
 import "./showdash.css";
 
 function formatDateRange(startDate: string | null, endDate: string | null) {
@@ -18,19 +20,24 @@ function formatDateRange(startDate: string | null, endDate: string | null) {
 export default async function MyShows() {
   const supabase = await createSupabaseServer();
 
-  // testing bc of login issue
-  // const {
-  //   data: { session },
-  // } = await supabase.auth.getSession();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  // if (!session) {
-  //   redirect("/login");
-  // }
+  if (!user) {
+    redirect("/sign-up/brand");
+  }
+
+  const brand = await getBrandByAccountId(supabase, user.id);
+
+  if (!brand) {
+    redirect("/sign-up/brand");
+  }
 
   const { data: shows, error } = await supabase
     .from("shows")
     .select("id, image, name, quantity, category, style, startDate, endDate, created_at")
-    // .eq("user_id", session.user.id)
+    .eq("brand_id", brand.brand_uuid)
     .order("created_at", { ascending: false });
 
   if (error) {

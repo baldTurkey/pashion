@@ -1,6 +1,7 @@
 "use client";
 
 import { createClient } from "@/lib/supabase/client";
+import { AddressAutocomplete } from "@/components/shared/address-autocomplete";
 import { CheckCircle2 } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -73,10 +74,11 @@ export default function Location() {
       <label className="text-lg font-medium">
         Give Delivery Address
       </label>
-      <textarea
+      <AddressAutocomplete
+        className="min-h-12 w-full rounded-lg border border-slate-300 px-3 py-2 text-base"
         value={location}
-        onChange={(e) => handleLocationChange(e.target.value)}
-        className="min-h-28 rounded-lg border border-slate-300 px-3 py-2 text-base"
+        onChange={handleLocationChange}
+        onSelect={(suggestion) => handleLocationChange(suggestion.placeName)}
         placeholder="Enter Delivery Location"
       />
       <div className="mt-2 inline-flex items-center gap-2 text-sm text-slate-600">

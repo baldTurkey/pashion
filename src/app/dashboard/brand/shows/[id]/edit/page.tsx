@@ -1,5 +1,6 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { createSupabaseServer } from "@/lib/supabase/server";
+import { getBrandByAccountId } from "@/lib/brands/queries";
 import EditShowForm from "./EditShowForm";
 
 export default async function EditShowPage({
@@ -11,6 +12,20 @@ export default async function EditShowPage({
 
   const supabase = await createSupabaseServer();
 
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/sign-up/brand");
+  }
+
+  const brand = await getBrandByAccountId(supabase, user.id);
+
+  if (!brand) {
+    redirect("/sign-up/brand");
+  }
+
   const { data: show, error } = await supabase
     .from("shows")
     .select("*")
@@ -18,6 +33,11 @@ export default async function EditShowPage({
     .single();
 
   if (error || !show) {
+    notFound();
+  }
+
+  // Only the owning brand can edit this show.
+  if (show.brand_id !== brand.brand_uuid) {
     notFound();
   }
 

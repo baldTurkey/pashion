@@ -2,7 +2,13 @@ import { NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { getStripe } from "@/lib/stripe/server";
 import { getAdminClient } from "@/lib/supabase/admin";
-import { getOrderByStripeSessionId, getOrderItems, markOrderPaidIfPending, recordItemTransfer } from "@/lib/orders/queries";
+import {
+  decrementProductStock,
+  getOrderByStripeSessionId,
+  getOrderItems,
+  markOrderPaidIfPending,
+  recordItemTransfer,
+} from "@/lib/orders/queries";
 import { sendOrderConfirmationEmail } from "@/lib/email/order-confirmation";
 
 // Stripe calls this directly (not the browser), so it's the one place we can
@@ -48,11 +54,17 @@ export async function POST(request: Request) {
     if (isFirstTime) {
       const items = await getOrderItems(adminClient, order.id);
 
-      // stock is not decremented here. Unlike this branch's original
-      // `listings` table, `products` has no single reliable stock count —
-      // most rows have no `inventory_id` at all, and the rest track supply
-      // as a free-text per-size breakdown, not something safe to decrement
-      // blindly.
+      // Atomic per-product decrement (no-ops for untracked/NULL stock). Best
+      // effort here — the payment already succeeded, so a failed decrement
+      // logs rather than blocks; real oversell prevention happens earlier,
+      // at /api/checkout, before Stripe is ever involved.
+      await Promise.all(
+        items.map((item) =>
+          decrementProductStock(adminClient, item.product_id, item.quantity).catch((err) =>
+            console.error(`Failed to decrement stock for product ${item.product_id}:`, err)
+          )
+        )
+      );
 
       // Cart is now an order — clear it.
       await adminClient.from("cart_items").delete().eq("customer_id", order.customer_id);

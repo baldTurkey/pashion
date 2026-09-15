@@ -57,7 +57,10 @@ export async function NavBar() {
               <Link href="/cart" className="text-sm font-medium text-brand-ink hover:text-brand-accent">
                 Cart
               </Link>
-              <Link href="/account" className="text-sm font-medium text-brand-ink hover:text-brand-accent">
+              <Link
+                href={dashboardHref ?? "/account"}
+                className="text-sm font-medium text-brand-ink hover:text-brand-accent"
+              >
                 Account
               </Link>
               <LogoutButton />

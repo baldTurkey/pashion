@@ -115,3 +115,94 @@ export async function recordItemTransfer(adminClient: SupabaseClient, orderItemI
 
   if (error) throw error;
 }
+
+// Decrements real inventory (products.stock) once a payment is confirmed.
+// No-ops server-side for untracked (NULL stock) products.
+export async function decrementProductStock(adminClient: SupabaseClient, productId: string, quantity: number) {
+  const { error } = await adminClient.rpc("decrement_product_stock", {
+    p_product_id: productId,
+    p_quantity: quantity,
+  });
+
+  if (error) throw error;
+}
+
+export interface CustomerOrderItem {
+  id: string;
+  product_name: string;
+  unit_price_cents: number;
+  quantity: number;
+  fulfillment_status: string;
+  tracking_number: string | null;
+}
+
+export interface CustomerOrder {
+  id: string;
+  status: string;
+  subtotal_cents: number;
+  shipping_name: string | null;
+  shipping_address: string | null;
+  shipping_city: string | null;
+  shipping_region: string | null;
+  shipping_postal_code: string | null;
+  created_at: string;
+  order_items: CustomerOrderItem[];
+}
+
+// RLS (orders_select_own / order_items_select_own_order) already limits
+// this to the signed-in customer's own orders — no extra filter needed
+// beyond eq("customer_id", ...), which just avoids an extra round trip.
+export async function getOrdersWithItemsForCustomer(
+  supabase: SupabaseClient,
+  customerId: string
+): Promise<CustomerOrder[]> {
+  const { data, error } = await supabase
+    .from("orders")
+    .select(
+      "id, status, subtotal_cents, shipping_name, shipping_address, shipping_city, shipping_region, shipping_postal_code, created_at, order_items(id, product_name, unit_price_cents, quantity, fulfillment_status, tracking_number)"
+    )
+    .eq("customer_id", customerId)
+    .order("created_at", { ascending: false });
+
+  if (error) throw error;
+  return (data ?? []) as unknown as CustomerOrder[];
+}
+
+export interface BrandOrderItem {
+  id: string;
+  product_name: string;
+  unit_price_cents: number;
+  quantity: number;
+  fulfillment_status: string;
+  tracking_number: string | null;
+  order: {
+    id: string;
+    created_at: string;
+    shipping_name: string | null;
+    shipping_address: string | null;
+    shipping_city: string | null;
+    shipping_region: string | null;
+    shipping_postal_code: string | null;
+    shipping_country: string | null;
+  } | null;
+}
+
+// RLS (order_items_select_own_brand) already limits this to the signed-in
+// brand's own items. Only paid orders are real sales — pending ones are
+// checkout sessions that never completed.
+export async function getOrderItemsForBrand(
+  supabase: SupabaseClient,
+  brandUuid: string
+): Promise<BrandOrderItem[]> {
+  const { data, error } = await supabase
+    .from("order_items")
+    .select(
+      "id, product_name, unit_price_cents, quantity, fulfillment_status, tracking_number, order:orders!inner(id, created_at, status, shipping_name, shipping_address, shipping_city, shipping_region, shipping_postal_code, shipping_country)"
+    )
+    .eq("brand_id", brandUuid)
+    .eq("order.status", "paid")
+    .order("id", { ascending: false });
+
+  if (error) throw error;
+  return (data ?? []) as unknown as BrandOrderItem[];
+}

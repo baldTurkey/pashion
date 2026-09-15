@@ -21,6 +21,8 @@ type Product = {
   delivery_price?: number | null;
   deliveryInDays?: number | null;
   delivery_in_days?: number | null;
+  stock?: number | null;
+  brands?: { company_name: string; slug: string; shipping_range: string | null } | null;
 };
 
 type ProductPageProps = {
@@ -34,7 +36,7 @@ async function getProductByRouteId(routeId: string): Promise<Product | null> {
 
   const byProductId = await supabase
     .from("products")
-    .select("*")
+    .select("*, brands(company_name, slug, shipping_range)")
     .eq("product_id", routeId)
     .eq("listing_status", "published")
     .maybeSingle();
@@ -45,7 +47,7 @@ async function getProductByRouteId(routeId: string): Promise<Product | null> {
 
   const byId = await supabase
     .from("products")
-    .select("*")
+    .select("*, brands(company_name, slug, shipping_range)")
     .eq("id", routeId)
     .eq("listing_status", "published")
     .maybeSingle();
@@ -56,10 +58,23 @@ async function getProductByRouteId(routeId: string): Promise<Product | null> {
   return null;
 }
 
+async function getDeliveryLocation(): Promise<string | null> {
+  const supabase = await createSupabaseServer();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) return null;
+
+  const { data } = await supabase.from("profiles").select("location").eq("id", user.id).maybeSingle();
+  return data?.location ?? null;
+}
+
 export default async function ProductDetailPage({ params }: ProductPageProps) {
   const resolvedParams = await params;
   const routeId = decodeURIComponent(resolvedParams.productId);
   const product = await getProductByRouteId(routeId);
+  const deliveryLocation = await getDeliveryLocation();
 
   if (!product) {
     return (
@@ -110,6 +125,11 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
     .split(",")
     .map((option) => option.trim())
     .filter(Boolean);
+
+  const stock = product.stock ?? null;
+  const outOfStock = stock === 0;
+  const stockMessage =
+    stock === null ? "In stock" : outOfStock ? "Out of stock" : stock <= 5 ? `Only ${stock} left in stock` : "In stock";
 
   return (
     <main className="grid grid-cols-1 gap-8 lg:grid-cols-3">
@@ -214,57 +234,55 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
         <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <div className="flex items-baseline gap-2">
             <span className="text-3xl font-bold text-slate-900">${price.toFixed(2)}</span>
-            <button className="rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-700 hover:bg-blue-200">
-              Price history
-            </button>
           </div>
 
           <div className="mt-4 space-y-1 text-sm text-slate-600">
-            <p>FREE delivery Sunday, July 26</p>
-            <p className="font-medium text-slate-900">for members. Order within 3 hrs 30 mins</p>
+            <p>{product.brands?.shipping_range ? `Ships to ${product.brands.shipping_range}` : "Shipping calculated at checkout"}</p>
           </div>
 
           <div className="mt-4 flex items-center gap-2 text-sm text-slate-700">
             <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
             </svg>
-            <span>Deliver to Acc Name - Westford 01234</span>
+            {deliveryLocation ? (
+              <span>Ship to {deliveryLocation}</span>
+            ) : (
+              <Link href="/location" className="text-blue-600 hover:underline">
+                Add a delivery address to see shipping to you
+              </Link>
+            )}
           </div>
 
-          <div className="mt-4 rounded-lg bg-red-50 p-3 text-sm font-medium text-red-700">
-            Only 1 left in stock - order soon
+          <div
+            className={`mt-4 rounded-lg p-3 text-sm font-medium ${
+              outOfStock ? "bg-red-50 text-red-700" : stock !== null && stock <= 5 ? "bg-amber-50 text-amber-700" : "bg-emerald-50 text-emerald-700"
+            }`}
+          >
+            {stockMessage}
           </div>
 
           <div className="mt-4 space-y-2">
             {product.product_id && (
               <AddToCartButton
                 productId={product.product_id}
+                disabled={outOfStock}
                 className="w-full rounded-full bg-yellow-400 py-2 font-semibold text-slate-900 hover:bg-yellow-500 disabled:opacity-60"
               />
             )}
-            <button className="w-full rounded-full bg-orange-400 py-2 font-semibold text-white hover:bg-orange-500">
-              Buy Now
-            </button>
           </div>
 
-          <div className="mt-4 space-y-3 border-t border-slate-200 pt-4 text-xs text-slate-600">
+          <div className="mt-4 border-t border-slate-200 pt-4 text-xs text-slate-600">
             <div className="flex justify-between">
-              <span className="font-medium text-slate-900">Shipper / Seller</span>
-              <span className="text-slate-700">Amazon.com</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="font-medium text-slate-900">Returns</span>
-              <span className="text-blue-600">FREE 30-day refund/replacement</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="font-medium text-slate-900">Gift options</span>
-              <span className="text-blue-600">Available at checkout</span>
+              <span className="font-medium text-slate-900">Sold by</span>
+              {product.brands ? (
+                <Link href={`/brands/${product.brands.slug}`} className="text-blue-600 hover:underline">
+                  {product.brands.company_name}
+                </Link>
+              ) : (
+                <span className="text-slate-700">Unknown brand</span>
+              )}
             </div>
           </div>
-
-          <button className="mt-4 w-full text-center text-sm text-blue-600 hover:text-blue-700">
-            ▼ See more
-          </button>
         </div>
       </aside>
     </main>

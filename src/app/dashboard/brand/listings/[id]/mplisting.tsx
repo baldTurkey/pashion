@@ -1,6 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { createSupabaseServer } from "@/lib/supabase/server";
+import { getBrandByAccountId } from "@/lib/brands/queries";
 import DeleteListingButton from "./deletelisting";
 import EditListingForm from "./edit/editlisting";
 import "@/components/mpdash.css";
@@ -9,13 +10,18 @@ export default async function Mplisting({ id }: { id: string }) {
   const supabase = await createSupabaseServer();
 
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  //testing for 404 logni issue
-  // if (!session) {
-   // redirect("/login");
-  // }
+  if (!user) {
+    redirect("/sign-up/brand");
+  }
+
+  const brand = await getBrandByAccountId(supabase, user.id);
+
+  if (!brand) {
+    redirect("/sign-up/brand");
+  }
 
   const { data: listing, error } = await supabase
     .from("products")
@@ -23,19 +29,14 @@ export default async function Mplisting({ id }: { id: string }) {
     .eq("id", id)
     .single();
 
-    console.log("DEBUG listing:", listing);
-    console.log("DEBUG listing error:", JSON.stringify(error, null, 2));
   if (error || !listing) {
     notFound();
   }
 
-  // Only the creator can view this page. Drop this check (and instead
-  // adjust the RLS select policy) if you want listings to be publicly
-  // browsable like an actual marketplace.
-  // testing bc of /login issue
-   // if (listing.user_id !== session.user.id) {
-    // notFound();
- // }
+  // Only the owning brand can view this page.
+  if (listing.brand_id !== brand.brand_uuid) {
+    notFound();
+  }
 
   return (
     

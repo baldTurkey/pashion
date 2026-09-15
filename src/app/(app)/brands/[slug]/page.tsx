@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { getBrandBySlug } from "@/lib/brands/queries";
@@ -7,6 +8,14 @@ import { Card } from "@/components/ui/card";
 interface BrandProfilePageProps {
   params: Promise<{ slug: string }>;
 }
+
+type BrandListing = {
+  id: number;
+  product_id: string | null;
+  name: string | null;
+  imageUrl: string | null;
+  currentPrice: string | null;
+};
 
 export default async function BrandProfilePage({ params }: BrandProfilePageProps) {
   const { slug } = await params;
@@ -19,8 +28,16 @@ export default async function BrandProfilePage({ params }: BrandProfilePageProps
     notFound();
   }
 
+  const { data: listings } = await supabase
+    .from("products")
+    .select("id, product_id, name, imageUrl, currentPrice")
+    .eq("brand_id", brand.brand_uuid)
+    .eq("listing_status", "published")
+    .order("created_at", { ascending: false })
+    .returns<BrandListing[]>();
+
   return (
-    <div className="mx-auto max-w-2xl px-4 py-16">
+    <div className="mx-auto max-w-4xl px-4 py-16">
       <Card className="p-8">
         <div className="flex flex-col items-center gap-4 text-center">
           <div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-full bg-brand-blush">
@@ -73,6 +90,53 @@ export default async function BrandProfilePage({ params }: BrandProfilePageProps
           )}
         </dl>
       </Card>
+
+      <section className="mt-10">
+        <div className="mb-4 flex items-center justify-between gap-4">
+          <h2 className="font-serif text-2xl text-brand-ink">Shop {brand.company_name}</h2>
+          <p className="text-sm text-brand-ink/60">
+            {listings?.length ?? 0} item{listings?.length === 1 ? "" : "s"}
+          </p>
+        </div>
+
+        {!listings || listings.length === 0 ? (
+          <Card className="p-8 text-center text-brand-ink/60">
+            {brand.company_name} hasn&apos;t posted any listings yet.
+          </Card>
+        ) : (
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+            {listings.map((listing) => (
+              <Link
+                key={listing.id}
+                href={`/shop/${listing.product_id ?? listing.id}`}
+                className="group overflow-hidden rounded-xl border border-brand-ink/10 bg-white transition-shadow hover:shadow-md"
+              >
+                <div className="aspect-[3/4] overflow-hidden bg-brand-blush">
+                  {listing.imageUrl ? (
+                    <Image
+                      src={listing.imageUrl}
+                      alt={listing.name ?? "Listing"}
+                      width={300}
+                      height={400}
+                      className="h-full w-full object-cover transition-transform group-hover:scale-105"
+                    />
+                  ) : (
+                    <div className="flex h-full items-center justify-center text-xs text-brand-ink/40">
+                      No photo
+                    </div>
+                  )}
+                </div>
+                <div className="p-3">
+                  <p className="truncate text-sm font-medium text-brand-ink">{listing.name}</p>
+                  {listing.currentPrice && (
+                    <p className="text-sm text-brand-ink/70">${Number(listing.currentPrice).toFixed(2)}</p>
+                  )}
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
+      </section>
     </div>
   );
 }

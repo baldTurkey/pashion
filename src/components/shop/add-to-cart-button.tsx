@@ -3,7 +3,15 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-export function AddToCartButton({ productId, className }: { productId: string; className?: string }) {
+export function AddToCartButton({
+  productId,
+  className,
+  disabled,
+}: {
+  productId: string;
+  className?: string;
+  disabled?: boolean;
+}) {
   const router = useRouter();
   const [status, setStatus] = useState<"idle" | "adding" | "added" | "error">("idle");
 
@@ -34,8 +42,16 @@ export function AddToCartButton({ productId, className }: { productId: string; c
   };
 
   return (
-    <button type="button" onClick={handleClick} disabled={status === "adding"} className={className}>
-      {status === "adding" ? "Adding…" : status === "added" ? "Added ✓" : status === "error" ? "Try again" : "Add to cart"}
+    <button type="button" onClick={handleClick} disabled={disabled || status === "adding"} className={className}>
+      {disabled
+        ? "Out of stock"
+        : status === "adding"
+          ? "Adding…"
+          : status === "added"
+            ? "Added ✓"
+            : status === "error"
+              ? "Try again"
+              : "Add to cart"}
     </button>
   );
 }

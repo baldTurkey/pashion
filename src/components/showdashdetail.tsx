@@ -1,6 +1,7 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { createSupabaseServer } from "@/lib/supabase/server";
+import { getBrandByAccountId } from "@/lib/brands/queries";
 import "./showdashdetail.css";
 import DeleteShowButton from "../app/dashboard/brand/shows/[id]/deleteshows"
 
@@ -16,14 +17,19 @@ function formatDate(dateStr: string | null) {
 export default async function ShowDetail({ id }: { id: string }) {
   const supabase = await createSupabaseServer();
 
-  // testing bc of login issue
-  // const {
-  //   data: { session },
-  // } = await supabase.auth.getSession();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  // if (!session) {
-  //   redirect("/login");
-  // }
+  if (!user) {
+    redirect("/sign-up/brand");
+  }
+
+  const brand = await getBrandByAccountId(supabase, user.id);
+
+  if (!brand) {
+    redirect("/sign-up/brand");
+  }
 
   const { data: show, error } = await supabase
     .from("shows")
@@ -35,12 +41,10 @@ export default async function ShowDetail({ id }: { id: string }) {
     notFound();
   }
 
-  // Only the creator can view this page. Drop this check (and instead
-  // adjust the RLS select policy) if you want shows to be publicly
-  // browsable.
-  // if (show.user_id !== session.user.id) {
-  //   notFound();
-  // }
+  // Only the owning brand can view this page.
+  if (show.brand_id !== brand.brand_uuid) {
+    notFound();
+  }
 
   const dateRangeStart = formatDate(show.startDate);
   const dateRangeEnd = formatDate(show.endDate);

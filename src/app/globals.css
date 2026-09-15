@@ -893,22 +893,10 @@ footer{
   font-weight: 700;
 }
 
-.mpform-price-wrap {
-  position: relative;
-}
-
-.mpform-price-sign {
-  position: absolute;
-  left: 0.95rem;
-  top: 50%;
-  transform: translateY(-50%);
-  color: rgba(28, 25, 23, 0.72);
-  font-weight: 700;
-}
-
-.mpform-price-input {
-  padding-left: 2rem;
-}
+/* Price input layout (flex sign + input) lives in mpform.css — this file must
+   not redefine .mpform-price-wrap/-sign/-input, since global CSS from both
+   files loads on every page and the two designs conflict (absolute-positioned
+   sign here vs. flex layout there), causing the "$" to overlap the digits. */
 
 .mpform-size-chips {
   display: flex;

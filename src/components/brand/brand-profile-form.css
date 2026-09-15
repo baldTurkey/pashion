@@ -1,0 +1,78 @@
+.bpf-form {
+  --fantasy: #F7F3ED;
+  --rose: #DBA1A2;
+  --vanilla: #EFD8D6;
+  --tobago: #422B23;
+  --tobago-70: rgba(66, 43, 35, 0.7);
+  --tobago-40: rgba(66, 43, 35, 0.4);
+  --tobago-15: rgba(66, 43, 35, 0.15);
+  --tobago-08: rgba(66, 43, 35, 0.08);
+  --display: 'Fraunces', serif;
+  --body: 'Work Sans', sans-serif;
+
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-family: var(--body);
+  color: var(--tobago);
+}
+
+.bpf-logo-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.bpf-logo-preview {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--vanilla);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-family: var(--display);
+  font-size: 26px;
+  color: var(--tobago);
+}
+
+.bpf-logo-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.bpf-hidden-input {
+  display: none;
+}
+
+.bpf-label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--tobago-70);
+  margin-top: 20px;
+  margin-bottom: 6px;
+}
+
+.bpf-error {
+  font-family: var(--mono, monospace);
+  font-size: 12px;
+  color: #b3453f;
+  margin-top: 12px;
+}
+
+.bpf-success {
+  font-family: var(--mono, monospace);
+  font-size: 12px;
+  color: #3f7d4f;
+  margin-top: 12px;
+}
+
+.bpf-actions {
+  margin-top: 28px;
+}

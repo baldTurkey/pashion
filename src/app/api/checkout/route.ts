@@ -40,6 +40,35 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Cart is empty" }, { status: 400 });
     }
 
+    // Stock is nullable/untracked for older listings — only block checkout
+    // for products that actually declare a tracked quantity.
+    const { data: stockRows, error: stockError } = await supabase
+      .from("products")
+      .select("product_id, name, stock")
+      .in(
+        "product_id",
+        items.map((item) => item.productId)
+      );
+
+    if (stockError) {
+      return NextResponse.json({ error: stockError.message }, { status: 500 });
+    }
+
+    const stockByProductId = new Map((stockRows ?? []).map((row) => [row.product_id, row.stock]));
+    const insufficient = items.filter((item) => {
+      const stock = stockByProductId.get(item.productId);
+      return typeof stock === "number" && stock < item.quantity;
+    });
+
+    if (insufficient.length > 0) {
+      return NextResponse.json(
+        {
+          error: `Not enough stock for: ${insufficient.map((item) => item.name).join(", ")}. Please update your cart quantities.`,
+        },
+        { status: 409 }
+      );
+    }
+
     // orders/order_items have no insert policy for regular users — only the service role can write them.
     const adminClient = getAdminClient();
     const { orderId } = await createPendingOrder(adminClient, user.id, items, shipping);

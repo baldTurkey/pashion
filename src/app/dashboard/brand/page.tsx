@@ -20,17 +20,23 @@ export default async function BrandOverviewPage() {
         .limit(5)
     : { data: [] };
 
-  const { data: listings } = await supabase
-    .from("products")
-    .select("id, name, currentPrice")
-    .order("created_at", { ascending: false })
-    .limit(5);
+  const { data: listings } = brand?.brand_uuid
+    ? await supabase
+        .from("products")
+        .select("id, name, currentPrice")
+        .eq("brand_id", brand.brand_uuid)
+        .order("created_at", { ascending: false })
+        .limit(5)
+    : { data: [] };
 
-  const { data: shows } = await supabase
-    .from("shows")
-    .select("id, category, style, startDate, endDate")
-    .order("created_at", { ascending: false })
-    .limit(5);
+  const { data: shows } = brand?.brand_uuid
+    ? await supabase
+        .from("shows")
+        .select("id, category, style, startDate, endDate")
+        .eq("brand_id", brand.brand_uuid)
+        .order("created_at", { ascending: false })
+        .limit(5)
+    : { data: [] };
 
   return (
     <div>

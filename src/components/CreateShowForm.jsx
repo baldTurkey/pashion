@@ -167,6 +167,18 @@ export default function CreateShowForm() {
     setSaving(true);
     uploadProgress.start();
     try {
+      const {
+        data: { user },
+      } = await supabaseBrowser.auth.getUser();
+      if (!user) throw new Error("You must be signed in to publish a show.");
+
+      const { data: brand, error: brandError } = await supabaseBrowser
+        .from("brands")
+        .select("brand_uuid")
+        .eq("account_id", user.id)
+        .single();
+      if (brandError || !brand) throw new Error("Could not find your brand profile.");
+
       const photoUrls = await Promise.all(
         images.map((img) => uploadFile(img.file, "photos"))
       );
@@ -175,6 +187,7 @@ export default function CreateShowForm() {
         .from("shows")
         .insert([
           {
+            brand_id: brand.brand_uuid,
             name: itemName.trim(),
             image: photoUrls[0] || null,
             quantity: Number(quantity),

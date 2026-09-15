@@ -1,18 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { supabaseBrowser } from "@/lib/supabase/client";
 
 export function LogoutButton() {
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
 
   const handleLogout = async () => {
     setLoading(true);
     await supabaseBrowser.auth.signOut();
-    router.push("/");
-    router.refresh(); // NavBar is a server component — refresh so it re-checks the now-cleared session
+    // Full reload, not router.push+refresh: the client Router Cache can keep
+    // serving a previously-fetched, still-signed-in NavBar for other routes
+    // (e.g. after clicking the logo) since refresh() only invalidates the
+    // current route. A hard navigation wipes that cache everywhere.
+    window.location.href = "/";
   };
 
   return (

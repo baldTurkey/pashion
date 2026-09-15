@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
 import { supabaseBrowser } from "@/lib/supabase/client";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
+import { AddressAutocomplete } from "@/components/shared/address-autocomplete";
 import styles from "./brand-signup.module.css";
 
 interface BrandFormData {
@@ -39,6 +40,7 @@ export default function BrandSignUpPage() {
     handleSubmit,
     watch,
     setValue,
+    control,
     formState: { errors },
   } = useForm<BrandFormData>({
     defaultValues: {
@@ -338,13 +340,20 @@ export default function BrandSignUpPage() {
 
         <div className={styles.twoCol}>
           <div className={styles.inputGroup}>
-            <input
-              type="text"
-              id="location"
-              placeholder=" "
-              {...register("location")}
+            <Controller
+              control={control}
+              name="location"
+              render={({ field }) => (
+                <AddressAutocomplete
+                  id="location"
+                  placeholder="City, State"
+                  value={field.value ?? ""}
+                  onChange={field.onChange}
+                  onBlur={field.onBlur}
+                />
+              )}
             />
-            <label htmlFor="location">Location (Mapbox soon)</label>
+            <label htmlFor="location">Location</label>
           </div>
 
           <div className={styles.inputGroup}>
