@@ -44,7 +44,6 @@ async function uploadFile(file, folder) {
     .toString(36)
     .slice(2)}.${ext}`;
   
-  console.log("Supabase URL:", process.env.NEXT_PUBLIC_SUPABASE_URL);
   const { error: uploadError } = await supabaseBrowser.storage
     .from("show-photos")
     .upload(path, file);

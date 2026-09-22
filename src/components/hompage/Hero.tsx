@@ -1,8 +1,6 @@
 import { createSupabaseServer } from "@/lib/supabase/server";
 
-const STATS = [
-    
-  ];
+const STATS: Array<{ value: string; label: string }> = [];
   
   export default async function HPHero() {
     const supabase = await createSupabaseServer();
