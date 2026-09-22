@@ -1,10 +1,13 @@
+import { createSupabaseServer } from "@/lib/supabase/server";
+
 const STATS = [
-    { value: "0+", label: "Designers featured" },
-    { value: "0", label: "Shows hosted" },
-    { value: "0", label: "Votes this season" },
+    
   ];
   
-  export default function HPHero() {
+  export default async function HPHero() {
+    const supabase = await createSupabaseServer();
+    const { data: imageData } = supabase.storage.from("other-assets").getPublicUrl("may.png");
+
     return (
       <section className="hero">
         <div className="wrap">
@@ -35,11 +38,11 @@ const STATS = [
             </div>
           </div>
   
-          <div className="hero-art">
+          <div className="hero-art" style={{ backgroundImage: `url(${imageData.publicUrl})` }}>
             <span className="corner-mark" aria-hidden="true"></span>
             <div className="tag">
               <span className="eyebrow">Now voting</span>
-              <strong>Look 67 — HERHERHER</strong>
+              <strong>Navaratari Collection Contest</strong>
               <span>520 votes · closes in 2 days</span>
             </div>
           </div>

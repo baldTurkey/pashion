@@ -32,10 +32,10 @@ export function Footer() {
           <ul className="mt-2 space-y-1 text-sm">
             <li className="flex items-center gap-2">
               <Mail size={14} />
-              <span>hello@pashion.com</span>
+              <span>PashionCollective@gmail.com</span>
             </li>
             <li>
-              <Link href="/" className="hover:text-brand-blush">Instagram</Link>
+              <Link href="/our-team" className="hover:text-brand-blush">Our Team</Link>
             </li>
           </ul>
         </div>

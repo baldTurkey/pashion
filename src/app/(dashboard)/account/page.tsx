@@ -1,9 +1,7 @@
 import { redirect } from "next/navigation";
 import { createSupabaseServer } from "@/lib/supabase/server";
-import { ComingSoon } from "@/components/ui/coming-soon";
+import { AccountManager } from "@/components/account/account-manager";
 
-// Generic — reachable from any logged-in role's dashboard nav, so this just
-// checks for a session rather than a specific brand/designer row.
 export default async function AccountPage() {
   const supabase = await createSupabaseServer();
   const {
@@ -14,12 +12,5 @@ export default async function AccountPage() {
     redirect("/login");
   }
 
-  return (
-    <ComingSoon
-      title="Manage Account"
-      description="Editing your account details, password, and notification preferences is coming soon."
-      backHref="/"
-      backLabel="Back to home"
-    />
-  );
+  return <AccountManager user={user} />;
 }

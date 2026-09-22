@@ -279,13 +279,23 @@ button{ font-family:inherit; cursor:pointer; }
   position:relative;
   aspect-ratio:4/5;
   background:linear-gradient(160deg, var(--rose) 0%, var(--vanilla) 60%);
+  background-position:center;
+  background-size:cover;
   border-radius:2px;
   overflow:hidden;
   display:flex;
   align-items:flex-end;
 }
+.hero-art::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(160deg, rgba(219,161,162,0.28), rgba(239,216,214,0.12));
+  pointer-events:none;
+}
 .hero-art .tag{
   position:relative;
+  z-index:1;
   margin:22px;
   background:var(--fantasy);
   padding:16px 18px;
@@ -307,12 +317,89 @@ button{ font-family:inherit; cursor:pointer; }
 }
 .hero-art .corner-mark{
   position:absolute;
+  z-index:1;
   top:22px; left:22px;
   width:36px; height:36px;
   border-top:1.5px solid var(--tobago);
   border-left:1.5px solid var(--tobago);
   opacity:0.5;
 }
+
+.team-directory{ background:var(--tobago); color:var(--fantasy); }
+.team-page{ overflow:hidden; }
+.team-directory{ background:var(--tobago); color:var(--fantasy); padding:72px 0; }
+.team-directory-heading{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap:28px;
+  margin-bottom:28px;
+}
+.team-directory-heading .eyebrow{ color:var(--silver); }
+.team-directory-heading p{
+  max-width:280px;
+  margin:0;
+  color:var(--fantasy-70);
+  font-size:15px;
+  line-height:1.6;
+}
+.team-grid{ border-top:1px solid rgba(247,243,237,0.28); }
+.team-member{
+  display:grid;
+  grid-template-columns:44px 1fr minmax(190px, 0.6fr);
+  gap:24px;
+  align-items:center;
+  min-height:122px;
+  padding:20px 0;
+  border-bottom:1px solid rgba(247,243,237,0.28);
+  transition:padding .25s ease, color .25s ease;
+}
+.team-member:hover{ color:var(--rose); padding-left:8px; }
+.team-member-number, .team-member-role{
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+}
+.team-member-number{ color:var(--silver); }
+.team-member-role{ margin:0 0 6px; color:var(--silver); }
+.team-member h2{
+  font-family:var(--display);
+  font-size:clamp(23px, 2.2vw, 31px);
+  font-weight:500;
+  letter-spacing:-0.01em;
+  line-height:1.1;
+  margin:0;
+}
+.team-member-contacts{ display:flex; flex-direction:column; gap:8px; }
+.team-contact{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  width:max-content;
+  max-width:100%;
+  color:var(--fantasy-70);
+  font-size:14px;
+  transition:color .2s ease;
+}
+.team-contact:hover{ color:var(--fantasy); }
+.team-contact svg{ width:15px; height:15px; flex-shrink:0; }
+.team-linkedin-mark{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:15px;
+  height:15px;
+  border:1px solid currentColor;
+  font-family:var(--mono);
+  font-size:9px;
+  font-weight:700;
+  line-height:1;
+}
+.team-contact .team-external-icon{ margin-left:-3px; }
+.team-home-link{ margin-top:32px; }
+.team-home-link .btn-outline{ color:var(--fantasy); border-color:var(--fantasy); }
+.team-home-link .btn-outline:hover{ color:var(--tobago); background:var(--fantasy); }
 
 section{ padding:110px 0; }
 .section-head{
@@ -704,6 +791,10 @@ footer{
   .menu-toggle{ display:flex; }
   .hero .wrap{ grid-template-columns:1fr; gap:44px; }
   .hero-art{ order:-1; aspect-ratio:16/10; }
+  .team-hero .wrap{ grid-template-columns:1fr; gap:42px; }
+  .team-hero-art{ max-width:540px; width:100%; }
+  .team-member{ grid-template-columns:54px 1fr; }
+  .team-member-contacts{ grid-column:2; }
   .who .wrap{ grid-template-columns:1fr; }
   .steps{ grid-template-columns:1fr; gap:44px; }
   .steps::before{ display:none; }
@@ -723,6 +814,11 @@ footer{
   .footer-grid{ grid-template-columns:1fr; }
   .form-card{ padding:28px 22px; }
   .hero-stats{ gap:24px; }
+  .team-hero{ padding:56px 0 48px; }
+  .team-directory-heading{ align-items:flex-start; flex-direction:column; }
+  .team-member{ grid-template-columns:38px 1fr; gap:14px; min-height:0; }
+  .team-member-contacts{ grid-column:1 / -1; padding-left:52px; }
+  .team-contact{ font-size:13px; }
 }
 
 .mpform-field-label {
