@@ -82,7 +82,8 @@ export async function POST(request: Request) {
             name: item.product_name,
             quantity: item.quantity,
             unitPriceCents: item.unit_price_cents,
-          }))
+          })),
+          order.shipping_cents
         );
       }
     }
@@ -101,7 +102,9 @@ export async function POST(request: Request) {
       for (const item of untransferred) {
         totalsByBrand.set(
           item.brand_id,
-          (totalsByBrand.get(item.brand_id) ?? 0) + item.unit_price_cents * item.quantity
+          (totalsByBrand.get(item.brand_id) ?? 0) +
+            item.unit_price_cents * item.quantity +
+            item.shipping_cents
         );
       }
 

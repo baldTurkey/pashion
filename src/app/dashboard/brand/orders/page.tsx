@@ -53,7 +53,14 @@ export default async function BrandOrdersPage() {
                 </td>
                 <td>{item.product_name}</td>
                 <td>{item.quantity}</td>
-                <td>${((item.unit_price_cents * item.quantity) / 100).toFixed(2)}</td>
+                <td>
+                  ${((item.unit_price_cents * item.quantity + item.shipping_cents) / 100).toFixed(2)}
+                  {item.shipping_cents > 0 && (
+                    <div className="text-xs text-tobago-70">
+                      Includes ${(item.shipping_cents / 100).toFixed(2)} shipping
+                    </div>
+                  )}
+                </td>
                 <td>
                   {item.order ? (
                     <>

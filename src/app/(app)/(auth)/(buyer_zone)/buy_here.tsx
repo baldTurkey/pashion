@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/client";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
+import { getCustomerDeliveryName, parseCustomerContactInfo } from "@/lib/customers/contact-info";
 
 type Address = {
   full_name: string | null;
@@ -45,17 +46,21 @@ export default function BuyHere() {
 
     setUserId(user.id);
     const { data, error } = await supabase
-      .from("profiles")
-      .select("full_name, location")
-      .eq("id", user.id)
-      .single();
+      .from("customers")
+      .select("contact_info")
+      .eq("customer_uuid", user.id)
+      .maybeSingle();
 
     if (error) {
       console.error("Profile fetch error:", error.message);
       return;
     }
 
-    setAddress(data as Address);
+    const contactInfo = parseCustomerContactInfo(data?.contact_info);
+    setAddress({
+      full_name: getCustomerDeliveryName(contactInfo) || null,
+      location: contactInfo.location ?? null,
+    });
   };
 
   useEffect(() => {

@@ -9,9 +9,11 @@ interface OrderConfirmationItem {
 export async function sendOrderConfirmationEmail(
   toEmail: string,
   orderId: string,
-  items: OrderConfirmationItem[]
+  items: OrderConfirmationItem[],
+  shippingCents: number
 ) {
-  const totalCents = items.reduce((sum, item) => sum + item.unitPriceCents * item.quantity, 0);
+  const subtotalCents = items.reduce((sum, item) => sum + item.unitPriceCents * item.quantity, 0);
+  const totalCents = subtotalCents + shippingCents;
 
   const itemsHtml = items
     .map(
@@ -30,6 +32,7 @@ export async function sendOrderConfirmationEmail(
     html: `
       <h1>Thanks for your order!</h1>
       <table width="100%">${itemsHtml}</table>
+      <p>Shipping: $${(shippingCents / 100).toFixed(2)}</p>
       <p><strong>Total: $${(totalCents / 100).toFixed(2)}</strong></p>
     `,
   });

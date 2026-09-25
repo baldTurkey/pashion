@@ -35,9 +35,9 @@ function ErrorText({ children }) {
   return <div className="mpform-error">{children}</div>;
 }
 
-async function uploadFile(file, folder) {
+async function uploadFile(file, folder, accountId) {
   const ext = file.name.split(".").pop();
-  const path = `${folder}/${Date.now()}-${Math.random()
+  const path = `${accountId}/${folder}/${Date.now()}-${Math.random()
     .toString(36)
     .slice(2)}.${ext}`;
  
@@ -180,25 +180,37 @@ export default function marketplaceform() {
       return;
     }
 
-  setSaving(true);
+    setSaving(true);
+
+  try {
+    const {
+      data: { user },
+      error: userError,
+    } = await supabaseBrowser.auth.getUser();
+    if (userError || !user) throw new Error("Sign in before creating a listing.");
 
     const { data: brand, error: brandError } = await supabaseBrowser
-    .from("brands")
-    .select("brand_uuid")
-    .eq("account_id", user.id)
-    .single();
-  try {
+      .from("brands")
+      .select("brand_uuid, shipping_address, shipping_longitude, shipping_latitude")
+      .eq("account_id", user.id)
+      .single();
+    if (brandError) throw brandError;
+    if (!brand?.shipping_address || brand.shipping_longitude == null || brand.shipping_latitude == null) {
+      throw new Error("Add a shipping origin to your brand profile before creating a listing.");
+    }
+
     const photoUrls = await Promise.all(
-      images.map((img) => uploadFile(img.file, "photos"))
+      images.map((img) => uploadFile(img.file, "photos", user.id))
     );
 
     let sizeGuideUrl = null;
     if (sizeGuide?.file) {
-      sizeGuideUrl = await uploadFile(sizeGuide.file, "size-guides");
+      sizeGuideUrl = await uploadFile(sizeGuide.file, "size-guides", user.id);
     }
  
     const { error: insertError } = await supabaseBrowser.from("products").insert([
       {
+        brand_id: brand.brand_uuid,
         imageUrl: photoUrls[0] || null,
         name: itemName.trim(),
         currentPrice: price.toString(),
@@ -218,7 +230,7 @@ export default function marketplaceform() {
       } catch (err) {
       console.error("Failed to publish listing:", err?.message, err?.details, err?.hint, err?.code);
       setSubmitError(
-        "Uh oh.. Something went wrong while publishing. Please try again."
+        err?.message || "Something went wrong while publishing. Please try again."
       );
       setSubmitted(false);
     

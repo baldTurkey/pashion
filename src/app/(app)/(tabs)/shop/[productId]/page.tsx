@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { AddToCartButton } from "@/components/shop/add-to-cart-button";
+import { ProductShippingEstimate } from "@/components/shop/product-shipping-estimate";
+import { parseCustomerContactInfo } from "@/lib/customers/contact-info";
 
 type Product = {
   id: string;
@@ -66,8 +68,12 @@ async function getDeliveryLocation(): Promise<string | null> {
 
   if (!user) return null;
 
-  const { data } = await supabase.from("profiles").select("location").eq("id", user.id).maybeSingle();
-  return data?.location ?? null;
+  const { data } = await supabase
+    .from("customers")
+    .select("contact_info")
+    .eq("customer_uuid", user.id)
+    .maybeSingle();
+  return parseCustomerContactInfo(data?.contact_info).location ?? null;
 }
 
 export default async function ProductDetailPage({ params }: ProductPageProps) {
@@ -240,18 +246,11 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
             <p>{product.brands?.shipping_range ? `Ships to ${product.brands.shipping_range}` : "Shipping calculated at checkout"}</p>
           </div>
 
-          <div className="mt-4 flex items-center gap-2 text-sm text-slate-700">
-            <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
-            </svg>
-            {deliveryLocation ? (
-              <span>Ship to {deliveryLocation}</span>
-            ) : (
-              <Link href="/location" className="text-blue-600 hover:underline">
-                Add a delivery address to see shipping to you
-              </Link>
-            )}
-          </div>
+          <ProductShippingEstimate
+            productId={product.product_id ?? product.id}
+            initialAddress={deliveryLocation ?? ""}
+            itemPrice={price}
+          />
 
           <div
             className={`mt-4 rounded-lg p-3 text-sm font-medium ${

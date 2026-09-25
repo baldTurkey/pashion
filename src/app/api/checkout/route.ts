@@ -4,6 +4,7 @@ import { getAdminClient } from "@/lib/supabase/admin";
 import { getActiveCartItemsForCheckout } from "@/lib/cart/queries";
 import { createPendingOrder, attachStripeSession } from "@/lib/orders/queries";
 import { getStripe } from "@/lib/stripe/server";
+import { calculateShippingQuotes, parseShippingDetails } from "@/lib/shipping/calculate";
 
 export async function POST(request: Request) {
   try {
@@ -16,21 +17,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Not signed in" }, { status: 401 });
     }
 
-    const shipping = await request.json();
-    const required = [
-      "shippingName",
-      "shippingAddress",
-      "shippingCity",
-      "shippingRegion",
-      "shippingPostalCode",
-      "shippingCountry",
-    ] as const;
-
-    for (const field of required) {
-      if (!shipping[field]) {
-        return NextResponse.json({ error: `Missing ${field}` }, { status: 400 });
-      }
-    }
+    const shipping = parseShippingDetails(await request.json());
 
     // Re-read the cart server-side rather than trusting anything the client
     // could have sent — prices/quantities always come from the database.
@@ -71,20 +58,38 @@ export async function POST(request: Request) {
 
     // orders/order_items have no insert policy for regular users — only the service role can write them.
     const adminClient = getAdminClient();
-    const { orderId } = await createPendingOrder(adminClient, user.id, items, shipping);
+    const shippingResult = await calculateShippingQuotes(adminClient, items, shipping);
+    const { orderId } = await createPendingOrder(
+      adminClient,
+      user.id,
+      items,
+      shipping,
+      shippingResult.quotes,
+      shippingResult.destination
+    );
 
     const origin = new URL(request.url).origin;
     const session = await getStripe().checkout.sessions.create({
       mode: "payment",
       customer_email: user.email,
-      line_items: items.map((item) => ({
-        quantity: item.quantity,
-        price_data: {
-          currency: "usd",
-          unit_amount: item.unitPriceCents,
-          product_data: { name: item.name },
-        },
-      })),
+      line_items: [
+        ...items.map((item) => ({
+          quantity: item.quantity,
+          price_data: {
+            currency: "usd",
+            unit_amount: item.unitPriceCents,
+            product_data: { name: item.name },
+          },
+        })),
+        ...shippingResult.quotes.map((quote) => ({
+          quantity: 1,
+          price_data: {
+            currency: "usd",
+            unit_amount: quote.amountCents,
+            product_data: { name: `Shipping from ${quote.brandName}` },
+          },
+        })),
+      ],
       metadata: { order_id: orderId },
       success_url: `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/checkout`,

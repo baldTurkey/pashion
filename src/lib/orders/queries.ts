@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { CheckoutCartItem } from "@/lib/cart/queries";
+import type { ShippingQuote } from "@/lib/shipping/calculate";
 
 export interface ShippingDetails {
   shippingName: string;
@@ -15,9 +16,12 @@ export async function createPendingOrder(
   adminClient: SupabaseClient,
   customerId: string,
   items: CheckoutCartItem[],
-  shipping: ShippingDetails
+  shipping: ShippingDetails,
+  quotes: ShippingQuote[],
+  destination: { longitude: number; latitude: number }
 ) {
   const subtotalCents = items.reduce((sum, item) => sum + item.unitPriceCents * item.quantity, 0);
+  const shippingCents = quotes.reduce((sum, quote) => sum + quote.amountCents, 0);
 
   const { data: order, error: orderError } = await adminClient
     .from("orders")
@@ -25,32 +29,45 @@ export async function createPendingOrder(
       customer_id: customerId,
       status: "pending",
       subtotal_cents: subtotalCents,
+      shipping_cents: shippingCents,
+      total_cents: subtotalCents + shippingCents,
       shipping_name: shipping.shippingName,
       shipping_address: shipping.shippingAddress,
       shipping_city: shipping.shippingCity,
       shipping_region: shipping.shippingRegion,
       shipping_postal_code: shipping.shippingPostalCode,
       shipping_country: shipping.shippingCountry,
+      shipping_longitude: destination.longitude,
+      shipping_latitude: destination.latitude,
     })
     .select("id")
     .single();
 
   if (orderError) throw orderError;
 
+  const chargedBrands = new Set<string>();
   const { error: itemsError } = await adminClient.from("order_items").insert(
-    items.map((item) => ({
+    items.map((item) => {
+      const shippingCharge = chargedBrands.has(item.brandId)
+        ? 0
+        : quotes.find((quote) => quote.brandId === item.brandId)?.amountCents ?? 0;
+      chargedBrands.add(item.brandId);
+
+      return {
       order_id: order.id,
       product_id: item.productId,
       brand_id: item.brandId,
       product_name: item.name,
       unit_price_cents: item.unitPriceCents,
       quantity: item.quantity,
-    }))
+        shipping_cents: shippingCharge,
+      };
+    })
   );
 
   if (itemsError) throw itemsError;
 
-  return { orderId: order.id as string, subtotalCents };
+  return { orderId: order.id as string, subtotalCents, shippingCents };
 }
 
 export async function attachStripeSession(adminClient: SupabaseClient, orderId: string, sessionId: string) {
@@ -65,7 +82,7 @@ export async function attachStripeSession(adminClient: SupabaseClient, orderId: 
 export async function getOrderByStripeSessionId(adminClient: SupabaseClient, sessionId: string) {
   const { data, error } = await adminClient
     .from("orders")
-    .select("id, status, customer_id")
+    .select("id, status, customer_id, shipping_cents")
     .eq("stripe_checkout_session_id", sessionId)
     .maybeSingle();
 
@@ -80,13 +97,14 @@ export interface OrderItemForPayout {
   product_name: string;
   unit_price_cents: number;
   quantity: number;
+  shipping_cents: number;
   stripe_transfer_id: string | null;
 }
 
 export async function getOrderItems(adminClient: SupabaseClient, orderId: string): Promise<OrderItemForPayout[]> {
   const { data, error } = await adminClient
     .from("order_items")
-    .select("id, product_id, brand_id, product_name, unit_price_cents, quantity, stripe_transfer_id")
+    .select("id, product_id, brand_id, product_name, unit_price_cents, quantity, shipping_cents, stripe_transfer_id")
     .eq("order_id", orderId);
 
   if (error) throw error;
@@ -140,6 +158,8 @@ export interface CustomerOrder {
   id: string;
   status: string;
   subtotal_cents: number;
+  shipping_cents: number;
+  total_cents: number;
   shipping_name: string | null;
   shipping_address: string | null;
   shipping_city: string | null;
@@ -159,7 +179,7 @@ export async function getOrdersWithItemsForCustomer(
   const { data, error } = await supabase
     .from("orders")
     .select(
-      "id, status, subtotal_cents, shipping_name, shipping_address, shipping_city, shipping_region, shipping_postal_code, created_at, order_items(id, product_name, unit_price_cents, quantity, fulfillment_status, tracking_number)"
+      "id, status, subtotal_cents, shipping_cents, total_cents, shipping_name, shipping_address, shipping_city, shipping_region, shipping_postal_code, created_at, order_items(id, product_name, unit_price_cents, quantity, fulfillment_status, tracking_number)"
     )
     .eq("customer_id", customerId)
     .order("created_at", { ascending: false });
@@ -173,6 +193,7 @@ export interface BrandOrderItem {
   product_name: string;
   unit_price_cents: number;
   quantity: number;
+  shipping_cents: number;
   fulfillment_status: string;
   tracking_number: string | null;
   order: {
@@ -197,7 +218,7 @@ export async function getOrderItemsForBrand(
   const { data, error } = await supabase
     .from("order_items")
     .select(
-      "id, product_name, unit_price_cents, quantity, fulfillment_status, tracking_number, order:orders!inner(id, created_at, status, shipping_name, shipping_address, shipping_city, shipping_region, shipping_postal_code, shipping_country)"
+      "id, product_name, unit_price_cents, quantity, shipping_cents, fulfillment_status, tracking_number, order:orders!inner(id, created_at, status, shipping_name, shipping_address, shipping_city, shipping_region, shipping_postal_code, shipping_country)"
     )
     .eq("brand_id", brandUuid)
     .eq("order.status", "paid")

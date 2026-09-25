@@ -112,7 +112,7 @@ export default async function MyOrder() {
                     ? `${order.shipping_address}, ${order.shipping_city}, ${order.shipping_region} ${order.shipping_postal_code}`
                     : "No shipping address on file"}
                 </span>
-                <span className="font-semibold text-slate-900">${(order.subtotal_cents / 100).toFixed(2)}</span>
+                <span className="font-semibold text-slate-900">${(order.total_cents / 100).toFixed(2)}</span>
               </div>
             </article>
           );

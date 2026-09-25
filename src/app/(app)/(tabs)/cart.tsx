@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
+import { getCustomerDeliveryName, parseCustomerContactInfo } from "@/lib/customers/contact-info";
 
 type CartItem = {
   id: string;
@@ -58,16 +59,20 @@ export default function Cart() {
 
       setUserId(user.id);
       const { data, error } = await supabase
-        .from("profiles")
-        .select("full_name, location")
-        .eq("id", user.id)
-        .single();
+        .from("customers")
+        .select("contact_info")
+        .eq("customer_uuid", user.id)
+        .maybeSingle();
 
       if (error) {
         console.error("Address fetch error:", error.message);
         setAddressData(null);
       } else {
-        setAddressData((data ?? null) as Address | null);
+        const contactInfo = parseCustomerContactInfo(data?.contact_info);
+        setAddressData({
+          full_name: getCustomerDeliveryName(contactInfo) || null,
+          location: contactInfo.location ?? null,
+        });
       }
     };
 

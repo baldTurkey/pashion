@@ -18,6 +18,9 @@ interface BrandFormData {
   customStyle?: string;
   description: string;
   location: string;
+  shippingLongitude: number | null;
+  shippingLatitude: number | null;
+  shippingCountryCode: string | null;
   website: string;
   email: string;
   password: string;
@@ -46,6 +49,9 @@ export default function BrandSignUpPage() {
     defaultValues: {
       companyName: "",
       location: "",
+      shippingLongitude: null,
+      shippingLatitude: null,
+      shippingCountryCode: null,
       website: "",
       style: "",
       description: "",
@@ -92,6 +98,10 @@ export default function BrandSignUpPage() {
         last_name: data.lastName,
         style: brandStyle,
         website: data.website,
+        shipping_address: data.location,
+        shipping_longitude: data.shippingLongitude,
+        shipping_latitude: data.shippingLatitude,
+        shipping_country_code: data.shippingCountryCode,
       };
 
       // Sent as multipart/form-data (not JSON) so the actual logo File can travel
@@ -343,17 +353,37 @@ export default function BrandSignUpPage() {
             <Controller
               control={control}
               name="location"
+              rules={{
+                required: "Shipping origin is required",
+                validate: () =>
+                  (watch("shippingLongitude") !== null && watch("shippingLatitude") !== null) ||
+                  "Select an address from the suggestions",
+              }}
               render={({ field }) => (
                 <AddressAutocomplete
                   id="location"
-                  placeholder="City, State"
+                  placeholder="Shipping origin address"
                   value={field.value ?? ""}
-                  onChange={field.onChange}
+                  onChange={(value) => {
+                    field.onChange(value);
+                    setValue("shippingLongitude", null);
+                    setValue("shippingLatitude", null);
+                    setValue("shippingCountryCode", null);
+                  }}
+                  onSelect={(suggestion) => {
+                    setValue("shippingLongitude", suggestion.longitude, { shouldValidate: true });
+                    setValue("shippingLatitude", suggestion.latitude, { shouldValidate: true });
+                    setValue("shippingCountryCode", suggestion.countryCode);
+                  }}
                   onBlur={field.onBlur}
+                  required
                 />
               )}
             />
-            <label htmlFor="location">Location</label>
+            <label htmlFor="location">Shipping origin</label>
+            {errors.location && (
+              <span className={styles.fieldError}>{errors.location.message}</span>
+            )}
           </div>
 
           <div className={styles.inputGroup}>

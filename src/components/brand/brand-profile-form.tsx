@@ -41,7 +41,10 @@ export function BrandProfileForm({ brand }: { brand: Brand }) {
   const [customStyle, setCustomStyle] = useState(knownStyle ? "" : brand.style ?? "");
   const [about, setAbout] = useState(brand.about ?? "");
   const [website, setWebsite] = useState(brand.website ?? "");
-  const [location, setLocation] = useState(brand.contact_info?.location ?? "");
+  const [location, setLocation] = useState(brand.shipping_address ?? brand.contact_info?.location ?? "");
+  const [shippingLongitude, setShippingLongitude] = useState<number | null>(brand.shipping_longitude);
+  const [shippingLatitude, setShippingLatitude] = useState<number | null>(brand.shipping_latitude);
+  const [shippingCountryCode, setShippingCountryCode] = useState<string | null>(brand.shipping_country_code);
   const [shippingRange, setShippingRange] = useState(brand.shipping_range ?? "");
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState<string | null>(brand.logo);
@@ -71,6 +74,10 @@ export function BrandProfileForm({ brand }: { brand: Brand }) {
       const trimmedWebsite = website.trim();
       const trimmedCompanyName = companyName.trim();
 
+      if (!location.trim() || shippingLongitude === null || shippingLatitude === null) {
+        throw new Error("Select a complete shipping origin from the address suggestions.");
+      }
+
       const { error: updateError } = await supabaseBrowser
         .from("brands")
         .update({
@@ -79,6 +86,10 @@ export function BrandProfileForm({ brand }: { brand: Brand }) {
           about: about.trim(),
           website: trimmedWebsite,
           shipping_range: shippingRange.trim() || null,
+          shipping_address: location.trim(),
+          shipping_longitude: shippingLongitude,
+          shipping_latitude: shippingLatitude,
+          shipping_country_code: shippingCountryCode,
           logo: logoUrl,
           contact_info: {
             ...brand.contact_info,
@@ -184,15 +195,27 @@ export function BrandProfileForm({ brand }: { brand: Brand }) {
       />
 
       <label className="bpf-label" htmlFor="bpf-location">
-        Location
+        Shipping origin address
       </label>
       <AddressAutocomplete
         id="bpf-location"
         className="mpform-input"
         value={location}
-        onChange={setLocation}
-        placeholder="City, State"
+        onChange={(value) => {
+          setLocation(value);
+          setShippingLongitude(null);
+          setShippingLatitude(null);
+          setShippingCountryCode(null);
+        }}
+        onSelect={(suggestion) => {
+          setShippingLongitude(suggestion.longitude);
+          setShippingLatitude(suggestion.latitude);
+          setShippingCountryCode(suggestion.countryCode);
+        }}
+        placeholder="Street address, city, state, postal code"
+        required
       />
+      <p className="bpf-help">Used to calculate shipping at checkout. Select an address from the suggestions.</p>
 
       <label className="bpf-label" htmlFor="bpf-website">
         Website

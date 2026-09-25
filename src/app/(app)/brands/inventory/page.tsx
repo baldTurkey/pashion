@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Card } from "@/components/ui/card";
+import { ShippingOriginForm } from "@/components/brand/shipping-origin-form";
 
 type InventoryRow = {
 	id: number;
@@ -47,6 +48,14 @@ type InventoryEditValue = {
 	stock: string;
 	shipping_status: string;
 	ready_to_sell_date: string;
+};
+
+type ShippingOrigin = {
+	brandId: string;
+	address: string;
+	longitude: number | null;
+	latitude: number | null;
+	countryCode: string | null;
 };
 
 function getSupplyTotal(supply: string[] | null | undefined, stock: number) {
@@ -172,6 +181,7 @@ export default function InventoryPage() {
 	const [error, setError] = useState<string | null>(null);
 	const [formValues, setFormValues] = useState<Record<number, InventoryEditValue>>({});
 	const [expandedRows, setExpandedRows] = useState<Record<number, boolean>>({});
+	const [shippingOrigin, setShippingOrigin] = useState<ShippingOrigin | null>(null);
 
 	useEffect(() => {
 		let isActive = true;
@@ -194,7 +204,7 @@ export default function InventoryPage() {
 
 			const { data: brand, error: brandError } = await supabase
 				.from("brands")
-				.select("brand_uuid, company_name")
+				.select("brand_uuid, company_name, shipping_address, shipping_longitude, shipping_latitude, shipping_country_code")
 				.eq("account_id", user.id)
 				.maybeSingle();
 
@@ -208,6 +218,13 @@ export default function InventoryPage() {
 			}
 
 			setBrandName(brand.company_name ?? "your brand");
+			setShippingOrigin({
+				brandId: brand.brand_uuid,
+				address: brand.shipping_address ?? "",
+				longitude: brand.shipping_longitude ?? null,
+				latitude: brand.shipping_latitude ?? null,
+				countryCode: brand.shipping_country_code ?? null,
+			});
 
 			const { data, error: inventoryError } = await supabase
 				.from("inventory")
@@ -400,6 +417,16 @@ export default function InventoryPage() {
 					</Link>
 				</div>
 			</div>
+
+			{shippingOrigin && (
+				<ShippingOriginForm
+					brandId={shippingOrigin.brandId}
+					initialAddress={shippingOrigin.address}
+					initialLongitude={shippingOrigin.longitude}
+					initialLatitude={shippingOrigin.latitude}
+					initialCountryCode={shippingOrigin.countryCode}
+				/>
+			)}
 
 			<Card className="overflow-hidden p-0">
 				<div className="flex items-center justify-between border-b border-brand-ink/10 bg-brand-cream/60 px-4 py-3 sm:px-6">

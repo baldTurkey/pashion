@@ -2,15 +2,22 @@
 
 import { createClient } from "@/lib/supabase/client";
 import { AddressAutocomplete } from "@/components/shared/address-autocomplete";
+import {
+  getCustomerDeliveryName,
+  parseCustomerContactInfo,
+  type CustomerContactInfo,
+} from "@/lib/customers/contact-info";
 import { CheckCircle2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 export default function Location() {
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
   const [name, setName] = useState("");
   const [location, setLocation] = useState("");
   const [loading, setLoading] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const contactInfoRef = useRef<CustomerContactInfo>({});
 
   const fetchProfile = async () => {
     const {
@@ -20,46 +27,42 @@ export default function Location() {
 
     setUserId(user.id);
     const { data, error } = await supabase
-      .from("profiles")
-      .select("location, full_name")
-      .eq("id", user.id)
-      .single();
+      .from("customers")
+      .select("contact_info")
+      .eq("customer_uuid", user.id)
+      .maybeSingle();
 
     if (data) {
-      setLocation(data.location ?? "");
-      setName(data.full_name ?? "");
+      const contactInfo = parseCustomerContactInfo(data.contact_info);
+      contactInfoRef.current = contactInfo;
+      setLocation(contactInfo.location ?? "");
+      setName(getCustomerDeliveryName(contactInfo));
     }
     if (error) {
-      console.error("Fetch error:", error.message);
+      setError(error.message);
     }
   };
 
   useEffect(() => {
     fetchProfile();
-  }, []);
+  }, [supabase]);
 
-  const handleNameChange = async (value: string) => {
+  const saveContactInfo = async (changes: Partial<CustomerContactInfo>) => {
     if (!userId) return;
     setLoading(true);
-    setName(value);
+    setError(null);
+    const nextContactInfo = { ...contactInfoRef.current, ...changes };
 
     const { error } = await supabase
-      .from("profiles")
-      .upsert({ id: userId, full_name: value });
+      .from("customers")
+      .update({ contact_info: nextContactInfo })
+      .eq("customer_uuid", userId);
     setLoading(false);
-    if (error) console.error("Save error:", error.message);
-  };
-
-  const handleLocationChange = async (value: string) => {
-    if (!userId) return;
-    setLoading(true);
-    setLocation(value);
-
-    const { error } = await supabase
-      .from("profiles")
-      .upsert({ id: userId, location: value });
-    setLoading(false);
-    if (error) console.error("Save error:", error.message);
+    if (error) {
+      setError(error.message);
+      return;
+    }
+    contactInfoRef.current = nextContactInfo;
   };
 
   return (
@@ -67,7 +70,8 @@ export default function Location() {
       <label className="text-lg font-medium">Name</label>
       <input
         value={name}
-        onChange={(e) => handleNameChange(e.target.value)}
+        onChange={(event) => setName(event.target.value)}
+        onBlur={() => void saveContactInfo({ delivery_name: name.trim() })}
         className="min-h-12 rounded-lg border border-slate-300 px-3 py-2 text-base"
         placeholder="Name"
       />
@@ -77,10 +81,15 @@ export default function Location() {
       <AddressAutocomplete
         className="min-h-12 w-full rounded-lg border border-slate-300 px-3 py-2 text-base"
         value={location}
-        onChange={handleLocationChange}
-        onSelect={(suggestion) => handleLocationChange(suggestion.placeName)}
+        onChange={setLocation}
+        onBlur={() => void saveContactInfo({ location: location.trim() })}
+        onSelect={(suggestion) => {
+          setLocation(suggestion.placeName);
+          void saveContactInfo({ location: suggestion.placeName });
+        }}
         placeholder="Enter Delivery Location"
       />
+      {error && <p className="text-sm text-red-600">{error}</p>}
       <div className="mt-2 inline-flex items-center gap-2 text-sm text-slate-600">
         <CheckCircle2 size={16} className={loading ? "text-slate-400" : "text-emerald-600"} />
         {loading ? "Saving changes..." : "Saved"}

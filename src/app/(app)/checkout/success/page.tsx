@@ -23,7 +23,7 @@ export default async function CheckoutSuccessPage({
   const { data: order } = sessionId
     ? await supabase
         .from("orders")
-        .select("id, status, subtotal_cents")
+        .select("id, status, total_cents")
         .eq("stripe_checkout_session_id", sessionId)
         .maybeSingle()
     : { data: null };
@@ -38,7 +38,7 @@ export default async function CheckoutSuccessPage({
             </h1>
             <p className="mt-2 text-brand-ink/70">
               {order.status === "paid"
-                ? `We've charged $${(order.subtotal_cents / 100).toFixed(2)} and a confirmation email is on its way.`
+                ? `We've charged $${(order.total_cents / 100).toFixed(2)} including shipping, and a confirmation email is on its way.`
                 : "We're still confirming your payment with Stripe — this usually takes a few seconds. Refresh if this doesn't update."}
             </p>
             <p className="mt-1 text-xs text-brand-ink/40">Order #{order.id.slice(0, 8)}</p>

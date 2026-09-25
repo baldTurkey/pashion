@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import { Card } from "@/components/ui/card";
 import { AddressAutocomplete } from "@/components/shared/address-autocomplete";
 import type { CartItem } from "@/types/cart";
@@ -15,16 +15,85 @@ interface ShippingForm {
   shippingCountry: string;
 }
 
-export function CheckoutClient({ items, subtotal }: { items: CartItem[]; subtotal: number }) {
+interface QuoteResult {
+  quotes: Array<{ brandId: string; brandName: string; distanceKilometers: number; amountCents: number }>;
+  shippingCents: number;
+}
+
+export function CheckoutClient({
+  items,
+  subtotal,
+  initialShipping,
+}: {
+  items: CartItem[];
+  subtotal: number;
+  initialShipping?: Partial<ShippingForm>;
+}) {
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [quote, setQuote] = useState<QuoteResult | null>(null);
+  const [quoting, setQuoting] = useState(false);
   const {
     register,
     handleSubmit,
     control,
     setValue,
     formState: { errors },
-  } = useForm<ShippingForm>();
+  } = useForm<ShippingForm>({ defaultValues: initialShipping });
+  const shippingValues = useWatch({ control });
+
+  useEffect(() => {
+    const complete = [
+      shippingValues.shippingAddress,
+      shippingValues.shippingCity,
+      shippingValues.shippingRegion,
+      shippingValues.shippingPostalCode,
+      shippingValues.shippingCountry,
+    ].every((value) => value?.trim());
+
+    if (!complete) {
+      setQuote(null);
+      return;
+    }
+
+    const controller = new AbortController();
+    const timeout = window.setTimeout(async () => {
+      setQuoting(true);
+      setError(null);
+      try {
+        const response = await fetch("/api/checkout/quote", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...shippingValues, shippingName: shippingValues.shippingName || "Shipping quote" }),
+          signal: controller.signal,
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || "Could not calculate shipping");
+        setQuote(result);
+      } catch (quoteError) {
+        if (!controller.signal.aborted) {
+          setQuote(null);
+          setError(quoteError instanceof Error ? quoteError.message : "Could not calculate shipping");
+        }
+      } finally {
+        if (!controller.signal.aborted) setQuoting(false);
+      }
+    }, 500);
+
+    return () => {
+      window.clearTimeout(timeout);
+      controller.abort();
+    };
+  }, [
+    shippingValues.shippingName,
+    shippingValues.shippingAddress,
+    shippingValues.shippingCity,
+    shippingValues.shippingRegion,
+    shippingValues.shippingPostalCode,
+    shippingValues.shippingCountry,
+  ]);
+
+  const total = subtotal + (quote?.shippingCents ?? 0) / 100;
 
   const onSubmit = async (data: ShippingForm) => {
     setSubmitting(true);
@@ -138,10 +207,16 @@ export function CheckoutClient({ items, subtotal }: { items: CartItem[]; subtota
 
             <button
               type="submit"
-              disabled={submitting}
+              disabled={submitting || quoting || !quote}
               className="mt-2 inline-flex items-center justify-center rounded-full bg-brand-accent px-8 py-3 text-lg font-medium text-white transition-colors hover:bg-brand-olive-dark disabled:opacity-60 sm:col-span-2"
             >
-              {submitting ? "Redirecting to Stripe…" : `Pay $${subtotal.toFixed(2)} with Stripe`}
+              {submitting
+                ? "Redirecting to Stripe…"
+                : quoting
+                  ? "Calculating shipping…"
+                  : quote
+                    ? `Pay $${total.toFixed(2)} with Stripe`
+                    : "Enter address for shipping total"}
             </button>
           </form>
         </Card>
@@ -164,6 +239,19 @@ export function CheckoutClient({ items, subtotal }: { items: CartItem[]; subtota
           <div className="mt-4 flex justify-between border-t border-brand-ink/10 pt-4 font-semibold text-brand-ink">
             <span>Subtotal</span>
             <span>${subtotal.toFixed(2)}</span>
+          </div>
+          <div className="mt-2 space-y-2 text-sm text-brand-ink/70">
+            {quote?.quotes.map((shipment) => (
+              <div key={shipment.brandId} className="flex justify-between gap-3">
+                <span>Shipping from {shipment.brandName}</span>
+                <span>${(shipment.amountCents / 100).toFixed(2)}</span>
+              </div>
+            ))}
+            {!quote && <div className="flex justify-between"><span>Shipping</span><span>Enter address</span></div>}
+          </div>
+          <div className="mt-4 flex justify-between border-t border-brand-ink/10 pt-4 font-semibold text-brand-ink">
+            <span>Total</span>
+            <span>${total.toFixed(2)}</span>
           </div>
         </Card>
       </div>
