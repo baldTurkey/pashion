@@ -82,7 +82,7 @@ export async function attachStripeSession(adminClient: SupabaseClient, orderId: 
 export async function getOrderByStripeSessionId(adminClient: SupabaseClient, sessionId: string) {
   const { data, error } = await adminClient
     .from("orders")
-    .select("id, status, customer_id, shipping_cents")
+    .select("id, status, customer_id, shipping_cents, shipping_name, shipping_address, shipping_city, shipping_region, shipping_postal_code, shipping_country")
     .eq("stripe_checkout_session_id", sessionId)
     .maybeSingle();
 

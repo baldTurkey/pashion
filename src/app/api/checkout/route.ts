@@ -27,6 +27,30 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Cart is empty" }, { status: 400 });
     }
 
+    const adminClient = getAdminClient();
+    const brandIds = [...new Set(items.map((item) => item.brandId))];
+    const { data: payoutBrands, error: payoutBrandsError } = await adminClient
+      .from("brands")
+      .select("brand_uuid, stripe_account_id, stripe_payouts_enabled")
+      .in("brand_uuid", brandIds);
+
+    if (payoutBrandsError) {
+      return NextResponse.json({ error: "Could not verify seller payout setup" }, { status: 500 });
+    }
+
+    const readyBrandIds = new Set(
+      (payoutBrands ?? [])
+        .filter((brand) => brand.stripe_account_id && brand.stripe_payouts_enabled)
+        .map((brand) => brand.brand_uuid)
+    );
+
+    if (items.some((item) => !readyBrandIds.has(item.brandId))) {
+      return NextResponse.json(
+        { error: "A seller in your cart has not connected Stripe payouts. Remove that listing and try again." },
+        { status: 409 }
+      );
+    }
+
     // Stock is nullable/untracked for older listings — only block checkout
     // for products that actually declare a tracked quantity.
     const { data: stockRows, error: stockError } = await supabase
@@ -57,7 +81,6 @@ export async function POST(request: Request) {
     }
 
     // orders/order_items have no insert policy for regular users — only the service role can write them.
-    const adminClient = getAdminClient();
     const shippingResult = await calculateShippingQuotes(adminClient, items, shipping);
     const { orderId } = await createPendingOrder(
       adminClient,

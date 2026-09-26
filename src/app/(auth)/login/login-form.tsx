@@ -14,6 +14,18 @@ interface LoginFormData {
   rememberMe: boolean;
 }
 
+function getSameOriginPath(value: string | null) {
+  if (!value) return null;
+
+  try {
+    const target = new URL(value, window.location.origin);
+    if (target.origin !== window.location.origin) return null;
+    return `${target.pathname}${target.search}${target.hash}`;
+  } catch {
+    return null;
+  }
+}
+
 // Matches the `role` value each signup form stores in auth user_metadata
 
 const DASHBOARD_BY_ROLE: Record<string, string> = {
@@ -64,7 +76,8 @@ export default function LoginPage() {
       }
 
       const role = authData.user?.user_metadata?.role as string | undefined;
-      router.push(DASHBOARD_BY_ROLE[role ?? ""] ?? "/");
+      const destination = getSameOriginPath(searchParams.get("next")) ?? DASHBOARD_BY_ROLE[role ?? ""] ?? "/";
+      router.replace(destination);
       // Server components (like the dashboards) read the session from
       // cookies at request time — refresh so they pick up the just-created
       // session immediately rather than on some later navigation.

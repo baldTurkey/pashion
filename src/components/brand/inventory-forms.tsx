@@ -402,6 +402,17 @@ function AddInventoryFields({
     uploadProgress.start();
 
     try {
+      const { data: brand, error: brandError } = await supabaseBrowser
+        .from("brands")
+        .select("stripe_account_id, stripe_payouts_enabled")
+        .eq("brand_uuid", brandId)
+        .maybeSingle();
+
+      if (brandError) throw brandError;
+      if (!brand?.stripe_account_id || !brand.stripe_payouts_enabled) {
+        throw new Error("Connect Stripe payouts before creating a listing.");
+      }
+
       const photoUrls = await Promise.all(
         images.map((image) => (image.source === "upload" && image.file ? uploadFile(image.file, "photos") : image.url)),
       );

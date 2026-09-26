@@ -10,6 +10,7 @@ import {
   recordItemTransfer,
 } from "@/lib/orders/queries";
 import { sendOrderConfirmationEmail } from "@/lib/email/order-confirmation";
+import { sendBrandOrderNotificationEmail } from "@/lib/email/brand-order-notification";
 
 // Stripe calls this directly (not the browser), so it's the one place we can
 // trust that money actually moved. Two events handled:
@@ -26,12 +27,25 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Missing stripe-signature header" }, { status: 400 });
   }
 
-  let event: Stripe.Event;
-  try {
-    event = getStripe().webhooks.constructEvent(rawBody, signature, process.env.STRIPE_WEBHOOK_SECRET!);
-  } catch (err) {
+  const webhookSecrets = [
+    process.env.STRIPE_WEBHOOK_SECRET,
+    process.env.STRIPE_CONNECT_WEBHOOK_SECRET,
+  ].filter((secret): secret is string => Boolean(secret));
+
+  let event: Stripe.Event | null = null;
+  let signatureError: unknown;
+  for (const secret of webhookSecrets) {
+    try {
+      event = getStripe().webhooks.constructEvent(rawBody, signature, secret);
+      break;
+    } catch (err) {
+      signatureError = err;
+    }
+  }
+
+  if (!event) {
     return NextResponse.json(
-      { error: `Invalid signature: ${err instanceof Error ? err.message : "unknown error"}` },
+      { error: `Invalid signature: ${signatureError instanceof Error ? signatureError.message : "unknown error"}` },
       { status: 400 }
     );
   }
@@ -86,6 +100,74 @@ export async function POST(request: Request) {
           order.shipping_cents
         );
       }
+
+      const itemsByBrand = new Map<string, typeof items>();
+      for (const item of items) {
+        const brandItems = itemsByBrand.get(item.brand_id) ?? [];
+        brandItems.push(item);
+        itemsByBrand.set(item.brand_id, brandItems);
+      }
+
+      const brandIdsForEmail = [...itemsByBrand.keys()];
+      const { data: emailBrands, error: emailBrandsError } = await adminClient
+        .from("brands")
+        .select("brand_uuid, account_id, company_name, contact_info")
+        .in("brand_uuid", brandIdsForEmail);
+
+      if (emailBrandsError) {
+        console.error(`Failed to load brand email recipients for order ${order.id}:`, emailBrandsError);
+      } else {
+        await Promise.all(
+          (emailBrands ?? []).map(async (brand) => {
+            const brandItems = itemsByBrand.get(brand.brand_uuid) ?? [];
+            let contactInfo: { email?: string } | null = null;
+
+            try {
+              contactInfo = typeof brand.contact_info === "string"
+                ? JSON.parse(brand.contact_info)
+                : brand.contact_info;
+            } catch {
+              console.warn(`Invalid contact info for brand ${brand.brand_uuid}`);
+            }
+
+            let recipient = contactInfo?.email?.trim();
+            if (!recipient) {
+              const { data: owner } = await adminClient.auth.admin.getUserById(brand.account_id);
+              recipient = owner.user?.email ?? undefined;
+            }
+
+            if (!recipient) {
+              console.error(`No email address available for brand ${brand.brand_uuid} on order ${order.id}`);
+              return;
+            }
+
+            const brandShippingCents = brandItems.reduce((sum, item) => sum + item.shipping_cents, 0);
+            try {
+              await sendBrandOrderNotificationEmail(
+                recipient,
+                brand.company_name,
+                order.id,
+                brandItems.map((item) => ({
+                  name: item.product_name,
+                  quantity: item.quantity,
+                  unitPriceCents: item.unit_price_cents,
+                })),
+                brandShippingCents,
+                {
+                  name: order.shipping_name,
+                  address: order.shipping_address,
+                  city: order.shipping_city,
+                  region: order.shipping_region,
+                  postalCode: order.shipping_postal_code,
+                  country: order.shipping_country,
+                }
+              );
+            } catch (err) {
+              console.error(`Failed to notify brand ${brand.brand_uuid} for order ${order.id}:`, err);
+            }
+          })
+        );
+      }
     }
 
     // Payouts: deliberately outside the isFirstTime gate above. A retried
@@ -113,18 +195,28 @@ export async function POST(request: Request) {
       // to know whether payouts are connected; brand_uuid is what ties the
       // transfer back to the right order_items.
       const brandIds = [...totalsByBrand.keys()];
-      const { data: brands } = await adminClient
+      const { data: brands, error: brandsError } = await adminClient
         .from("brands")
         .select("brand_uuid, stripe_account_id")
         .in("brand_uuid", brandIds);
 
+      if (brandsError) {
+        console.error(`Failed to load payout destinations for order ${order.id}:`, brandsError);
+        return NextResponse.json({ error: "Failed to load payout destinations" }, { status: 500 });
+      }
+
+      const brandsById = new Map((brands ?? []).map((brand) => [brand.brand_uuid, brand]));
       let anyTransferFailed = false;
 
-      for (const brand of brands ?? []) {
-        if (!brand.stripe_account_id) continue; // shouldn't happen — listings require payouts to be connected
+      for (const [brandId, amount] of totalsByBrand) {
+        const brand = brandsById.get(brandId);
+        if (!brand?.stripe_account_id) {
+          console.error(`Missing Stripe payout destination for brand ${brandId} on order ${order.id}`);
+          anyTransferFailed = true;
+          continue;
+        }
 
-        const amount = totalsByBrand.get(brand.brand_uuid)!;
-        const brandItems = untransferred.filter((item) => item.brand_id === brand.brand_uuid);
+        const brandItems = untransferred.filter((item) => item.brand_id === brandId);
 
         try {
           const transfer = await getStripe().transfers.create({
@@ -142,7 +234,7 @@ export async function POST(request: Request) {
           // brands in the same order. Log and keep going; the 500 below
           // tells Stripe to retry this event, which will naturally pick
           // this brand back up since its items still lack a transfer_id.
-          console.error(`Stripe transfer failed for order ${order.id}, brand ${brand.brand_uuid}:`, err);
+          console.error(`Stripe transfer failed for order ${order.id}, brand ${brandId}:`, err);
           anyTransferFailed = true;
         }
       }

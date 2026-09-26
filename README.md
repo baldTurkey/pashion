@@ -6,12 +6,13 @@ Pashion helps independent brands cultivate dedicated communities and launch thei
 For Vercel Production, add these environment variables using values from Stripe's **live mode**:
 
 - `STRIPE_SECRET_KEY`: the live secret key beginning with `sk_live_`
-- `STRIPE_WEBHOOK_SECRET`: the signing secret from a live webhook endpoint
+- `STRIPE_WEBHOOK_SECRET`: the signing secret from a live platform webhook endpoint
+- `STRIPE_CONNECT_WEBHOOK_SECRET`: the signing secret from a live Connect webhook endpoint
 
-Create a Stripe webhook for `https://<your-vercel-domain>/api/webhooks/stripe` and enable:
+Create two live Stripe webhook endpoints, both pointing to `https://<your-vercel-domain>/api/webhooks/stripe`:
 
-- `checkout.session.completed`
-- `account.updated`
+- A platform-scoped endpoint for `checkout.session.completed`; put its signing secret in `STRIPE_WEBHOOK_SECRET`.
+- A connected-accounts-scoped Connect endpoint for `account.updated`; put its signing secret in `STRIPE_CONNECT_WEBHOOK_SECRET`.
 
 Use the live Connect settings for the same Stripe platform account. Checkout payments, connected brand accounts, transfers, and webhook verification all use `STRIPE_SECRET_KEY`. The server rejects a test secret when `NODE_ENV` or `VERCEL_ENV` is `production`.
 

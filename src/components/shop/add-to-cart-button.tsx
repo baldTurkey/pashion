@@ -25,7 +25,9 @@ export function AddToCartButton({
       });
 
       if (res.status === 401) {
-        router.push("/login");
+        const returnTo = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+        setStatus("idle");
+        router.push(`/login?next=${encodeURIComponent(returnTo)}`);
         return;
       }
 

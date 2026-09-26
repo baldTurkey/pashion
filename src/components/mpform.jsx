@@ -7,7 +7,14 @@ import {supabaseBrowser} from "../lib/supabase/client.ts";
 const MIN_IMAGES = 1;
 const MAX_IMAGES = 8;
 
-const SIZES = ["XS", "S", "M", "L", "XL", "XXL", "One size"];
+const SUPPLY_SIZES = [
+  { key: "small", label: "Small" },
+  { key: "medium", label: "Medium" },
+  { key: "large", label: "Large" },
+  { key: "xlarge", label: "X-Large" },
+  { key: "xxl", label: "XX-Large" },
+  { key: "one size", label: "One size" },
+];
 const STYLES = [
   "Casual",
   "Formal",
@@ -18,6 +25,26 @@ const STYLES = [
   "Minimalist",
   "Other",
 ];
+
+function createEmptySupplyQuantities() {
+  return SUPPLY_SIZES.reduce((quantities, sizeValue) => {
+    quantities[sizeValue.key] = 0;
+    return quantities;
+  }, {});
+}
+
+function sumSupplyQuantities(supplyQuantities) {
+  return Object.values(supplyQuantities).reduce((total, quantity) => total + Number(quantity || 0), 0);
+}
+
+function buildSupplyArray(supplyQuantities) {
+  const total = sumSupplyQuantities(supplyQuantities);
+
+  return [
+    String(total),
+    ...SUPPLY_SIZES.map((sizeValue) => `${sizeValue.key}: ${Number(supplyQuantities[sizeValue.key] || 0)}`),
+  ];
+}
 
 function FieldLabel({ number, children, required }) {
   return (
@@ -58,8 +85,7 @@ export default function marketplaceform() {
   const [itemName, setItemName] = useState("");
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
-  const [size, setSize] = useState("");
-  const [customSize, setCustomSize] = useState("");
+  const [supplyQuantities, setSupplyQuantities] = useState(() => createEmptySupplyQuantities());
   const [sizeGuide, setSizeGuide] = useState(null);
   const [style, setStyle] = useState("");
   const [customStyle, setCustomStyle] = useState("");
@@ -85,8 +111,7 @@ export default function marketplaceform() {
     setDeliveryPrice("");
     setDeliveryInDays("");
     setDescription("");
-    setSize("");
-    setCustomSize("");
+    setSupplyQuantities(createEmptySupplyQuantities());
     setSizeGuide(null);
     setStyle("");
     setCustomStyle("");
@@ -158,7 +183,7 @@ export default function marketplaceform() {
     if (!price.trim() || isNaN(Number(price)) || Number(price) <= 0)
       e.price = "Enter a valid price.";
     if (!description.trim()) e.description = "Add a description.";
-    if (!size && !customSize.trim()) e.size = "Choose or enter a size.";
+    if (sumSupplyQuantities(supplyQuantities) <= 0) e.stock = "Add at least 1 item across the size quantities.";
     if (!sizeGuide) e.sizeGuide = "Upload a size guide.";
     if (!style && !customStyle.trim()) e.style = "Choose or enter a style.";
     if (!careInfo.trim()) e.careInfo = "Add care and info details.";
@@ -191,10 +216,13 @@ export default function marketplaceform() {
 
     const { data: brand, error: brandError } = await supabaseBrowser
       .from("brands")
-      .select("brand_uuid, shipping_address, shipping_longitude, shipping_latitude")
+      .select("brand_uuid, shipping_address, shipping_longitude, shipping_latitude, stripe_account_id, stripe_payouts_enabled")
       .eq("account_id", user.id)
       .single();
     if (brandError) throw brandError;
+    if (!brand.stripe_account_id || !brand.stripe_payouts_enabled) {
+      throw new Error("Connect Stripe payouts before creating a listing.");
+    }
     if (!brand?.shipping_address || brand.shipping_longitude == null || brand.shipping_latitude == null) {
       throw new Error("Add a shipping origin to your brand profile before creating a listing.");
     }
@@ -207,9 +235,37 @@ export default function marketplaceform() {
     if (sizeGuide?.file) {
       sizeGuideUrl = await uploadFile(sizeGuide.file, "size-guides", user.id);
     }
+
+    const availableSizes = SUPPLY_SIZES
+      .filter((sizeValue) => Number(supplyQuantities[sizeValue.key] || 0) > 0)
+      .map((sizeValue) => sizeValue.label);
+    const totalStock = sumSupplyQuantities(supplyQuantities);
+
+    const { data: inventoryItem, error: inventoryError } = await supabaseBrowser
+      .from("inventory")
+      .insert([
+        {
+          brand_id: brand.brand_uuid,
+          name: itemName.trim(),
+          imageUrl: photoUrls,
+          currentPrice: price.toString(),
+          description: description.trim(),
+          size: availableSizes,
+          supply: buildSupplyArray(supplyQuantities),
+          stock: totalStock,
+          style: style === "Other" ? customStyle.trim() : style,
+          care_info: careInfo.trim(),
+          size_guide_url: sizeGuideUrl,
+        },
+      ])
+      .select("id")
+      .single();
+
+    if (inventoryError) throw inventoryError;
  
     const { error: insertError } = await supabaseBrowser.from("products").insert([
       {
+        inventory_id: inventoryItem.id,
         brand_id: brand.brand_uuid,
         imageUrl: photoUrls[0] || null,
         name: itemName.trim(),
@@ -217,14 +273,25 @@ export default function marketplaceform() {
         description: description.trim(),
           // deliveryPrice: deliveryPrice.toString(),
           // deliveryInDays: deliveryInDays.toString(),
-        size: size || customSize.trim(),
+        size: availableSizes.join(", "),
+        supply: buildSupplyArray(supplyQuantities),
+        stock: totalStock,
         style: style === "Other" ? customStyle.trim() : style,
         care_info: careInfo.trim(),
         size_guide_url: sizeGuideUrl,
       },
     ]);
  
-    if (insertError) throw insertError;
+    if (insertError) {
+      const { error: cleanupError } = await supabaseBrowser
+        .from("inventory")
+        .delete()
+        .eq("id", inventoryItem.id)
+        .eq("brand_id", brand.brand_uuid);
+
+      if (cleanupError) console.error("Failed to remove inventory row after listing failure:", cleanupError);
+      throw insertError;
+    }
 
       setSubmitted(true);
       } catch (err) {
@@ -361,34 +428,32 @@ return (
 
         <div className="mpform-section">
           <FieldLabel number="05" required>
-            Size
+            Sizes and quantities
           </FieldLabel>
-          <div className="mpform-size-chips">
-            {SIZES.map((s) => (
-              <button
-                type="button"
-                key={s}
-                onClick={() => {
-                  setSize(s);
-                  setCustomSize("");
-                }}
-                className={`mpform-size-chip ${size === s ? "selected" : ""}`}
-              >
-                {s}
-              </button>
+          <div className="mpform-size-quantity-grid">
+            {SUPPLY_SIZES.map((sizeValue) => (
+              <label key={sizeValue.key} className="mpform-size-quantity-row">
+                <span>{sizeValue.label}</span>
+                <input
+                  className="mpform-input"
+                  type="number"
+                  min="0"
+                  step="1"
+                  value={supplyQuantities[sizeValue.key] ?? 0}
+                  onChange={(event) => {
+                    const nextValue = Number(event.target.value);
+                    setSupplyQuantities((current) => ({
+                      ...current,
+                      [sizeValue.key]: Number.isFinite(nextValue) && nextValue >= 0 ? nextValue : 0,
+                    }));
+                  }}
+                  placeholder="0"
+                />
+              </label>
             ))}
           </div>
-
-          <input
-            className="mpform-input"
-            placeholder="Or type an exact size / measurement"
-            value={customSize}
-            onChange={(e) => {
-              setCustomSize(e.target.value);
-              if (e.target.value) setSize("");
-            }}
-          />
-          {errors.size && <ErrorText>{errors.size}</ErrorText>}
+          <div className="mpform-helper">Total stock: {sumSupplyQuantities(supplyQuantities)}</div>
+          {errors.stock && <ErrorText>{errors.stock}</ErrorText>}
 
           <div className="mpform-spacer" />
 
